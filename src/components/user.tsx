@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,51 +12,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { useUser } from '@/lib/hooks/use-user';
 
 export default function User() {
-  const [user, setUser] = useState<{
-    id: string;
-    email?: string;
-    user_metadata?: {
-      full_name?: string;
-      avatar_url?: string;
-    };
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const supabase = createClient();
   const router = useRouter();
-
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        setLoading(true);
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
-        if (error) throw error;
-        setUser(session?.user ?? null);
-      } catch (error) {
-        console.error('Error loading user:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadUser();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [supabase.auth]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
