@@ -11,8 +11,10 @@ import { createClient } from '@/lib/supabase/client';
 import sanitizeFilename from '@/lib/helpers/sanitize-file-name';
 import { uploadDocument } from '@/lib/actions'; // Import the server action
 import { v4 as uuidv4 } from 'uuid';
+import DashboardTable from './dashboard-table';
+import { FileMetadata } from '@/lib/types';
 
-export function Dashboard() {
+export function Dashboard({ fileMetadata }: { fileMetadata: FileMetadata[] }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { user } = useUser();
   const router = useRouter();
@@ -24,14 +26,13 @@ export function Dashboard() {
       return;
     }
 
-    const fileId = uuidv4(); // Generate a UUID for the file
+    const fileId = uuidv4();
     const sanitizedName = sanitizeFilename(name);
     const uniqueFilename = `${fileId}_${sanitizedName}`;
     const filePath = `${user.id}/${uniqueFilename}`;
 
     toast.promise(
       (async () => {
-        // Upload file to Supabase Storage
         const { data, error } = await supabase.storage
           .from('documents')
           .upload(filePath, file);
@@ -39,7 +40,6 @@ export function Dashboard() {
 
         console.log(data);
 
-        // Prepare metadata
         const metadata = {
           user_id: user.id,
           file_id: fileId,
@@ -51,7 +51,6 @@ export function Dashboard() {
           last_modified: new Date(file.lastModified).toISOString(),
         };
 
-        // Call server action to store metadata
         await uploadDocument(metadata);
 
         setIsDialogOpen(false);
@@ -77,12 +76,7 @@ export function Dashboard() {
           Add Document
         </Button>
       </div>
-      <div className='bg-white shadow rounded-lg p-6'>
-        <p className='text-gray-600'>
-          Your documents will appear here. Click the Add Document button to get
-          started.
-        </p>
-      </div>
+      <DashboardTable fileMetadata={fileMetadata} />
       <FileUploadDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
