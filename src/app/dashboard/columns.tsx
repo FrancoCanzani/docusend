@@ -15,6 +15,7 @@ import {
 import { FileMetadata } from '@/lib/types';
 import { format } from 'date-fns';
 import { getFileTypeFromMIME } from '@/lib/helpers/get-file-type';
+import CopyButton from '@/components/copy-button';
 
 const FILE_TYPE_MAP: { [key: string]: string } = {
   pdf: 'PDF',
@@ -28,21 +29,52 @@ export const columns: ColumnDef<FileMetadata>[] = [
   {
     id: 'select',
     header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-      />
+      <div className='flex items-center justify-center h-full'>
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Select all'
+        />
+      </div>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-      />
+      <div className='flex items-center justify-center h-full'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: 'file_type',
+    header: ({ column }) => {
+      return (
+        <button
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className='hover:bg-transparent flex items-center justify-start'
+        >
+          Type
+          <ArrowUpDown className='ml-2 h-3 w-3' />
+        </button>
+      );
+    },
+    cell: ({ row }) => {
+      const mimeType = row.getValue('file_type');
+      if (typeof mimeType !== 'string') {
+        return <div>Unknown</div>;
+      }
+      const fileType = getFileTypeFromMIME(mimeType);
+      const displayType = FILE_TYPE_MAP[fileType] || fileType.toUpperCase();
+      return (
+        <span className='border bg-gray-100 hover:bg-gray-200 font-semibold text-xs px-2 py-1 rounded-sm'>
+          {displayType}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'original_name',
@@ -53,7 +85,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
           className='hover:bg-transparent flex items-center justify-start'
         >
           File Name
-          <ArrowUpDown className='ml-2 h-4 w-4' />
+          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
@@ -67,27 +99,11 @@ export const columns: ColumnDef<FileMetadata>[] = [
     ),
   },
   {
-    accessorKey: 'file_type',
-    header: ({ column }) => {
-      return (
-        <button
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent flex items-center justify-start'
-        >
-          File Type
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </button>
-      );
+    accessorKey: 'file_id',
+    header: () => {
+      return <span className='hover:bg-transparent'>Share</span>;
     },
-    cell: ({ row }) => {
-      const mimeType = row.getValue('file_type');
-      if (typeof mimeType !== 'string') {
-        return <div>Unknown</div>;
-      }
-      const fileType = getFileTypeFromMIME(mimeType);
-      const displayType = FILE_TYPE_MAP[fileType] || fileType.toUpperCase();
-      return <div>{displayType}</div>;
-    },
+    cell: ({ row }) => <CopyButton documentId={row.getValue('file_id')} />,
   },
   {
     accessorKey: 'file_size',
@@ -98,7 +114,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
           className='hover:bg-transparent flex items-center justify-start'
         >
           Size
-          <ArrowUpDown className='ml-2 h-4 w-4' />
+          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
@@ -131,10 +147,10 @@ export const columns: ColumnDef<FileMetadata>[] = [
       return (
         <button
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent flex items-center justify-start'
+          className='hover:bg-transparent min-w-[6.2rem] flex items-center justify-start'
         >
           Upload Date
-          <ArrowUpDown className='ml-2 h-4 w-4' />
+          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
@@ -161,7 +177,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
           <DropdownMenuTrigger asChild>
             <Button variant='ghost' className='h-8 w-8 p-0'>
               <span className='sr-only'>Open menu</span>
-              <MoreHorizontal className='h-4 w-4' />
+              <MoreHorizontal className='h-3 w-3' />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
