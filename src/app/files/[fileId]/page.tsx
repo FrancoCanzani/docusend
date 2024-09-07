@@ -1,5 +1,5 @@
-import FileViewer from '@/components/file-viewer';
 import { createClient } from '@/lib/supabase/server';
+import FileViewer from '@/components/file-viewer';
 
 export default async function FileViewerPage({
   params,
@@ -19,11 +19,6 @@ export default async function FileViewerPage({
 
     if (metadataError) throw new Error('File not found');
 
-    // Check if the file is a PDF
-    if (fileData.file_type !== 'application/pdf') {
-      throw new Error('Only PDF files are supported');
-    }
-
     // Generate signed URL
     const { data: urlData, error: urlError } = await supabase.storage
       .from('documents')
@@ -35,9 +30,9 @@ export default async function FileViewerPage({
 
     return (
       <div className='container mx-auto px-4 py-8'>
-        <h1 className='text-2xl font-bold mb-4'>{fileData.original_name}</h1>
+        <h1 className='text-xl font-bold mb-4'>{fileData.original_name}</h1>
         <div className='w-full h-[80vh]'>
-          <FileViewer fileUrl={fileUrl} />
+          <FileViewer fileUrl={fileUrl} fileType={fileData.file_type} />
         </div>
       </div>
     );

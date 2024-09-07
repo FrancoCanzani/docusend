@@ -29,7 +29,7 @@ const ACCEPTED_FILE_TYPES = {
   'application/pdf': ['.pdf'],
 };
 
-const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30 MB in bytes
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB in bytes
 
 export function FileUploadDialog({
   isOpen,
