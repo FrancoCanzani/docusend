@@ -3,11 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from './supabase/server';
-import { nanoid } from 'nanoid';
+
+const supabase = createClient();
 
 export async function login(formData: FormData) {
-  const supabase = createClient();
-
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
@@ -15,7 +14,11 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   };
 
+  console.log(data);
+
   const { error } = await supabase.auth.signInWithPassword(data);
+
+  console.log(error);
 
   if (error) {
     redirect('/error');
@@ -42,28 +45,30 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/dashboard');
+  redirect('/');
 }
 
-const supabase = createClient();
-
-export async function uploadDocument(file: File, userId: string) {
-  const fileId = nanoid();
-  const filePath = `${userId}/${fileId}/${file.name}`;
-
-  const { data, error } = await supabase.storage
-    .from('documents')
-    .upload(filePath, file);
+export async function uploadDocument(metadata: {
+  user_id: string;
+  file_id: string;
+  original_name: string;
+  sanitized_name: string;
+  file_path: string;
+  file_size: number;
+  file_type: string;
+  last_modified: string;
+}) {
+  const { error } = await supabase.from('file_metadata').insert({
+    ...metadata,
+    upload_date: new Date().toISOString(),
+  });
 
   if (error) {
-    console.error('Error uploading file:', error);
-    return null;
+    console.error('Error storing document metadata:', error);
+    throw new Error('Failed to store document metadata');
   }
 
-  // Store document metadata
-  await storeDocumentMetadata(fileId, file.name, userId);
-
-  return data;
+  revalidatePath('/dashboard');
 }
 
 export async function downloadDocument(filePath: string) {
@@ -79,11 +84,12 @@ export async function downloadDocument(filePath: string) {
   return data;
 }
 
-export async function listAllDocuments() {
+export async function listAllDocuments(userId: string) {
   const { data, error } = await supabase
-    .from('documents')
+    .from('file_metadata')
     .select('*')
-    .order('created_at', { ascending: false });
+    .eq('user_id', userId)
+    .order('upload_date', { ascending: false });
 
   if (error) {
     console.error('Error listing documents:', error);
@@ -93,20 +99,35 @@ export async function listAllDocuments() {
   return data;
 }
 
-export async function deleteDocument(filePath: string, documentId: string) {
+export async function deleteDocument(fileId: string, userId: string) {
+  // First, get the file path
+  const { data: fileData, error: fetchError } = await supabase
+    .from('file_metadata')
+    .select('file_path')
+    .eq('file_id', fileId)
+    .eq('user_id', userId)
+    .single();
+
+  if (fetchError) {
+    console.error('Error fetching file metadata:', fetchError);
+    return false;
+  }
+
+  // Delete from storage
   const { error: storageError } = await supabase.storage
     .from('documents')
-    .remove([filePath]);
+    .remove([fileData.file_path]);
 
   if (storageError) {
     console.error('Error deleting file from storage:', storageError);
     return false;
   }
 
+  // Delete metadata
   const { error: dbError } = await supabase
-    .from('documents')
+    .from('file_metadata')
     .delete()
-    .match({ id: documentId });
+    .match({ file_id: fileId, user_id: userId });
 
   if (dbError) {
     console.error('Error deleting document metadata:', dbError);
@@ -114,18 +135,4 @@ export async function deleteDocument(filePath: string, documentId: string) {
   }
 
   return true;
-}
-
-async function storeDocumentMetadata(
-  fileId: string,
-  fileName: string,
-  uploaderId: string
-) {
-  const { error } = await supabase
-    .from('documents')
-    .insert({ id: fileId, name: fileName, uploader_id: uploaderId });
-
-  if (error) {
-    console.error('Error storing document metadata:', error);
-  }
 }

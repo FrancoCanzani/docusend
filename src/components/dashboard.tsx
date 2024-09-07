@@ -1,17 +1,68 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { FileUploadDialog } from './file-upload-dialog';
+import { useUser } from '@/lib/hooks/use-user';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
+import sanitizeFilename from '@/lib/helpers/sanitize-file-name';
+import { uploadDocument } from '@/lib/actions'; // Import the server action
+import { v4 as uuidv4 } from 'uuid';
 
 export function Dashboard() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { user } = useUser();
+  const router = useRouter();
+  const supabase = createClient();
 
-  const handleUpload = (file: File, name: string) => {
-    // Here you would typically handle the document addition logic
-    console.log('Document added:', name, file);
-    // You can add your upload logic here
+  const handleUpload = async (file: File, name: string) => {
+    if (!user) {
+      toast.error('You must be logged in to upload documents');
+      return;
+    }
+
+    const fileId = uuidv4(); // Generate a UUID for the file
+    const sanitizedName = sanitizeFilename(name);
+    const uniqueFilename = `${fileId}_${sanitizedName}`;
+    const filePath = `${user.id}/${uniqueFilename}`;
+
+    toast.promise(
+      (async () => {
+        // Upload file to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from('documents')
+          .upload(filePath, file);
+        if (error) throw error;
+
+        console.log(data);
+
+        // Prepare metadata
+        const metadata = {
+          user_id: user.id,
+          file_id: fileId,
+          original_name: name,
+          sanitized_name: sanitizedName,
+          file_path: filePath,
+          file_size: file.size,
+          file_type: file.type,
+          last_modified: new Date(file.lastModified).toISOString(),
+        };
+
+        // Call server action to store metadata
+        await uploadDocument(metadata);
+
+        setIsDialogOpen(false);
+        router.refresh();
+      })(),
+      {
+        loading: 'Uploading document...',
+        success: 'Document uploaded successfully!',
+        error: 'Failed to upload document. Please try again.',
+      }
+    );
   };
 
   return (

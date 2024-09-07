@@ -20,9 +20,11 @@ export default function User() {
   const supabase = createClient();
   const router = useRouter();
 
+  console.log(user);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.refresh();
+    router.push('/');
   };
 
   if (loading) {
@@ -40,7 +42,7 @@ export default function User() {
   }
 
   if (!user) {
-    return null;
+    return;
   }
 
   return (

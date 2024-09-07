@@ -1,7 +1,25 @@
 import { Sidebar } from '@/components/sidebar';
 import { Dashboard } from '@/components/dashboard';
+import { createClient } from '@/lib/supabase/server';
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = createClient();
+
+  const { data: authData } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from('file_metadata')
+    .select('*')
+    .eq('user_id', authData.user?.id)
+    .order('upload_date', { ascending: false });
+
+  console.log(data);
+
+  if (error) {
+    console.error('Error listing documents:', error);
+    return null;
+  }
+
   return (
     <div className='flex h-screen bg-gray-100'>
       <Sidebar />

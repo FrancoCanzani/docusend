@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, FileRejection } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,13 +10,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { X, Upload } from 'lucide-react';
+import { X, Upload, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface FileUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onUpload: (file: File, name: string) => void;
 }
+
+const ACCEPTED_FILE_TYPES = {
+  'application/vnd.ms-excel': ['.xls'],
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
+    '.xlsx',
+  ],
+  'text/csv': ['.csv'],
+  'application/vnd.oasis.opendocument.spreadsheet': ['.ods'],
+  'application/pdf': ['.pdf'],
+};
+
+const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30 MB in bytes
 
 export function FileUploadDialog({
   isOpen,
@@ -25,20 +38,38 @@ export function FileUploadDialog({
 }: FileUploadDialogProps) {
   const [documentName, setDocumentName] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       if (acceptedFiles && acceptedFiles.length > 0) {
         setFile(acceptedFiles[0]);
         if (!documentName) {
           setDocumentName(acceptedFiles[0].name);
+        }
+        setError(null);
+      } else if (fileRejections.length > 0) {
+        const rejection = fileRejections[0];
+        if (rejection.errors[0]?.code === 'file-invalid-type') {
+          setError(
+            'Invalid file type. Please upload XLS, XLSX, CSV, ODS, or PDF files only.'
+          );
+        } else if (rejection.errors[0]?.code === 'file-too-large') {
+          setError('File is too large. Maximum size is 30 MB.');
+        } else {
+          setError('Error uploading file. Please try again.');
         }
       }
     },
     [documentName]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: ACCEPTED_FILE_TYPES,
+    maxSize: MAX_FILE_SIZE,
+    multiple: false,
+  });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -54,7 +85,8 @@ export function FileUploadDialog({
         <DialogHeader>
           <DialogTitle>Add New Document</DialogTitle>
           <DialogDescription>
-            Upload a new document to your DocuSend account.
+            Upload a new document to your DocuSend account. Supported file
+            types: XLS, XLSX, CSV, ODS, PDF. Maximum file size: 30 MB.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='space-y-4'>
@@ -84,6 +116,7 @@ export function FileUploadDialog({
                   onClick={(e) => {
                     e.stopPropagation();
                     setFile(null);
+                    setError(null);
                   }}
                 >
                   <X className='h-4 w-4' />
@@ -93,9 +126,18 @@ export function FileUploadDialog({
               <div className='flex flex-col items-center'>
                 <Upload className='h-10 w-10 text-gray-400 mb-2' />
                 <p>Drag & drop a file here, or click to select a file</p>
+                <p className='text-sm text-gray-500 mt-1'>
+                  Supported files: XLS, XLSX, CSV, ODS, PDF (max 30 MB)
+                </p>
               </div>
             )}
           </div>
+          {error && (
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <Button
             type='submit'
             className='w-full'
