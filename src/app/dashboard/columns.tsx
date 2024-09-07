@@ -16,6 +16,7 @@ import { FileMetadata } from '@/lib/types';
 import { format } from 'date-fns';
 import { getFileTypeFromMIME } from '@/lib/helpers/get-file-type';
 import CopyButton from '@/components/copy-button';
+import Link from 'next/link';
 
 const FILE_TYPE_MAP: { [key: string]: string } = {
   pdf: 'PDF',
@@ -90,12 +91,13 @@ export const columns: ColumnDef<FileMetadata>[] = [
       );
     },
     cell: ({ row }) => (
-      <div
+      <Link
+        href={`/files/${row.original.file_id}`}
         className='font-medium max-w-80 truncate'
         title={row.getValue('original_name')}
       >
         {row.getValue('original_name')}
-      </div>
+      </Link>
     ),
   },
   {
@@ -156,7 +158,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
     },
     cell: ({ row }) => {
       return (
-        <time>
+        <time suppressHydrationWarning>
           {format(
             new Date(row.getValue('upload_date')).toLocaleString(),
             'MM/dd/yyyy'
