@@ -1,17 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { pdfjs, Document, Page } from 'react-pdf';
 import * as XLSX from 'xlsx';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-
-interface FileViewerProps {
-  fileUrl: string;
-  fileType: string;
-}
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];
@@ -21,27 +11,18 @@ interface Workbook {
   [sheetName: string]: SheetData;
 }
 
-const FileViewer: React.FC<FileViewerProps> = ({ fileUrl, fileType }) => {
-  const [numPages, setNumPages] = useState<number | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
+interface SpreadsheetViewerProps {
+  fileUrl: string;
+}
+
+export default function SpreadsheetViewer({ fileUrl }: SpreadsheetViewerProps) {
   const [workbook, setWorkbook] = useState<Workbook>({});
   const [sheetNames, setSheetNames] = useState<string[]>([]);
   const [currentSheet, setCurrentSheet] = useState<string>('');
 
   useEffect(() => {
-    if (isSpreadsheet(fileType)) {
-      fetchSpreadsheetData();
-    }
-  }, [fileUrl, fileType]);
-
-  const isSpreadsheet = (type: string): boolean => {
-    return [
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'text/csv',
-      'application/vnd.oasis.opendocument.spreadsheet',
-    ].includes(type);
-  };
+    fetchSpreadsheetData();
+  }, [fileUrl]);
 
   const fetchSpreadsheetData = async (): Promise<void> => {
     try {
@@ -66,44 +47,7 @@ const FileViewer: React.FC<FileViewerProps> = ({ fileUrl, fileType }) => {
     }
   };
 
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
-    setNumPages(numPages);
-  };
-
-  const renderPDF = (): JSX.Element => (
-    <>
-      <Document
-        file={fileUrl}
-        onLoadSuccess={onDocumentLoadSuccess}
-        className='max-w-full'
-      >
-        <Page pageNumber={pageNumber} width={600} />
-      </Document>
-      <p className='mt-4'>
-        Page {pageNumber} of {numPages}
-      </p>
-      <div className='flex gap-4 mt-2'>
-        <button
-          onClick={() => setPageNumber((page) => Math.max(page - 1, 1))}
-          disabled={pageNumber <= 1}
-          className='px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300'
-        >
-          Previous
-        </button>
-        <button
-          onClick={() =>
-            setPageNumber((page) => Math.min(page + 1, numPages || 1))
-          }
-          disabled={pageNumber >= (numPages || 1)}
-          className='px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300'
-        >
-          Next
-        </button>
-      </div>
-    </>
-  );
-
-  const renderSpreadsheet = (): JSX.Element => (
+  return (
     <>
       <div className='overflow-x-auto w-full'>
         <table className='min-w-full bg-white text-black border border-gray-300'>
@@ -149,12 +93,4 @@ const FileViewer: React.FC<FileViewerProps> = ({ fileUrl, fileType }) => {
       </div>
     </>
   );
-
-  return (
-    <div className='flex flex-col items-center max-w-7xl mx-auto p-4'>
-      {fileType === 'application/pdf' ? renderPDF() : renderSpreadsheet()}
-    </div>
-  );
-};
-
-export default FileViewer;
+}

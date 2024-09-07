@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import FileViewer from '@/components/file-viewer';
+import FileViewer from '@/components/file/file-viewer';
 
 export default async function FileViewerPage({
   params,

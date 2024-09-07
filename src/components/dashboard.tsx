@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { FileUploadDialog } from './file-upload-dialog';
+import { FileUploadDialog } from './file/file-upload-dialog';
 import { useUser } from '@/lib/hooks/use-user';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
