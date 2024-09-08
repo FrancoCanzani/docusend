@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];
@@ -48,49 +50,66 @@ export default function SpreadsheetViewer({ fileUrl }: SpreadsheetViewerProps) {
   };
 
   return (
-    <>
-      <div className='overflow-x-auto w-full'>
-        <table className='min-w-full bg-white text-black border border-gray-300'>
-          <thead>
-            <tr className='bg-gray-100 text-left'>
-              {workbook[currentSheet]?.[0]?.map((header, index) => (
-                <th key={index} className='px-4 py-2 border-b'>
-                  {String(header)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {workbook[currentSheet]?.slice(1).map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                className={rowIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
-              >
-                {row.map((cell, cellIndex) => (
-                  <td key={cellIndex} className='px-4 py-2 border-b'>
-                    {String(cell)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className='flex justify-center mt-4 space-x-2 overflow-x-auto'>
+    <div className='flex flex-col w-full h-[calc(100vh-4rem)] max-w-6xl mx-auto'>
+      <Tabs
+        value={currentSheet}
+        onValueChange={setCurrentSheet}
+        className='w-full h-full'
+      >
+        <TabsList className='w-full justify-start overflow-x-auto rounded-sm'>
+          {sheetNames.map((name) => (
+            <TabsTrigger key={name} value={name} className='px-4 py-2'>
+              {name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
         {sheetNames.map((name) => (
-          <button
+          <TabsContent
             key={name}
-            onClick={() => setCurrentSheet(name)}
-            className={`px-3 py-1 text-sm font-medium rounded-t-lg ${
-              currentSheet === name
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+            value={name}
+            className='border bg-white text-black rounded-b-lg flex-grow relative'
           >
-            {name}
-          </button>
+            <ScrollArea className='h-[calc(100vh-8rem)] w-full'>
+              <div className='min-w-max'>
+                <table className='w-full border-collapse'>
+                  <thead>
+                    <tr className='bg-muted sticky top-0 z-10'>
+                      {workbook[name]?.[0]?.map((header, index) => (
+                        <th
+                          key={index}
+                          className='p-2 text-left border font-medium whitespace-nowrap'
+                        >
+                          {String(header)}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workbook[name]?.slice(1).map((row, rowIndex) => (
+                      <tr
+                        key={rowIndex}
+                        className={
+                          rowIndex % 2 === 0 ? 'bg-muted/50' : 'bg-background'
+                        }
+                      >
+                        {row.map((cell, cellIndex) => (
+                          <td
+                            key={cellIndex}
+                            className='p-2 border whitespace-nowrap'
+                          >
+                            {String(cell)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <ScrollBar orientation='horizontal' />
+            </ScrollArea>
+          </TabsContent>
         ))}
-      </div>
-    </>
+      </Tabs>
+    </div>
   );
 }
