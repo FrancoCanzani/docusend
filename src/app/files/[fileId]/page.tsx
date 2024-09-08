@@ -10,7 +10,6 @@ export default async function FileViewerPage({
   const supabase = createClient();
 
   try {
-    // Fetch file metadata
     const { data: fileData, error: metadataError } = await supabase
       .from('file_metadata')
       .select('*')
@@ -29,8 +28,8 @@ export default async function FileViewerPage({
     const fileUrl = urlData.signedUrl;
 
     return (
-      <div className='container mx-auto px-4 py-8'>
-        <h1 className='text-xl font-bold mb-4'>{fileData.original_name}</h1>
+      <div className='container mx-auto p-4'>
+        <h1 className='text-xl font-bold mb-3'>{fileData.original_name}</h1>
         <div className='w-full h-[80vh]'>
           <FileViewer fileUrl={fileUrl} fileType={fileData.file_type} />
         </div>
