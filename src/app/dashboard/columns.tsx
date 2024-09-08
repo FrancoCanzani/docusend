@@ -1,22 +1,14 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowUpDown } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { FileMetadata } from '@/lib/types';
 import { format } from 'date-fns';
 import { getFileTypeFromMIME } from '@/lib/helpers/get-file-type';
 import CopyButton from '@/components/copy-button';
 import Link from 'next/link';
+import DocumentSettingsSheet from '@/components/document-settings-sheet';
 
 const FILE_TYPE_MAP: { [key: string]: string } = {
   pdf: 'PDF',
@@ -93,7 +85,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
     cell: ({ row }) => (
       <Link
         href={`/files/${row.original.file_id}`}
-        className='font-medium max-w-80 truncate'
+        className='font-medium max-w-44 truncate'
         title={row.getValue('original_name')}
       >
         {row.getValue('original_name')}
@@ -169,32 +161,11 @@ export const columns: ColumnDef<FileMetadata>[] = [
   },
   {
     id: 'actions',
-    header: 'Actions',
     enableHiding: false,
     cell: ({ row }) => {
       const file = row.original;
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <MoreHorizontal className='h-3 w-3' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(file.id)}
-            >
-              Copy file ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Download</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <DocumentSettingsSheet file={file} />;
     },
   },
 ];

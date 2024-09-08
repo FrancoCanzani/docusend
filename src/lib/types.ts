@@ -10,5 +10,10 @@ export type FileMetadata = {
   upload_date: string;
   last_modified: string;
   is_public: boolean;
+  allow_download: boolean;
+  require_email: boolean;
   expiration_date: string | null;
+  require_password: boolean;
+  password: string | null;
+  enable_feedback: boolean;
 };
