@@ -16,4 +16,6 @@ export type FileMetadata = {
   require_password: boolean;
   password: string | null;
   enable_feedback: boolean;
+  require_nda: boolean;
+  nda_text: string | null;
 };
