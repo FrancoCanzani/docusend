@@ -16,6 +16,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Textarea } from './ui/textarea';
+import { ndaText } from '@/lib/constants/ndaText';
 
 interface DocumentSettings {
   isPublic: boolean;
@@ -43,7 +44,7 @@ export default function DocumentSettingsSheet({
     password: file.password ?? '',
     enableFeedback: file.enable_feedback ?? false,
     requireNDA: file.require_nda ?? false,
-    ndaText: file.nda_text ?? '',
+    ndaText: file.nda_text ?? ndaText,
   });
 
   const handleSettingChange = (
@@ -70,7 +71,7 @@ export default function DocumentSettingsSheet({
           <Settings2 size={14} />
         </button>
       </SheetTrigger>
-      <SheetContent className='bg-white overflow-y-auto'>
+      <SheetContent className='bg-white text-black overflow-y-auto'>
         <SheetHeader>
           <SheetTitle>{file.original_name}</SheetTitle>
           <SheetDescription>Manage your document settings</SheetDescription>
@@ -147,7 +148,7 @@ export default function DocumentSettingsSheet({
                 type='time'
                 value={settings.expirationDate.split('T')[1].slice(0, 5)}
                 onChange={(e) => {
-                  const [date, _] = settings.expirationDate.split('T');
+                  const [date] = settings.expirationDate.split('T');
                   handleSettingChange(
                     'expirationDate',
                     `${date}T${e.target.value}:00Z`
