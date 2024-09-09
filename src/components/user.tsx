@@ -29,7 +29,7 @@ export default function User() {
 
   if (loading) {
     return (
-      <div className='w-full max-w-md p-2 mb-2 space-y-4'>
+      <div className='w-full max-w-md p-2 px-3 mb-2 space-y-4'>
         <div className='flex items-center space-x-4'>
           <Skeleton className='h-10 w-10 rounded-sm' />
           <div className='space-y-2'>
@@ -46,9 +46,33 @@ export default function User() {
   }
 
   return (
-    <div className='w-full max-w-sm p-2 text-black'>
+    <div className='w-full max-w-sm p-2 px-3 text-black'>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className='flex items-center mb-2'>
+        <CollapsibleContent className='space-y-2'>
+          <Button
+            className='w-full flex items-center justify-start pl-11'
+            variant='outline'
+          >
+            <CreditCard className='mr-2 h-4 w-4' />
+            Upgrade Account
+          </Button>
+          <Button
+            className='w-full flex items-center justify-start pl-11'
+            variant='outline'
+          >
+            <Users className='mr-2 h-4 w-4' />
+            Create Team
+          </Button>
+          <Button
+            className='w-full flex items-center justify-start pl-11'
+            variant='outline'
+            onClick={handleLogout}
+          >
+            <LogOut className='mr-2 h-4 w-4' />
+            Log Out
+          </Button>
+        </CollapsibleContent>
+        <div className='flex items-center mb-2 mt-3'>
           <Avatar>
             <AvatarImage
               src={user.user_metadata?.avatar_url}
@@ -73,20 +97,6 @@ export default function User() {
             </Button>
           </CollapsibleTrigger>
         </div>
-        <CollapsibleContent className='space-y-2'>
-          <Button className='w-full' variant='outline'>
-            <CreditCard className='mr-2 h-4 w-4' />
-            Upgrade Account
-          </Button>
-          <Button className='w-full' variant='outline'>
-            <Users className='mr-2 h-4 w-4' />
-            Create Team
-          </Button>
-          <Button className='w-full' variant='outline' onClick={handleLogout}>
-            <LogOut className='mr-2 h-4 w-4' />
-            Log Out
-          </Button>
-        </CollapsibleContent>
       </Collapsible>
     </div>
   );

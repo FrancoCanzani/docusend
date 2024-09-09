@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { LayoutDashboard, FileText, Users, Settings } from 'lucide-react';
 import User from './user';
+import { FileMetadata } from '@/lib/types';
+import { StorageUsage } from './storage-usage';
 
-export function Sidebar() {
+export function Sidebar({ fileMetadata }: { fileMetadata: FileMetadata[] }) {
   return (
     <div className='w-64 bg-white shadow-lg h-screen'>
       <div className='flex items-center justify-between h-16 px-6 border-b'>
@@ -43,6 +45,7 @@ export function Sidebar() {
         </Link>
       </nav>
       <div className='absolute bottom-0 w-64'>
+        <StorageUsage fileMetadata={fileMetadata} />
         <User />
       </div>
     </div>

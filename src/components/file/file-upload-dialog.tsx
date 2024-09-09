@@ -55,7 +55,7 @@ export function FileUploadDialog({
             'Invalid file type. Please upload XLS, XLSX, CSV, ODS, or PDF files only.'
           );
         } else if (rejection.errors[0]?.code === 'file-too-large') {
-          setError('File is too large. Maximum size is 30 MB.');
+          setError('File is too large. Maximum size is 50 MB.');
         } else {
           setError('Error uploading file. Please try again.');
         }
@@ -86,7 +86,7 @@ export function FileUploadDialog({
           <DialogTitle>Add New Document</DialogTitle>
           <DialogDescription>
             Upload a new document to your DocuSend account. Supported file
-            types: XLS, XLSX, CSV, ODS, PDF. Maximum file size: 30 MB.
+            types: XLS, XLSX, CSV, ODS, PDF. Maximum file size: 50 MB.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='space-y-4'>
@@ -127,7 +127,7 @@ export function FileUploadDialog({
                 <Upload className='h-10 w-10 text-gray-400 mb-2' />
                 <p>Drag & drop a file here, or click to select a file</p>
                 <p className='text-sm text-gray-500 mt-1'>
-                  Supported files: XLS, XLSX, CSV, ODS, PDF (max 30 MB)
+                  Supported files: XLS, XLSX, CSV, ODS, PDF (max 50 MB)
                 </p>
               </div>
             )}
