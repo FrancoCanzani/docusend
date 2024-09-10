@@ -2,6 +2,8 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import getPostContent from "@/lib/helpers/get-post-content";
 import fs from "fs";
 import path from "path";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface PostProps {
   params: { slug: string };
@@ -20,14 +22,21 @@ export default async function Post({ params }: PostProps) {
   const { content, frontMatter } = await getPostContent(params.slug);
 
   return (
-    <>
-      <div className="max-w-3xl mx-auto px-4 py-8 prose">
+    <div className="flex max-w-3xl py-8 space-y-4 mx-auto flex-col items-start justify-start">
+      <Link
+        href={"/"}
+        className="flex items-center font-medium text-sm text-gray-800"
+      >
+        <ArrowLeft size={13} className="mr-1" />
+        <span className="hover:underline">Go Back</span>
+      </Link>
+      <article className="px-4 prose">
         <h1>{frontMatter.title}</h1>
         <p className="text-sm text-gray-500">
           {new Date(frontMatter.date).toLocaleDateString()}
         </p>
         <MDXRemote source={content} />
-      </div>
-    </>
+      </article>
+    </div>
   );
 }
