@@ -91,7 +91,7 @@ export default function LandingPage() {
         <h2 className="text-sm bg-white rounded-lg px-2 py-0.5 shadow w-fit mx-auto font-semibold uppercase">
           Unlock Document Sharing Power
         </h2>
-        <h1 className="mt-8 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+        <h1 className="mt-8 text-4xl max-w-5xl mx-auto font-bold tracking-tight sm:text-5xl md:text-6xl">
           Empower Your Team with Next-Gen Document Sharing
         </h1>
         <p className="mx-auto my-8 max-w-2xl text-xl text-gray-600">
