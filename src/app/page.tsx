@@ -10,8 +10,15 @@ import {
   RefreshCw,
   Users,
   Shield,
+  Server,
   BarChart2,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const features = [
   {
@@ -84,7 +91,7 @@ export default function LandingPage() {
         <h2 className="text-sm bg-white rounded-lg px-2 py-0.5 shadow w-fit mx-auto font-semibold uppercase">
           Unlock Document Sharing Power
         </h2>
-        <h1 className="mt-8 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+        <h1 className="mt-8 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
           Empower Your Team with Next-Gen Document Sharing
         </h1>
         <p className="mx-auto my-8 max-w-2xl text-xl text-gray-600">
@@ -167,6 +174,227 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
+        </section>
+        <section>
+          <TooltipProvider>
+            <div className="py-12">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold sm:text-4xl">
+                    Transparent Plans for Every Need
+                  </h2>
+                  <p className="mt-4 text-xl text-gray-600">
+                    From individual use to enterprise solutions, we've got you
+                    covered.
+                  </p>
+                </div>
+
+                <div className="mt-16 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
+                  <div className="relative p-8 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        Free
+                      </h3>
+                      <p className="mt-4 flex items-center justify-center text-gray-900">
+                        <span className="text-5xl font-bold tracking-tight">
+                          $0
+                        </span>
+                        <span className="ml-1 text-xl font-semibold">
+                          /month
+                        </span>
+                      </p>
+                      <p className="mt-6 text-gray-500">
+                        For individual users getting started.
+                      </p>
+
+                      <ul className="mt-6 space-y-6">
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">Single user</span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">100 MB storage</span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">
+                            Unlimited document sharing
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">
+                            Unlimited visitor analytics
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    <a
+                      href="#"
+                      className="bg-black text-white hover:bg-primary/90 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"
+                    >
+                      Get started
+                    </a>
+                  </div>
+
+                  <div className="relative p-8 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        Basic
+                      </h3>
+                      <p className="mt-4 flex items-center justify-center text-gray-900">
+                        <span className="text-5xl font-bold tracking-tight">
+                          $15
+                        </span>
+                        <span className="ml-1 text-xl font-semibold">
+                          /month
+                        </span>
+                      </p>
+                      <p className="mt-6 text-gray-500">
+                        For professionals needing more storage.
+                      </p>
+
+                      <ul className="mt-6 space-y-6">
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">Single user</span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold">
+                            5 GB storage
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">
+                            Unlimited document sharing
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">
+                            Unlimited visitor analytics
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold text-start">
+                            Email, password and NDA verification
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold">
+                            Document expiration
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    <a
+                      href="#"
+                      className="bg-black text-white hover:bg-primary/90 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"
+                    >
+                      Upgrade to Basic
+                    </a>
+                  </div>
+
+                  <div className="relative p-8 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        Pro
+                      </h3>
+                      <p className="mt-4 flex items-center justify-center text-gray-900">
+                        <span className="text-5xl font-bold tracking-tight">
+                          $49
+                        </span>
+                        <span className="ml-1 text-xl font-semibold">
+                          /month
+                        </span>
+                      </p>
+                      <p className="mt-6 text-gray-500">
+                        For teams that need more power and flexibility.
+                      </p>
+
+                      <ul className="mt-6 space-y-6">
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="mx-3 font-semibold">
+                            Up to 10 team members
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Users size={16} />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>$10/month per extra user</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="mx-3 font-semibold">
+                            20 GB storage
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Server size={16} />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>$5/month per extra GB</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">
+                            Unlimited document sharing
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3">
+                            Unlimited visitor analytics
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold text-start">
+                            Email, password and NDA verification
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold">
+                            Document expiration
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold">
+                            Priority support
+                          </span>
+                        </li>
+                        <li className="flex">
+                          <span className="text-green-500">✓</span>
+                          <span className="ml-3 font-semibold">
+                            Custom branding
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    <a
+                      href="#"
+                      className="bg-black text-white hover:bg-primary/90 mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium"
+                    >
+                      Upgrade to Pro
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TooltipProvider>
         </section>
       </main>
       <footer className="container mx-auto px-4 py-8">
