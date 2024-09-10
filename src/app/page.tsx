@@ -3,10 +3,58 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Link2,
+  MessageSquare,
+  RefreshCw,
+  Users,
+  Shield,
+  BarChart2,
+} from "lucide-react";
+
+const features = [
+  {
+    title: "Reject attachments, embrace links",
+    description:
+      "Enhance security and control with dynamic links. Manage access and revoke permissions instantly.",
+    icon: <Link2 className="h-6 w-6" />,
+  },
+  {
+    title: "Real-time Engagement Insights",
+    description:
+      "Gain valuable insights with live document interaction data. Make informed decisions before your next meeting.",
+    icon: <MessageSquare className="h-6 w-6" />,
+  },
+  {
+    title: "Seamless Version Control",
+    description:
+      "Edit shared documents on-the-fly. Recipients always see the most up-to-date content without manual updates.",
+    icon: <RefreshCw className="h-6 w-6" />,
+  },
+  {
+    title: "Team collaboration",
+    description:
+      "Create teams, manage permissions, and collaborate seamlessly on shared documents.",
+    icon: <Users className="h-6 w-6" />,
+  },
+  {
+    title: "Document analytics",
+    description:
+      "Track document views, time spent, and user engagement with team-wide analytics.",
+    icon: <BarChart2 className="h-6 w-6" />,
+  },
+  {
+    title: "Secure sharing",
+    description:
+      "Set granular access controls, expiration dates, and password protection for sensitive documents.",
+    icon: <Shield className="h-6 w-6" />,
+  },
+];
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-100">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50/50 via-white to-blue-100">
       <header className="container mx-auto px-4 py-6">
         <nav className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">DocuSend</h1>
@@ -93,6 +141,33 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Why do I need DocuSend?
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <Card
+                  key={index}
+                  className="bg-white border-t-4 border-primary"
+                >
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-50/50 via-white to-blue-100 flex items-center justify-center mb-4">
+                      {feature.icon}
+                    </div>
+                    <CardTitle className="text-xl font-semibold">
+                      {feature.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
       <footer className="container mx-auto px-4 py-8">
         <div className="flex justify-center space-x-8"></div>
