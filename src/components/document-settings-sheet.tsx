@@ -202,6 +202,7 @@ export default function DocumentSettingsSheet({
                   handleSettingChange('password', e.target.value)
                 }
                 placeholder='Enter passcode'
+                required={settings.requirePassword}
               />
             )}
           </div>
