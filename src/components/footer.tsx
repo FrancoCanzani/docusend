@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-tr from-neutral-50 to-blue-100 py-12 rounded-t-lg">
-      <div className="container mx-auto px-4">
+    <footer className="bg-gradient-to-tr from-neutral-50 to-blue-100 p-8 md:p-16 rounded-t-lg">
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-lg font-semibold mb-4">DocuSend</h3>

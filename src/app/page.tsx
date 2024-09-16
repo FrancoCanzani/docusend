@@ -131,7 +131,7 @@ export default function LandingPage() {
         </div>
       </div>
       <section className="p-8 md:p-16" id="features">
-        <div className="container px-4">
+        <div className="container">
           <h2 className="text-3xl font-bold text-start mb-12">
             Why do I need DocuSend?
           </h2>
@@ -156,7 +156,7 @@ export default function LandingPage() {
       </section>
       <section className="p-8 md:p-16" id="pricing">
         <TooltipProvider>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
             <div className="text-start">
               <h2 className="text-3xl font-bold sm:text-4xl">
                 Transparent Plans for Every Need
