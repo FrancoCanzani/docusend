@@ -22,38 +22,34 @@ import Footer from "@/components/footer";
 const features = [
   {
     title: "Reject attachments, embrace links",
-    description:
-      "Enhance security and control with dynamic links. Manage access and revoke permissions instantly.",
+    description: "Enhance security and control with dynamic links.",
     icon: <Link2 className="h-6 w-6" />,
   },
   {
     title: "Real-time Engagement Insights",
-    description:
-      "Gain valuable insights with live document interaction data. Make informed decisions before your next meeting.",
+    description: "Gain valuable insights with interaction data.",
     icon: <MessageSquare className="h-6 w-6" />,
   },
   {
     title: "Seamless Version Control",
-    description:
-      "Edit shared documents on-the-fly. Recipients always see the most up-to-date content without manual updates.",
+    description: "Edit shared documents on-the-fly.",
     icon: <RefreshCw className="h-6 w-6" />,
   },
   {
     title: "Team collaboration",
     description:
-      "Create teams, manage permissions, and collaborate seamlessly on shared documents.",
+      "Create teams, manage permissions, and collaborate seamlessly.",
     icon: <Users className="h-6 w-6" />,
   },
   {
     title: "Document analytics",
-    description:
-      "Track document views, time spent, and user engagement with team-wide analytics.",
+    description: "Track document views, time spent, and user engagement.",
     icon: <BarChart2 className="h-6 w-6" />,
   },
   {
     title: "Secure sharing",
     description:
-      "Set granular access controls, expiration dates, and password protection for sensitive documents.",
+      "Set granular access controls, expiration dates, and password protection.",
     icon: <Shield className="h-6 w-6" />,
   },
 ];
@@ -130,28 +126,29 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-      <section className="p-8 md:p-16" id="features">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-start mb-12">
-            Why do I need DocuSend?
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="bg-transparent border-primary">
-                <CardHeader>
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-50/50 via-white to-blue-100 flex items-center justify-center mb-4">
-                    {feature.icon}
-                  </div>
-                  <CardTitle className="text-xl font-semibold">
-                    {feature.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      <section className="p-8 md:p-16 container" id="features">
+        <h2 className="text-3xl font-bold text-start mb-12">
+          Why do I need DocuSend?
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, index) => (
+            <Card
+              key={index}
+              className="bg-transparent border hover:scale-105 transition-all duration-300"
+            >
+              <CardHeader className="pt-3 px-3 pb-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-50/50 via-white to-blue-100 flex items-center justify-center mb-3">
+                  {feature.icon}
+                </div>
+                <CardTitle className="text-lg font-semibold">
+                  {feature.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-3">
+                <p className="text-gray-600 text-sm">{feature.description}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
       <section className="p-8 md:p-16" id="pricing">
@@ -168,11 +165,11 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-16 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
-              <div className="relative p-8 border-primary border rounded-lg shadow-sm flex flex-col">
+              <div className="relative p-6 bg-transparent border hover:scale-105 transition-all duration-300 rounded-lg flex flex-col">
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900">Free</h3>
                   <p className="mt-4 flex items-center justify-center text-gray-900">
-                    <span className="text-5xl font-bold tracking-tight">
+                    <span className="text-3xl font-bold tracking-tight">
                       $0
                     </span>
                     <span className="ml-1 text-xl font-semibold">/month</span>
@@ -208,11 +205,11 @@ export default function LandingPage() {
                 </a>
               </div>
 
-              <div className="relative p-8 border border-primary rounded-lg shadow-sm flex flex-col">
+              <div className="relative p-6 bg-transparent border hover:scale-105 transition-all duration-300 rounded-lg flex flex-col">
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900">Basic</h3>
                   <p className="mt-4 flex items-center justify-center text-gray-900">
-                    <span className="text-5xl font-bold tracking-tight">
+                    <span className="text-3xl font-bold tracking-tight">
                       $15
                     </span>
                     <span className="ml-1 text-xl font-semibold">/month</span>
@@ -260,11 +257,11 @@ export default function LandingPage() {
                 </a>
               </div>
 
-              <div className="relative p-8 border border-primary rounded-lg shadow-sm flex flex-col">
+              <div className="relative p-6 bg-transparent border hover:scale-105 transition-all duration-300 rounded-lg flex flex-col">
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900">Pro</h3>
                   <p className="mt-4 flex items-center justify-center text-gray-900">
-                    <span className="text-5xl font-bold tracking-tight">
+                    <span className="text-3xl font-bold tracking-tight">
                       $49
                     </span>
                     <span className="ml-1 text-xl font-semibold">/month</span>
