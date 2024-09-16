@@ -39,7 +39,7 @@ export default function PasswordForm({ fileId }: { fileId: string }) {
       if (error) throw error;
 
       if (data.password === password) {
-        document.cookie = `password_verified_${fileId}=true; path=/;`;
+        document.cookie = `password_verified_${fileId}=true; path=/; Max-Age=600;`;
         router.refresh();
       } else {
         setError('Incorrect password');

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import EmailForm from '@/components/forms/email_form';
 import PasswordForm from '@/components/forms/password_form';
 import NDAForm from '@/components/forms/nda_form';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default async function FileViewerPage({
   params,
@@ -33,12 +34,22 @@ export default async function FileViewerPage({
       }
     }
 
-    // Check if the file has expired
     if (
       fileData.is_expiring &&
       new Date(fileData.expiration_date) < new Date()
     ) {
-      return <div>This file has expired and is no longer available.</div>;
+      return (
+        <div className='max-w-5xl m-auto h-screen flex items-center justify-center p-8 md:p-16'>
+          <Alert>
+            <AlertTitle className='text-red-600'>File Expired</AlertTitle>
+            <AlertDescription>
+              This file is no longer accessible as the expiration date has
+              passed. To obtain a new link or further assistance, please contact
+              the file provider.
+            </AlertDescription>
+          </Alert>
+        </div>
+      );
     }
 
     // Check if email is required

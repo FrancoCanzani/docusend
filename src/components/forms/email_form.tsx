@@ -30,7 +30,7 @@ export default function EmailForm({ fileId }: { fileId: string }) {
     try {
       // validate the email server-side
       // For demonstration purposes, we'll just set a cookie and refresh the page
-      document.cookie = `email_verified_${fileId}=true; path=/;`;
+      document.cookie = `email_verified_${fileId}=true; path=/; Max-Age=600;`;
       router.refresh();
     } catch (error) {
       console.error('Error verifying email:', error);

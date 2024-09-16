@@ -84,7 +84,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
     },
     cell: ({ row }) => (
       <Link
-        href={`/files/${row.original.file_id}`}
+        href={`/file/${row.original.file_id}`}
         className='font-medium max-w-44 truncate'
         title={row.getValue('original_name')}
       >
