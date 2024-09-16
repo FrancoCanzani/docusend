@@ -1,117 +1,140 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
-import { ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ZoomIn,
+  ZoomOut,
+  ChevronLeft,
+  ChevronRight,
+  Minimize,
+} from 'lucide-react';
+import { FileMetadata } from '@/lib/types';
+import DownloadFileButton from './download-file-button';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-
 interface PDFViewerProps {
   fileUrl: string;
+  fileMetadata: FileMetadata;
 }
 
-export default function PDFViewer({ fileUrl }: PDFViewerProps) {
+export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [scale, setScale] = useState(1.3);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [scale, setScale] = useState(1);
+  const [pageWidth, setPageWidth] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
     setNumPages(numPages);
   };
 
-  const handleZoomIn = () => {
+  useEffect(() => {
+    const updatePageWidth = () => {
+      if (containerRef.current) {
+        setPageWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updatePageWidth();
+    window.addEventListener('resize', updatePageWidth);
+
+    return () => window.removeEventListener('resize', updatePageWidth);
+  }, []);
+
+  const handleZoomIn = () =>
     setScale((prevScale) => Math.min(prevScale + 0.1, 2.0));
-  };
-
-  const handleZoomOut = () => {
+  const handleZoomOut = () =>
     setScale((prevScale) => Math.max(prevScale - 0.1, 0.5));
-  };
+  const goToNextPage = () =>
+    setPageNumber((prev) => Math.min(prev + 1, numPages || 1));
+  const goToPreviousPage = () => setPageNumber((prev) => Math.max(prev - 1, 1));
 
-  const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowRight') goToNextPage();
+      if (event.key === 'ArrowLeft') goToPreviousPage();
+    };
 
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, numPages || 1));
-  };
-
-  const handlePageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const page = parseInt(e.target.value);
-    if (page && page > 0 && page <= (numPages || 1)) {
-      setCurrentPage(page);
-    }
-  };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
-    <div className='flex flex-col items-center max-w-4xl mx-auto'>
-      <div className='w-full mb-2 p-1 bg-gray-100 rounded-sm text-black shadow'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center space-x-2'>
-            <Button onClick={handleZoomOut} size='icon' variant='outline'>
-              <ZoomOut className='h-4 w-4' />
-            </Button>
-            <Slider
-              value={[scale]}
-              min={0.5}
-              max={2.0}
-              step={0.1}
-              onValueChange={([value]) => setScale(value)}
-              className='w-32'
-            />
-            <Button onClick={handleZoomIn} size='icon' variant='outline'>
-              <ZoomIn className='h-4 w-4' />
-            </Button>
-            <span className='text-sm'>Zoom: {(scale * 100).toFixed(0)}%</span>
-          </div>
-          <div className='flex items-center space-x-2'>
-            <Button
-              onClick={handlePrevPage}
-              size='icon'
-              variant='outline'
-              disabled={currentPage <= 1}
-            >
-              <ChevronLeft className='h-4 w-4' />
-            </Button>
-            <div className='flex items-center space-x-1'>
-              <Input
-                type='number'
-                min={1}
-                max={numPages || 1}
-                value={currentPage}
-                onChange={handlePageChange}
-                className='w-16 text-center'
-              />
-              <span className='text-sm'>/ {numPages || 1}</span>
-            </div>
-            <Button
-              onClick={handleNextPage}
-              size='icon'
-              variant='outline'
-              disabled={currentPage >= (numPages || 1)}
-            >
-              <ChevronRight className='h-4 w-4' />
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div className='w-full overflow-auto'>
-        <Document
-          file={fileUrl}
-          onLoadSuccess={onDocumentLoadSuccess}
-          className='flex justify-center'
+    <div
+      className='flex flex-col items-center w-full mx-auto'
+      style={{ height: 'calc(100vh - 64px)' }}
+    >
+      <div className='flex items-center justify-end w-full pb-4 px-4 space-x-2'>
+        <Button
+          onClick={handleZoomOut}
+          size='icon'
+          variant='outline'
+          className='h-8 w-8'
         >
-          <Page
-            key={`page_${currentPage}`}
-            pageNumber={currentPage}
-            scale={scale}
-            className='shadow-lg'
+          <ZoomOut className='h-4 w-4' />
+        </Button>
+        <Button
+          onClick={handleZoomIn}
+          size='icon'
+          variant='outline'
+          className='h-8 w-8'
+        >
+          <ZoomIn className='h-4 w-4' />
+        </Button>
+        <Button
+          onClick={() => setScale(1)}
+          size='icon'
+          variant='outline'
+          className='h-8 w-8'
+        >
+          <Minimize className='h-4 w-4' />
+        </Button>
+        {fileMetadata.allow_download && (
+          <DownloadFileButton
+            fileName={fileMetadata.sanitized_name}
+            filePath={fileMetadata.file_path}
           />
-        </Document>
+        )}
+      </div>
+      <div
+        ref={containerRef}
+        className='relative flex-grow w-full overflow-auto'
+      >
+        <div className='absolute inset-0 flex items-center justify-between px-2 z-10'>
+          <button
+            onClick={goToPreviousPage}
+            disabled={pageNumber <= 1}
+            className='h-full px-2 py-24 text-gray-400 hover:text-gray-50 focus:z-20'
+          >
+            <ChevronLeft className='h-10 w-10' aria-hidden='true' />
+          </button>
+          <button
+            onClick={goToNextPage}
+            disabled={pageNumber >= (numPages || 1)}
+            className='h-full px-2 py-24 text-gray-400 hover:text-gray-50 focus:z-20'
+          >
+            <ChevronRight className='h-10 w-10' aria-hidden='true' />
+          </button>
+        </div>
+        <div className='flex justify-center'>
+          <Document
+            file={fileUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            className='flex justify-center'
+          >
+            <Page
+              key={pageNumber}
+              pageNumber={pageNumber}
+              scale={scale}
+              width={Math.max(pageWidth * 0.8, 390)}
+              className='shadow-lg'
+            />
+          </Document>
+        </div>
       </div>
     </div>
   );

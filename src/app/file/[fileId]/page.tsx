@@ -17,7 +17,7 @@ export default async function FileViewerPage({
   const cookieStore = cookies();
 
   try {
-    const { data: fileData, error: metadataError } = await supabase
+    const { data: fileMetadata, error: metadataError } = await supabase
       .from('file_metadata')
       .select('*')
       .eq('file_id', fileId)
@@ -25,7 +25,7 @@ export default async function FileViewerPage({
 
     if (metadataError) throw new Error('File not found');
 
-    if (!fileData.is_public) {
+    if (!fileMetadata.is_public) {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -35,8 +35,8 @@ export default async function FileViewerPage({
     }
 
     if (
-      fileData.is_expiring &&
-      new Date(fileData.expiration_date) < new Date()
+      fileMetadata.is_expiring &&
+      new Date(fileMetadata.expiration_date) < new Date()
     ) {
       return (
         <div className='max-w-5xl m-auto h-screen flex items-center justify-center p-8 md:p-16'>
@@ -55,40 +55,38 @@ export default async function FileViewerPage({
     // Check if email is required
     const emailVerified =
       cookieStore.get(`email_verified_${fileId}`)?.value === 'true';
-    if (fileData.require_email && !emailVerified) {
+    if (fileMetadata.require_email && !emailVerified) {
       return <EmailForm fileId={fileId} />;
     }
 
     // Check if password is required
     const passwordVerified =
       cookieStore.get(`password_verified_${fileId}`)?.value === 'true';
-    if (fileData.require_password && !passwordVerified) {
+    if (fileMetadata.require_password && !passwordVerified) {
       return <PasswordForm fileId={fileId} />;
     }
 
     // Check if NDA is required
     const ndaAccepted =
       cookieStore.get(`nda_accepted_${fileId}`)?.value === 'true';
-    if (fileData.require_nda && !ndaAccepted) {
-      return <NDAForm fileId={fileId} ndaText={fileData.nda_text} />;
+    if (fileMetadata.require_nda && !ndaAccepted) {
+      return <NDAForm fileId={fileId} ndaText={fileMetadata.nda_text} />;
     }
 
     // Generate signed URL
     const { data: urlData, error: urlError } = await supabase.storage
       .from('documents')
-      .createSignedUrl(fileData.file_path, 3600); // URL expires in 1 hour
+      .createSignedUrl(fileMetadata.file_path, 3600); // URL expires in 1 hour
 
     if (urlError) throw new Error('Failed to generate file URL');
 
     const fileUrl = urlData.signedUrl;
 
     return (
-      <div className='container mx-auto p-4'>
-        <h1 className='text-xl font-bold mb-3'>{fileData.original_name}</h1>
-        <div className='w-full h-[80vh]'>
-          <FileViewer fileUrl={fileUrl} fileType={fileData.file_type} />
-          {/* todo: add feedback and download button  */}
-        </div>
+      <div className='container mx-auto'>
+        <h1 className='text-xl font-bold pt-6'>{fileMetadata.original_name}</h1>
+        <FileViewer fileUrl={fileUrl} fileMetadata={fileMetadata} />
+        {/* todo: add feedback and download button  */}
       </div>
     );
   } catch (error) {

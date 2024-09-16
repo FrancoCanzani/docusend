@@ -31,7 +31,7 @@ export default function NDAForm({
     if (accepted) {
       setIsLoading(true);
       try {
-        document.cookie = `nda_accepted_${fileId}=true; path=/; Max-Age=600;`;
+        document.cookie = `nda_accepted_${fileId}=true; path=/; Max-Age=86400;`;
         router.refresh();
       } catch (error) {
         console.error('Error accepting NDA:', error);

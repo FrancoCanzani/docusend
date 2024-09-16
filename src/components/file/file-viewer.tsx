@@ -3,13 +3,14 @@
 import React from 'react';
 import PDFViewer from './pdf-viewer';
 import SpreadsheetViewer from './spreadsheet-viewer';
+import { FileMetadata } from '@/lib/types';
 
 interface FileViewerProps {
   fileUrl: string;
-  fileType: string;
+  fileMetadata: FileMetadata;
 }
 
-export default function FileViewer({ fileUrl, fileType }: FileViewerProps) {
+export default function FileViewer({ fileUrl, fileMetadata }: FileViewerProps) {
   const isSpreadsheet = (type: string): boolean => {
     return [
       'application/vnd.ms-excel',
@@ -20,10 +21,10 @@ export default function FileViewer({ fileUrl, fileType }: FileViewerProps) {
   };
 
   return (
-    <div className='flex flex-col items-center max-w-7xl mx-auto p-4'>
-      {fileType === 'application/pdf' ? (
-        <PDFViewer fileUrl={fileUrl} />
-      ) : isSpreadsheet(fileType) ? (
+    <div className='flex flex-col items-center max-w-7xl mx-auto'>
+      {fileMetadata.file_type === 'application/pdf' ? (
+        <PDFViewer fileUrl={fileUrl} fileMetadata={fileMetadata} />
+      ) : isSpreadsheet(fileMetadata.file_type) ? (
         <SpreadsheetViewer fileUrl={fileUrl} />
       ) : (
         <div>Unsupported file type</div>
