@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FileMetadata } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 import { getFileTypeFromMIME } from '@/lib/helpers/get-file-type';
 import CopyButton from '@/components/copy-button';
 import Link from 'next/link';
@@ -141,7 +141,7 @@ export const columns: ColumnDef<FileMetadata>[] = [
       return (
         <button
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent min-w-[6.2rem] flex items-center justify-start'
+          className='hover:bg-transparent min-w-[6.3rem] flex items-center justify-start'
         >
           Upload Date
           <ArrowUpDown className='ml-2 h-3 w-3' />
@@ -149,14 +149,15 @@ export const columns: ColumnDef<FileMetadata>[] = [
       );
     },
     cell: ({ row }) => {
-      return (
-        <time suppressHydrationWarning>
-          {format(
-            new Date(row.getValue('upload_date')).toLocaleString(),
-            'MM/dd/yyyy'
-          )}
-        </time>
-      );
+      const uploadDate = row.getValue('upload_date');
+      if (typeof uploadDate !== 'string') {
+        return <span>Invalid date</span>;
+      }
+      const date = parseISO(uploadDate);
+      if (!isValid(date)) {
+        return <span>Invalid date</span>;
+      }
+      return <time>{format(date, 'MM/dd/yyyy')}</time>;
     },
   },
   {

@@ -43,6 +43,8 @@ export default function DashboardTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const supabase = createClient();
 
+  console.log(fileMetadata);
+
   const table = useReactTable({
     data: fileMetadata,
     columns,
