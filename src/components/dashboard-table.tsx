@@ -129,6 +129,7 @@ export default function DashboardTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  className='hover:bg-gray-50'
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (

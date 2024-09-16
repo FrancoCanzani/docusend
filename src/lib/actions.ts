@@ -148,3 +148,49 @@ export async function deleteDocument(fileId: string, userId: string) {
 
   return true;
 }
+
+export async function saveDocumentSettings(
+  fileId: string,
+  settings: {
+    is_public: boolean;
+    allow_download: boolean;
+    require_email: boolean;
+    is_expiring: boolean;
+    expiration_date: string | null;
+    require_password: boolean;
+    password: string | null;
+    enable_feedback: boolean;
+    require_nda: boolean;
+    nda_text: string | null;
+  }
+) {
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user || !user.user) {
+    throw new Error('User not authenticated');
+  }
+
+  const { error } = await supabase
+    .from('file_metadata')
+    .update({
+      is_public: settings.is_public,
+      allow_download: settings.allow_download,
+      require_email: settings.require_email,
+      is_expiring: settings.is_expiring,
+      expiration_date: settings.expiration_date,
+      require_password: settings.require_password,
+      password: settings.password,
+      enable_feedback: settings.enable_feedback,
+      require_nda: settings.require_nda,
+      nda_text: settings.nda_text,
+    })
+    .match({ file_id: fileId, user_id: user.user.id });
+
+  if (error) {
+    console.error('Error updating document settings:', error);
+    throw new Error('Failed to update document settings');
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}

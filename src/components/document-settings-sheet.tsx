@@ -17,11 +17,14 @@ import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Textarea } from './ui/textarea';
 import { ndaText } from '@/lib/constants/ndaText';
+import { saveDocumentSettings } from '@/lib/actions';
+import { toast } from 'sonner';
 
 interface DocumentSettings {
   isPublic: boolean;
   allowDownload: boolean;
   requireEmail: boolean;
+  isExpiring: boolean;
   expirationDate: string;
   requirePassword: boolean;
   password: string;
@@ -39,6 +42,7 @@ export default function DocumentSettingsSheet({
     isPublic: file.is_public ?? true,
     allowDownload: file.allow_download ?? false,
     requireEmail: file.require_email ?? false,
+    isExpiring: file.is_expiring ?? false,
     expirationDate: file.expiration_date ?? new Date().toISOString(),
     requirePassword: file.require_password ?? false,
     password: file.password ?? '',
@@ -54,13 +58,28 @@ export default function DocumentSettingsSheet({
     setSettings((prev) => ({ ...prev, [setting]: value }));
   };
 
-  const handleSaveSettings = async () => {
-    try {
-      // Implement your save logic here
-      console.log('Saving settings:', settings);
-    } catch (error) {
-      console.error('Failed to update settings:', error);
-    }
+  const handleSaveSettings = () => {
+    toast.promise(
+      saveDocumentSettings(file.file_id, {
+        is_public: settings.isPublic,
+        allow_download: settings.allowDownload,
+        require_email: settings.requireEmail,
+        is_expiring: settings.isExpiring,
+        expiration_date: settings.isExpiring ? settings.expirationDate : null,
+        require_password: settings.requirePassword,
+        password: settings.requirePassword ? settings.password : null,
+        enable_feedback: settings.enableFeedback,
+        require_nda: settings.requireNDA,
+        nda_text: settings.requireNDA ? settings.ndaText : null,
+      }),
+      {
+        loading: 'Saving...',
+        success: () => {
+          return `Settings saved successfully`;
+        },
+        error: 'Failed to update settings',
+      }
+    );
   };
 
   return (
@@ -71,12 +90,12 @@ export default function DocumentSettingsSheet({
           <Settings2 size={14} />
         </button>
       </SheetTrigger>
-      <SheetContent className='bg-white text-black overflow-y-auto'>
+      <SheetContent className='flex flex-col bg-white text-black'>
         <SheetHeader>
           <SheetTitle>{file.original_name}</SheetTitle>
           <SheetDescription>Manage your document settings</SheetDescription>
         </SheetHeader>
-        <div className='py-4 space-y-6'>
+        <div className='flex-grow overflow-y-auto py-4 space-y-6'>
           <div className='flex items-center justify-between'>
             <Label htmlFor='is-public'>Public</Label>
             <Switch
@@ -123,39 +142,46 @@ export default function DocumentSettingsSheet({
             <div className='flex items-center space-x-2'>
               <Checkbox
                 id='expires'
-                checked={!!settings.expirationDate}
-                onCheckedChange={(checked) =>
-                  handleSettingChange(
-                    'expirationDate',
-                    checked ? new Date().toISOString() : ''
-                  )
-                }
+                checked={settings.isExpiring}
+                onCheckedChange={(checked) => {
+                  handleSettingChange('isExpiring', checked);
+                  if (checked) {
+                    handleSettingChange(
+                      'expirationDate',
+                      new Date().toISOString()
+                    );
+                  } else {
+                    handleSettingChange('expirationDate', '');
+                  }
+                }}
               />
               <Label htmlFor='expires'>Expires</Label>
             </div>
-            <div className='flex space-x-2'>
-              <Input
-                type='date'
-                value={settings.expirationDate.split('T')[0]}
-                onChange={(e) =>
-                  handleSettingChange(
-                    'expirationDate',
-                    `${e.target.value}T00:00:00Z`
-                  )
-                }
-              />
-              <Input
-                type='time'
-                value={settings.expirationDate.split('T')[1].slice(0, 5)}
-                onChange={(e) => {
-                  const [date] = settings.expirationDate.split('T');
-                  handleSettingChange(
-                    'expirationDate',
-                    `${date}T${e.target.value}:00Z`
-                  );
-                }}
-              />
-            </div>
+            {settings.isExpiring && (
+              <div className='flex space-x-2'>
+                <Input
+                  type='date'
+                  value={settings.expirationDate.split('T')[0]}
+                  onChange={(e) =>
+                    handleSettingChange(
+                      'expirationDate',
+                      `${e.target.value}T00:00:00Z`
+                    )
+                  }
+                />
+                <Input
+                  type='time'
+                  value={settings.expirationDate.split('T')[1].slice(0, 5)}
+                  onChange={(e) => {
+                    const [date] = settings.expirationDate.split('T');
+                    handleSettingChange(
+                      'expirationDate',
+                      `${date}T${e.target.value}:00Z`
+                    );
+                  }}
+                />
+              </div>
+            )}
           </div>
           <div className='space-y-2'>
             <div className='flex items-center space-x-2'>
@@ -168,12 +194,17 @@ export default function DocumentSettingsSheet({
               />
               <Label htmlFor='require-password'>Passcode</Label>
             </div>
-            <Input
-              type='password'
-              value={settings.password}
-              onChange={(e) => handleSettingChange('password', e.target.value)}
-              placeholder='Enter passcode'
-            />
+            {settings.requirePassword && (
+              <Input
+                type='password'
+                value={settings.password}
+                onChange={(e) =>
+                  handleSettingChange('password', e.target.value)
+                }
+                placeholder='Enter passcode'
+                required={settings.requirePassword}
+              />
+            )}
           </div>
           <div className='space-y-2'>
             <div className='flex items-center space-x-2'>
@@ -186,16 +217,18 @@ export default function DocumentSettingsSheet({
               />
               <Label htmlFor='require-nda'>Require NDA</Label>
             </div>
-            <Textarea
-              value={settings.ndaText}
-              onChange={(e) => handleSettingChange('ndaText', e.target.value)}
-              placeholder='Enter NDA text'
-              rows={3}
-            />
+            {settings.requireNDA && (
+              <Textarea
+                value={settings.ndaText}
+                onChange={(e) => handleSettingChange('ndaText', e.target.value)}
+                placeholder='Enter NDA text'
+                rows={3}
+              />
+            )}
           </div>
         </div>
-        <SheetFooter className='flex flex-col space-y-4 sm:flex-row sm:justify-between sm:space-x-4 sm:space-y-0'>
-          <Button onClick={handleSaveSettings} className='w-full sm:w-auto'>
+        <SheetFooter className='pt-2'>
+          <Button onClick={handleSaveSettings} className='w-full'>
             Save Settings
           </Button>
         </SheetFooter>

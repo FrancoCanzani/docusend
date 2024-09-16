@@ -9,14 +9,15 @@ export type FileMetadata = {
   file_type: string;
   upload_date: string;
   last_modified: string;
-  is_public: boolean;
-  allow_download: boolean;
-  require_email: boolean;
+  is_public: boolean | null;
+  allow_download: boolean | null;
+  require_email: boolean | null;
+  is_expiring: boolean;
   expiration_date: string | null;
-  require_password: boolean;
+  require_password: boolean | null;
   password: string | null;
-  enable_feedback: boolean;
-  require_nda: boolean;
+  enable_feedback: boolean | null;
+  require_nda: boolean | null;
   nda_text: string | null;
 };
 

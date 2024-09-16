@@ -13,7 +13,7 @@ export function StorageUsage({ fileMetadata }: StorageUsageProps) {
   const usagePercentage = (usedStorage / maxStorage) * 100;
 
   return (
-    <div className='space-y-2 w-full max-w-sm p-2 px-3'>
+    <div className='space-y-2 w-full max-w-sm p-2 px-5'>
       <Progress value={usagePercentage} className='w-full h-2 rounded-sm' />
       <p className='text-sm text-gray-600'>
         {usedStorage.toFixed(2)} MB used out of {maxStorage} MB
