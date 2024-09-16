@@ -12,14 +12,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -31,6 +25,9 @@ import {
 } from '@/components/ui/table';
 import { columns } from '@/app/dashboard/columns';
 import { FileMetadata } from '@/lib/types';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
 
 export default function DashboardTable({
   fileMetadata,
@@ -44,6 +41,7 @@ export default function DashboardTable({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const supabase = createClient();
 
   const table = useReactTable({
     data: fileMetadata,
@@ -64,9 +62,65 @@ export default function DashboardTable({
     },
   });
 
+  const handleDeleteFile = async (filesToDelete: FileMetadata[]) => {
+    if (filesToDelete.length === 0) {
+      throw new Error('No files selected for deletion');
+    }
+
+    // Delete files from storage bucket
+    const { error: bucketError } = await supabase.storage
+      .from('documents')
+      .remove(filesToDelete.map((file) => file.file_path));
+
+    if (bucketError) throw bucketError;
+
+    // Delete metadata from database
+    const { error: dbError } = await supabase
+      .from('file_metadata')
+      .delete()
+      .in(
+        'file_id',
+        filesToDelete.map((file) => file.file_id)
+      );
+
+    if (dbError) throw dbError;
+
+    const fileWord = filesToDelete.length === 1 ? 'file' : 'files';
+    return `Successfully deleted ${filesToDelete.length} ${fileWord}.`;
+  };
+
+  const handleDeleteSelected = async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const filesToDelete = selectedRows.map((row) => row.original);
+
+    if (filesToDelete.length === 0) {
+      toast.error('No files selected for deletion');
+      return;
+    }
+
+    const fileWord = filesToDelete.length === 1 ? 'file' : 'files';
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${filesToDelete.length} ${fileWord}?`
+    );
+
+    if (!confirmDelete) return;
+
+    toast.promise(handleDeleteFile(filesToDelete), {
+      loading: `Deleting ${filesToDelete.length} ${fileWord}...`,
+      success: (message) => {
+        window.location.reload();
+        return message;
+      },
+      error: (error) => {
+        console.error('Error deleting files:', error);
+        return `Failed to delete ${fileWord}. Please try again.`;
+      },
+    });
+  };
+
   return (
     <div className='w-full text-black'>
-      <div className='flex items-center py-4'>
+      <div className='flex items-center py-4 space-x-3'>
         <Input
           placeholder='Filter files...'
           value={
@@ -77,32 +131,18 @@ export default function DashboardTable({
           }
           className='max-w-sm'
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='ml-auto'>
-              Columns <ChevronDown className='ml-2 h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className='capitalize'
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          variant='destructive'
+          size='sm'
+          onClick={handleDeleteSelected}
+          className={cn(
+            'flex items-center justify-center',
+            table.getFilteredSelectedRowModel().rows.length === 0 && 'hidden'
+          )}
+        >
+          <Trash2 className='mr-2' size={14} />
+          Delete Selected
+        </Button>
       </div>
       <div className='rounded-md border'>
         <Table>
