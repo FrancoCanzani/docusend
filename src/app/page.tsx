@@ -174,11 +174,11 @@ export default function LandingPage() {
                     </span>
                     <span className="ml-1 text-xl font-semibold">/month</span>
                   </p>
-                  <p className="mt-6 text-gray-500">
+                  <p className="mt-4 text-gray-500">
                     For individual users getting started.
                   </p>
 
-                  <ul className="mt-6 space-y-6">
+                  <ul className="mt-4 space-y-3">
                     <li className="flex">
                       <span className="text-green-500">✓</span>
                       <span className="ml-3">Single user</span>
@@ -214,11 +214,11 @@ export default function LandingPage() {
                     </span>
                     <span className="ml-1 text-xl font-semibold">/month</span>
                   </p>
-                  <p className="mt-6 text-gray-500">
+                  <p className="mt-4 text-gray-500">
                     For professionals needing more storage.
                   </p>
 
-                  <ul className="mt-6 space-y-6">
+                  <ul className="mt-4 space-y-3">
                     <li className="flex">
                       <span className="text-green-500">✓</span>
                       <span className="ml-3">Single user</span>
@@ -266,11 +266,11 @@ export default function LandingPage() {
                     </span>
                     <span className="ml-1 text-xl font-semibold">/month</span>
                   </p>
-                  <p className="mt-6 text-gray-500">
+                  <p className="mt-4 text-gray-500">
                     For teams that need more power and flexibility.
                   </p>
 
-                  <ul className="mt-6 space-y-6">
+                  <ul className="mt-4 space-y-3">
                     <li className="flex">
                       <span className="text-green-500">✓</span>
                       <span className="mx-3 font-semibold">
