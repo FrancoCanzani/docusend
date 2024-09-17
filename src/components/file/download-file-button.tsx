@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface DownloadButtonProps {
   filePath: string;
   fileName: string;
   bucketName?: string;
+  className?: string;
 }
 
 const getMimeType = (fileName: string): string => {
@@ -42,6 +44,7 @@ export default function DownloadFileButton({
   filePath,
   fileName,
   bucketName = 'documents',
+  className,
 }: DownloadButtonProps) {
   const supabase = createClient();
 
@@ -76,7 +79,7 @@ export default function DownloadFileButton({
       size='icon'
       variant='outline'
       title={`Download ${fileName}`}
-      className='h-8 w-8'
+      className={cn('h-8 w-8', className)}
     >
       <Download className='h-4 w-4' />
     </Button>

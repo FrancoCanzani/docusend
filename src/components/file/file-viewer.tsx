@@ -25,7 +25,7 @@ export default function FileViewer({ fileUrl, fileMetadata }: FileViewerProps) {
       {fileMetadata.file_type === 'application/pdf' ? (
         <PDFViewer fileUrl={fileUrl} fileMetadata={fileMetadata} />
       ) : isSpreadsheet(fileMetadata.file_type) ? (
-        <SpreadsheetViewer fileUrl={fileUrl} />
+        <SpreadsheetViewer fileUrl={fileUrl} fileMetadata={fileMetadata} />
       ) : (
         <div>Unsupported file type</div>
       )}

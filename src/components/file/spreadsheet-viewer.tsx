@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { FileMetadata } from '@/lib/types';
+import DownloadFileButton from './download-file-button';
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];
@@ -15,9 +17,13 @@ interface Workbook {
 
 interface SpreadsheetViewerProps {
   fileUrl: string;
+  fileMetadata: FileMetadata;
 }
 
-export default function SpreadsheetViewer({ fileUrl }: SpreadsheetViewerProps) {
+export default function SpreadsheetViewer({
+  fileUrl,
+  fileMetadata,
+}: SpreadsheetViewerProps) {
   const [workbook, setWorkbook] = useState<Workbook>({});
   const [sheetNames, setSheetNames] = useState<string[]>([]);
   const [currentSheet, setCurrentSheet] = useState<string>('');
@@ -56,13 +62,6 @@ export default function SpreadsheetViewer({ fileUrl }: SpreadsheetViewerProps) {
         onValueChange={setCurrentSheet}
         className='w-full h-full'
       >
-        <TabsList className='w-full justify-start overflow-x-auto rounded-sm'>
-          {sheetNames.map((name) => (
-            <TabsTrigger key={name} value={name} className='px-4 py-2'>
-              {name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
         {sheetNames.map((name) => (
           <TabsContent
             key={name}
@@ -107,6 +106,20 @@ export default function SpreadsheetViewer({ fileUrl }: SpreadsheetViewerProps) {
               </div>
               <ScrollBar orientation='horizontal' />
             </ScrollArea>
+            <TabsList className='w-full justify-start overflow-x-auto rounded-sm'>
+              {fileMetadata.allow_download && (
+                <DownloadFileButton
+                  fileName={fileMetadata.sanitized_name}
+                  filePath={fileMetadata.file_path}
+                  className='border-none p-0'
+                />
+              )}
+              {sheetNames.map((name) => (
+                <TabsTrigger key={name} value={name} className='px-4 py-2'>
+                  {name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
           </TabsContent>
         ))}
       </Tabs>
