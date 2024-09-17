@@ -15,6 +15,9 @@ export default async function FileViewerPage({
   const { fileId } = params;
   const supabase = createClient();
   const cookieStore = cookies();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   try {
     const { data: fileMetadata, error: metadataError } = await supabase
@@ -26,9 +29,6 @@ export default async function FileViewerPage({
     if (metadataError) throw new Error('File not found');
 
     if (!fileMetadata.is_public) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
       if (!user) {
         redirect('/');
       }
@@ -86,7 +86,6 @@ export default async function FileViewerPage({
       <div className='container mx-auto'>
         <h1 className='text-xl font-bold pt-6'>{fileMetadata.original_name}</h1>
         <FileViewer fileUrl={fileUrl} fileMetadata={fileMetadata} />
-        {/* todo: add feedback and download button  */}
       </div>
     );
   } catch (error) {

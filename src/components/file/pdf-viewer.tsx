@@ -11,11 +11,15 @@ import {
   ChevronLeft,
   ChevronRight,
   Minimize,
+  Loader,
 } from 'lucide-react';
 import { FileMetadata } from '@/lib/types';
 import DownloadFileButton from './download-file-button';
+import FileFeedbackForm from '../forms/file-feedback-form';
+import { useUser } from '@/lib/hooks/use-user';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
 interface PDFViewerProps {
   fileUrl: string;
   fileMetadata: FileMetadata;
@@ -27,6 +31,8 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
   const [scale, setScale] = useState(1);
   const [pageWidth, setPageWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { user } = useUser();
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
     setNumPages(numPages);
@@ -69,6 +75,9 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
       style={{ height: 'calc(100vh - 64px)' }}
     >
       <div className='flex items-center justify-end w-full pb-4 px-4 space-x-2'>
+        {fileMetadata.enable_feedback && (
+          <FileFeedbackForm fileId={fileMetadata.file_id} user={user} />
+        )}
         <Button
           onClick={handleZoomOut}
           size='icon'
@@ -125,6 +134,11 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
             file={fileUrl}
             onLoadSuccess={onDocumentLoadSuccess}
             className='flex justify-center'
+            loading={
+              <div className='flex justify-center items-center h-screen'>
+                <Loader className='animate-spin' size={30} />
+              </div>
+            }
           >
             <Page
               key={pageNumber}

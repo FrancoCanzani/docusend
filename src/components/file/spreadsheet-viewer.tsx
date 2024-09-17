@@ -6,6 +6,9 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileMetadata } from '@/lib/types';
 import DownloadFileButton from './download-file-button';
+import { useUser } from '@/lib/hooks/use-user';
+import FileFeedbackForm from '../forms/file-feedback-form';
+import { Loader } from 'lucide-react';
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];
@@ -27,12 +30,15 @@ export default function SpreadsheetViewer({
   const [workbook, setWorkbook] = useState<Workbook>({});
   const [sheetNames, setSheetNames] = useState<string[]>([]);
   const [currentSheet, setCurrentSheet] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
     fetchSpreadsheetData();
   }, [fileUrl]);
 
   const fetchSpreadsheetData = async (): Promise<void> => {
+    setIsLoading(true);
     try {
       const response = await fetch(fileUrl);
       const arrayBuffer = await response.arrayBuffer();
@@ -52,8 +58,18 @@ export default function SpreadsheetViewer({
       setCurrentSheet(workbook.SheetNames[0]);
     } catch (error) {
       console.error('Error fetching spreadsheet data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className='flex justify-center items-center h-[calc(100vh-4rem)]'>
+        <Loader className='animate-spin' size={30} />
+      </div>
+    );
+  }
 
   return (
     <div className='flex flex-col w-full h-[calc(100vh-4rem)] max-w-6xl mx-auto'>
@@ -111,11 +127,18 @@ export default function SpreadsheetViewer({
                 <DownloadFileButton
                   fileName={fileMetadata.sanitized_name}
                   filePath={fileMetadata.file_path}
-                  className='border-none p-0'
+                  className='border-none p-2'
+                />
+              )}
+              {fileMetadata.enable_feedback && (
+                <FileFeedbackForm
+                  fileId={fileMetadata.file_id}
+                  user={user}
+                  className='border-none p-2'
                 />
               )}
               {sheetNames.map((name) => (
-                <TabsTrigger key={name} value={name} className='px-4 py-2'>
+                <TabsTrigger key={name} value={name} className='p-2'>
                   {name}
                 </TabsTrigger>
               ))}
