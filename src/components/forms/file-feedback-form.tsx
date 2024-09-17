@@ -95,10 +95,9 @@ export default function FileFeedbackForm({
       setIsSubmitting(true);
       const supabase = createClient();
 
-      try {
+      const submitFeedback = async () => {
         const { error } = await supabase.from('file_feedback').insert({
           file_id: fileId,
-          user_id: user?.id,
           name: formData.name,
           email: formData.email,
           message: formData.message,
@@ -106,15 +105,24 @@ export default function FileFeedbackForm({
 
         if (error) throw error;
 
-        toast.success('Feedback Submitted');
-        setFormData((prev) => ({ ...prev, message: '' }));
-        setIsDialogOpen(false);
-      } catch (error) {
-        console.error('Error submitting feedback:', error);
-        toast.error('Failed to submit feedback. Please try again.');
-      } finally {
-        setIsSubmitting(false);
-      }
+        return 'Feedback submitted successfully';
+      };
+
+      toast.promise(submitFeedback(), {
+        loading: 'Submitting feedback...',
+        success: (data) => {
+          setFormData((prev) => ({ ...prev, message: '' }));
+          setIsDialogOpen(false);
+          return data;
+        },
+        error: (error) => {
+          console.error('Error submitting feedback:', error);
+          return 'Failed to submit feedback. Please try again.';
+        },
+        finally: () => {
+          setIsSubmitting(false);
+        },
+      });
     }
   };
 
