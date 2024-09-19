@@ -6,6 +6,7 @@ import EmailForm from '@/components/forms/email_form';
 import PasswordForm from '@/components/forms/password_form';
 import NDAForm from '@/components/forms/nda_form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import FileWatermark from '@/components/file/file-watermark';
 
 export default async function FileViewerPage({
   params,
@@ -86,6 +87,7 @@ export default async function FileViewerPage({
       <div className='container mx-auto'>
         <h1 className='text-xl font-bold pt-6'>{fileMetadata.original_name}</h1>
         <FileViewer fileUrl={fileUrl} fileMetadata={fileMetadata} />
+        <FileWatermark />
       </div>
     );
   } catch (error) {
