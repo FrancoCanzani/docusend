@@ -45,7 +45,7 @@ export function Sidebar({ fileMetadata }: { fileMetadata: FileMetadata[] }) {
         </Link>
       </nav>
       <div className='absolute bottom-0 w-64'>
-        <StorageUsage fileMetadata={fileMetadata} />
+        {/* <StorageUsage fileMetadata={fileMetadata} /> */}
         <User />
       </div>
     </div>
