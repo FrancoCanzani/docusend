@@ -17,6 +17,7 @@ import { FileMetadata } from '@/lib/types';
 import DownloadFileButton from './download-file-button';
 import FileFeedbackForm from '../forms/file-feedback-form';
 import { useUser } from '@/lib/hooks/use-user';
+import { useFileAnalytics } from '@/lib/hooks/use-file-analytics';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -33,6 +34,12 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { user } = useUser();
+
+  useFileAnalytics({
+    documentId: fileMetadata.file_id,
+    userId: user?.id,
+    authEmail: user?.email,
+  });
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
     setNumPages(numPages);

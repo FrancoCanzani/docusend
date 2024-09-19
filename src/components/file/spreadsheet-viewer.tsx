@@ -9,6 +9,7 @@ import DownloadFileButton from './download-file-button';
 import { useUser } from '@/lib/hooks/use-user';
 import FileFeedbackForm from '../forms/file-feedback-form';
 import { Loader } from 'lucide-react';
+import { useFileAnalytics } from '@/lib/hooks/use-file-analytics';
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];
@@ -33,6 +34,11 @@ export default function SpreadsheetViewer({
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useUser();
 
+  useFileAnalytics({
+    documentId: fileMetadata.file_id,
+    userId: user?.id,
+    authEmail: user?.email,
+  });
   useEffect(() => {
     fetchSpreadsheetData();
   }, [fileUrl]);

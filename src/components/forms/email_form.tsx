@@ -28,13 +28,19 @@ export default function EmailForm({ fileId }: { fileId: string }) {
     setIsLoading(true);
 
     try {
-      // validate the email server-side
-      // For demonstration purposes, we'll just set a cookie and refresh the page
-      document.cookie = `email_verified_${fileId}=true; path=/; Max-Age=600;`;
+      // Encode the email to handle special characters
+      const encodedEmail = encodeURIComponent(email);
+
+      // Set the cookie with the email
+      document.cookie = `user_email=${encodedEmail}; path=/; max-age=86400`; // Cookie expires in 24 hours
+
+      // Set the verification cookie
+      document.cookie = `email_verified_${fileId}=true; path=/; max-age=86400`;
+
       router.refresh();
     } catch (error) {
-      console.error('Error verifying email:', error);
-      setError('An error occurred while verifying the email');
+      console.error('Error setting email cookie:', error);
+      setError('An error occurred while processing your email');
     } finally {
       setIsLoading(false);
     }
