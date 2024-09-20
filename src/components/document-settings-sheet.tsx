@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { FileMetadata } from '@/lib/types';
 import {
   Sheet,
@@ -9,7 +9,6 @@ import {
   SheetTrigger,
   SheetFooter,
 } from './ui/sheet';
-import { Settings2 } from 'lucide-react';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
@@ -34,21 +33,23 @@ interface DocumentSettings {
 }
 
 export default function DocumentSettingsSheet({
-  file,
+  fileMetadata,
+  children,
 }: {
-  file: FileMetadata;
+  fileMetadata: FileMetadata;
+  children: ReactNode;
 }) {
   const [settings, setSettings] = useState<DocumentSettings>({
-    isPublic: file.is_public ?? true,
-    allowDownload: file.allow_download ?? false,
-    requireEmail: file.require_email ?? false,
-    isExpiring: file.is_expiring ?? false,
-    expirationDate: file.expiration_date ?? new Date().toISOString(),
-    requirePassword: file.require_password ?? false,
-    password: file.password ?? '',
-    enableFeedback: file.enable_feedback ?? false,
-    requireNDA: file.require_nda ?? false,
-    ndaText: file.nda_text ?? ndaText,
+    isPublic: fileMetadata.is_public ?? true,
+    allowDownload: fileMetadata.allow_download ?? false,
+    requireEmail: fileMetadata.require_email ?? false,
+    isExpiring: fileMetadata.is_expiring ?? false,
+    expirationDate: fileMetadata.expiration_date ?? new Date().toISOString(),
+    requirePassword: fileMetadata.require_password ?? false,
+    password: fileMetadata.password ?? '',
+    enableFeedback: fileMetadata.enable_feedback ?? false,
+    requireNDA: fileMetadata.require_nda ?? false,
+    ndaText: fileMetadata.nda_text ?? ndaText,
   });
 
   const handleSettingChange = (
@@ -60,7 +61,7 @@ export default function DocumentSettingsSheet({
 
   const handleSaveSettings = () => {
     toast.promise(
-      saveDocumentSettings(file.file_id, {
+      saveDocumentSettings(fileMetadata.file_id, {
         is_public: settings.isPublic,
         allow_download: settings.allowDownload,
         require_email: settings.requireEmail,
@@ -84,15 +85,10 @@ export default function DocumentSettingsSheet({
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <button className='p-1 bg-gray-100 border hover:bg-gray-200 rounded-sm'>
-          <span className='sr-only'>Settings</span>
-          <Settings2 size={14} />
-        </button>
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className='flex flex-col bg-white text-black'>
         <SheetHeader>
-          <SheetTitle>{file.original_name}</SheetTitle>
+          <SheetTitle>{fileMetadata.original_name}</SheetTitle>
           <SheetDescription>Manage your document settings</SheetDescription>
         </SheetHeader>
         <div className='flex-grow overflow-y-auto py-4 space-y-6'>

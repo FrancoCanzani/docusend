@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Settings2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FileMetadata } from '@/lib/types';
 import { format, isValid, parseISO } from 'date-fns';
@@ -166,7 +166,14 @@ export const columns: ColumnDef<FileMetadata>[] = [
     cell: ({ row }) => {
       const file = row.original;
 
-      return <DocumentSettingsSheet file={file} />;
+      return (
+        <DocumentSettingsSheet fileMetadata={file}>
+          <button className='p-1 bg-gray-100 border hover:bg-gray-200 rounded-sm'>
+            <span className='sr-only'>Settings</span>
+            <Settings2 size={14} />
+          </button>
+        </DocumentSettingsSheet>
+      );
     },
   },
 ];
