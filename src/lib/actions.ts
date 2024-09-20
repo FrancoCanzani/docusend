@@ -203,14 +203,14 @@ export async function recordDocumentView(formData: FormData) {
 
   try {
     const parsedData = viewDataSchema.parse({
-      documentId: formData.get('documentId'),
+      fileId: formData.get('documentId'),
       userId: formData.get('userId'),
       email: formData.get('email'),
       timeSpent: parseInt(formData.get('timeSpent') as string),
     });
 
     const viewData = {
-      document_id: parsedData.documentId,
+      file_id: parsedData.fileId,
       user_id: parsedData.userId,
       email: parsedData.email,
       time_spent: parsedData.timeSpent,
@@ -220,6 +220,8 @@ export async function recordDocumentView(formData: FormData) {
     const { error } = await supabase.from('file_views').insert(viewData);
 
     if (error) throw error;
+
+    revalidatePath(`/file/${parsedData.fileId}`);
 
     return { success: true };
   } catch (error) {

@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/sidebar';
 import FileFeedback from '@/components/file/file-feedback';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
+import FileViews from '@/components/file/file-views';
 
 export default async function Page({ params }: { params: { fileId: string } }) {
   const { fileId } = params;
@@ -39,14 +40,20 @@ export default async function Page({ params }: { params: { fileId: string } }) {
           <FileMetadata fileMetadata={fileMetadata} />
           <Separator />
           <Tabs defaultValue='views' className='w-full'>
-            <TabsList>
+            <TabsList className='text-base lg:text-lg'>
               <TabsTrigger value='views'>Views</TabsTrigger>
               <TabsTrigger value='feedback'>Feedback</TabsTrigger>
             </TabsList>
-            <TabsContent value='views'>
-              Make changes to your account here.
+            <TabsContent value='views' className='mt-6'>
+              {fileViews ? (
+                <FileViews fileViews={fileViews} />
+              ) : (
+                <p className='text-center text-muted-foreground'>
+                  No feedback yet.
+                </p>
+              )}{' '}
             </TabsContent>
-            <TabsContent value='feedback'>
+            <TabsContent value='feedback' className='mt-6'>
               {fileFeedback ? (
                 <FileFeedback feedback={fileFeedback} />
               ) : (

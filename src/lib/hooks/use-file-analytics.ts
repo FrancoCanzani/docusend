@@ -30,7 +30,7 @@ export function useFileAnalytics({
   const trackTimeSpent = useCallback(() => {
     const endTime = Date.now();
     const timeSpent = Math.round((endTime - startTimeRef.current) / 1000); // Time in seconds
-    const email = getEmailFromCookie() ?? authEmail ?? null;
+    const email = authEmail ?? getEmailFromCookie() ?? undefined;
 
     const formData = new FormData();
     formData.append('documentId', documentId);

@@ -47,7 +47,7 @@ export default function FileMetadata({ fileMetadata }: FileMetadataProps) {
   return (
     <section className='w-full space-y-4 sm:space-y-6'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-lg sm:text-xl font-bold truncate mr-2'>
+        <h1 className='text-xl sm:text-2xl font-bold truncate mr-2'>
           {fileMetadata.original_name}
         </h1>
         <div className='flex space-x-1 flex-shrink-0'>
