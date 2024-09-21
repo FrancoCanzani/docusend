@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Toaster } from 'sonner';
 import { Karla } from 'next/font/google';
+import { Toaster } from 'sonner';
 
 const karla = Karla({ subsets: ['latin'] });
 

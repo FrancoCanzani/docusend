@@ -1,6 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  SortingState,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  ColumnFiltersState,
+} from '@tanstack/react-table';
 import {
   Table,
   TableBody,
@@ -9,124 +19,189 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
 import { Button } from '@/components/ui/button';
-import { Clock, User, Mail } from 'lucide-react';
-import { format } from 'date-fns';
-
-type ViewData = {
-  file_id: string;
-  user_id?: string;
-  email?: string;
-  time_spent: number;
-  timestamp: string;
-};
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { columns, FileView } from '@/app/file/[fileId]/columns';
 
 type FileViewsProps = {
-  fileViews: ViewData[];
+  fileViews: FileView[];
 };
 
 export default function FileViews({ fileViews }: FileViewsProps) {
-  const [showAllViews, setShowAllViews] = useState(false);
-
-  const totalViews = fileViews.length;
-  const uniqueViewers = new Set(
-    fileViews.map((view) => view.user_id || view.email)
-  ).size;
-  const totalTimeSpent = fileViews.reduce(
-    (sum, view) => sum + view.time_spent,
-    0
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
   );
-  const averageTimeSpent = totalViews > 0 ? totalTimeSpent / totalViews : 0;
+  const [countryFilter, setCountryFilter] = React.useState<string | null>(null);
 
-  const chartData = fileViews.map((view, index) => ({
-    id: index + 1,
-    timeSpent: view.time_spent,
-  }));
+  const table = useReactTable({
+    data: fileViews,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+    },
+  });
 
-  const displayedViews = showAllViews ? fileViews : fileViews.slice(0, 5);
+  // Get unique countries for the filter dropdown
+  const uniqueCountries = React.useMemo(() => {
+    const countries = new Set<string>();
+    fileViews.forEach((view) => {
+      if (view.properties.$geoip_country_name) {
+        countries.add(view.properties.$geoip_country_name);
+      }
+    });
+    return Array.from(countries).sort();
+  }, [fileViews]);
 
-  const formatTimestamp = (timestamp: string) => {
-    return format(new Date(timestamp), 'MMM d, yyyy HH:mm:ss');
-  };
+  React.useEffect(() => {
+    if (countryFilter) {
+      table
+        .getColumn('properties.$geoip_country_name')
+        ?.setFilterValue(countryFilter);
+    } else {
+      table
+        .getColumn('properties.$geoip_country_name')
+        ?.setFilterValue(undefined);
+    }
+  }, [countryFilter, table]);
 
   return (
-    <div className='space-y-8'>
-      <section>
-        <h2 className='text-2xl font-bold mb-4'>View Statistics</h2>
-        <div className='flex justify-between items-start flex-col md:flex-row gap-4 mb-6'>
-          <div className='flex items-center space-x-2'>
-            <User size={18} className='text-muted-foreground' />
-            <span className='text-sm font-medium'>
-              Total Views: {totalViews}
-            </span>
-          </div>
-          <div className='flex items-center space-x-2'>
-            <Mail size={18} className='text-muted-foreground' />
-            <span className='text-sm font-medium'>
-              Unique Viewers: {uniqueViewers}
-            </span>
-          </div>
-          <div className='flex items-center space-x-2'>
-            <Clock size={18} className='text-muted-foreground' />
-            <span className='text-sm font-medium'>
-              Avg. Time: {averageTimeSpent.toFixed(1)}s
-            </span>
-          </div>
-        </div>
-        <div className='h-[300px] w-full'>
-          <ResponsiveContainer width='100%' height='100%'>
-            <BarChart data={chartData}>
-              <XAxis dataKey='id' tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey='timeSpent' fill='black' />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
-
-      <section>
-        <h2 className='text-2xl font-bold mb-4'>View Details</h2>
+    <div className='space-y-4'>
+      <div className='flex items-center gap-4'>
+        <Input
+          placeholder='Filter emails...'
+          value={
+            (table.getColumn('properties.email')?.getFilterValue() as string) ??
+            ''
+          }
+          onChange={(event) =>
+            table
+              .getColumn('properties.email')
+              ?.setFilterValue(event.target.value)
+          }
+          className='max-w-sm'
+        />
+        <Select
+          value={countryFilter ?? 'all'}
+          onValueChange={(value) =>
+            setCountryFilter(value === 'all' ? null : value)
+          }
+        >
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Filter by country' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>All Countries</SelectItem>
+            {uniqueCountries.map((country) => (
+              <SelectItem key={country} value={country}>
+                {country}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className='rounded-md border'>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Viewer</TableHead>
-              <TableHead>Time Spent (s)</TableHead>
-              <TableHead className='hidden md:block'>Timestamp</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {displayedViews.map((view, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  {view.email || view.user_id || 'Anonymous'}
-                </TableCell>
-                <TableCell>{view.time_spent}</TableCell>
-                <TableCell className='hidden md:block'>
-                  {formatTimestamp(view.timestamp)}
-                </TableCell>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
-        {fileViews.length > 5 && (
-          <Button
-            onClick={() => setShowAllViews(!showAllViews)}
-            className='mt-4'
-            variant='outline'
+      </div>
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center space-x-2'>
+          <p className='text-sm font-medium'>Rows per page</p>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
           >
-            {showAllViews ? 'Show Less' : 'Show All Views'}
+            <SelectTrigger className='h-8 w-[70px]'>
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side='top'>
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className='flex items-center space-x-2'>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
           </Button>
-        )}
-      </section>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -203,7 +203,7 @@ export async function recordDocumentView(formData: FormData) {
 
   try {
     const parsedData = viewDataSchema.parse({
-      fileId: formData.get('documentId'),
+      fileId: formData.get('fileId'),
       userId: formData.get('userId'),
       email: formData.get('email'),
       timeSpent: parseInt(formData.get('timeSpent') as string),

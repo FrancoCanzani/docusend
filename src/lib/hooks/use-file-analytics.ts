@@ -1,58 +1,28 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { recordDocumentView } from '../actions';
+import { useEffect, useCallback, useState } from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { useUser } from './use-user';
+import getEmailFromCookie from '../helpers/get-email-from-cookie';
 
-interface AnalyticsData {
-  documentId: string;
-  userId?: string;
-  authEmail?: string;
-}
+export function useFileAnalytics(fileId: string) {
+  const posthog = usePostHog();
+  const { user } = useUser();
+  const [hasTracked, setHasTracked] = useState(false);
 
-export function useFileAnalytics({
-  documentId,
-  userId,
-  authEmail,
-}: AnalyticsData) {
-  const startTimeRef = useRef(Date.now());
-
-  const getEmailFromCookie = useCallback((): string | null => {
-    if (typeof document === 'undefined') return null; // Check for server-side rendering
-    const cookies = document.cookie.split(';');
-    const emailCookie = cookies.find((cookie) =>
-      cookie.trim().startsWith('user_email=')
-    );
-    if (emailCookie) {
-      const [, value] = emailCookie.split('=');
-      return decodeURIComponent(value.trim());
-    }
-    return null;
-  }, []);
-
-  const trackTimeSpent = useCallback(() => {
-    const endTime = Date.now();
-    const timeSpent = Math.round((endTime - startTimeRef.current) / 1000); // Time in seconds
-    const email = authEmail ?? getEmailFromCookie() ?? undefined;
-
-    const formData = new FormData();
-    formData.append('documentId', documentId);
-    formData.append('userId', userId || '');
-    if (email) formData.append('email', email);
-    formData.append('timeSpent', timeSpent.toString());
-
-    recordDocumentView(formData);
-  }, [documentId, userId, authEmail, getEmailFromCookie]);
+  const trackPageView = useCallback(() => {
+    const email = user?.email ?? getEmailFromCookie();
+    console.log('Tracking with email:', email);
+    posthog.capture('file_view', {
+      file_id: fileId,
+      email: email,
+    });
+    setHasTracked(true);
+  }, [fileId, user, posthog]);
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      trackTimeSpent();
-    };
+    if (user !== null && !hasTracked) {
+      trackPageView();
+    }
+  }, [user, hasTracked, trackPageView]);
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      trackTimeSpent();
-    };
-  }, [trackTimeSpent]);
-
-  return { trackTimeSpent };
+  return null;
 }

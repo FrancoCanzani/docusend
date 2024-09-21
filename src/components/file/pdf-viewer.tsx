@@ -35,11 +35,7 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
 
   const { user } = useUser();
 
-  useFileAnalytics({
-    documentId: fileMetadata.file_id,
-    userId: user?.id,
-    authEmail: user?.email,
-  });
+  useFileAnalytics(fileMetadata.file_id);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
     setNumPages(numPages);

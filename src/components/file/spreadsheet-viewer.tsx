@@ -34,11 +34,8 @@ export default function SpreadsheetViewer({
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useUser();
 
-  useFileAnalytics({
-    documentId: fileMetadata.file_id,
-    userId: user?.id,
-    authEmail: user?.email,
-  });
+  useFileAnalytics(fileMetadata.file_id);
+
   useEffect(() => {
     fetchSpreadsheetData();
   }, [fileUrl]);

@@ -5,6 +5,7 @@ import FileFeedback from '@/components/file/file-feedback';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import FileViews from '@/components/file/file-views';
+import getFileAnalytics from '@/lib/helpers/get-file-analytics';
 
 export default async function Page({ params }: { params: { fileId: string } }) {
   const { fileId } = params;
@@ -28,9 +29,9 @@ export default async function Page({ params }: { params: { fileId: string } }) {
     .select('*')
     .eq('file_id', fileId);
 
-  console.log(fileMetadata);
-  console.log(fileViews);
-  console.log(fileFeedback);
+  const fileAnalytics = await getFileAnalytics(fileId);
+
+  console.log(fileAnalytics.results[0].properties.$lib);
 
   return (
     <div className='flex h-screen text-black'>
@@ -46,7 +47,7 @@ export default async function Page({ params }: { params: { fileId: string } }) {
             </TabsList>
             <TabsContent value='views' className='mt-6'>
               {fileViews ? (
-                <FileViews fileViews={fileViews} />
+                <FileViews fileViews={fileAnalytics.results} />
               ) : (
                 <p className='text-center text-muted-foreground'>
                   No feedback yet.
