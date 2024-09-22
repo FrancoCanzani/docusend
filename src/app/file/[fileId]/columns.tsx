@@ -23,76 +23,65 @@ export type FileView = {
 
 export const columns: ColumnDef<FileView>[] = [
   {
+    id: 'properties.email',
     accessorKey: 'properties.email',
     header: ({ column }) => {
       return (
-        <Button
-          variant='ghost'
+        <button
+          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Email
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
+          <ArrowUpDown className='ml-2 h-3 w-3' />
+        </button>
       );
     },
     cell: ({ row }) => row.original.properties.email ?? 'Anonymous',
   },
   {
+    id: 'properties.$device_type',
     accessorKey: 'properties.$device_type',
     header: ({ column }) => {
       return (
-        <Button
-          variant='ghost'
+        <button
+          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Device Type
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
+          <ArrowUpDown className='ml-2 h-3 w-3' />
+        </button>
       );
     },
     cell: ({ row }) => row.original.properties.$device_type ?? 'Unknown',
   },
   {
+    id: 'properties.$browser',
     accessorKey: 'properties.$browser',
     header: ({ column }) => {
       return (
-        <Button
-          variant='ghost'
+        <button
+          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Browser
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
+          <ArrowUpDown className='ml-2 h-3 w-3' />
+        </button>
       );
     },
     cell: ({ row }) => row.original.properties.$browser ?? 'Unknown',
   },
   {
-    accessorKey: 'properties.$os',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          OS
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      );
-    },
-    cell: ({ row }) => row.original.properties.$os ?? 'Unknown',
-  },
-  {
+    id: 'properties.$time',
     accessorKey: 'properties.$time',
     header: ({ column }) => {
       return (
-        <Button
-          variant='ghost'
+        <button
+          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Time
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
+          <ArrowUpDown className='ml-2 h-3 w-3' />
+        </button>
       );
     },
     cell: ({ row }) => {
@@ -105,16 +94,17 @@ export const columns: ColumnDef<FileView>[] = [
     },
   },
   {
+    id: 'properties.$geoip_country_name',
     accessorKey: 'properties.$geoip_country_name',
     header: ({ column }) => {
       return (
-        <Button
-          variant='ghost'
+        <button
+          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Country
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
+          <ArrowUpDown className='ml-2 h-3 w-3' />
+        </button>
       );
     },
     cell: ({ row }) => row.original.properties.$geoip_country_name ?? 'Unknown',

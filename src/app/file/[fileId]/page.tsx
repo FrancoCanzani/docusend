@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import FileViews from '@/components/file/file-views';
 import getFileAnalytics from '@/lib/helpers/get-file-analytics';
+import FileViewsMap from '@/components/file/file-views-map';
 
 export default async function Page({ params }: { params: { fileId: string } }) {
   const { fileId } = params;
@@ -31,8 +32,6 @@ export default async function Page({ params }: { params: { fileId: string } }) {
 
   const fileAnalytics = await getFileAnalytics(fileId);
 
-  console.log(fileAnalytics.results[0].properties.$lib);
-
   return (
     <div className='flex h-screen text-black'>
       <Sidebar fileMetadata={fileMetadata} />
@@ -44,13 +43,14 @@ export default async function Page({ params }: { params: { fileId: string } }) {
             <TabsList className='text-base lg:text-lg'>
               <TabsTrigger value='views'>Views</TabsTrigger>
               <TabsTrigger value='feedback'>Feedback</TabsTrigger>
+              <TabsTrigger value='geolocation'>Geolocation</TabsTrigger>
             </TabsList>
             <TabsContent value='views' className='mt-6'>
               {fileViews ? (
                 <FileViews fileViews={fileAnalytics.results} />
               ) : (
                 <p className='text-center text-muted-foreground'>
-                  No feedback yet.
+                  No Views yet.
                 </p>
               )}{' '}
             </TabsContent>
@@ -62,6 +62,15 @@ export default async function Page({ params }: { params: { fileId: string } }) {
                   No feedback yet.
                 </p>
               )}
+            </TabsContent>
+            <TabsContent value='geolocation' className='mt-6'>
+              {fileViews ? (
+                <FileViewsMap fileViews={fileAnalytics.results} />
+              ) : (
+                <p className='text-center text-muted-foreground'>
+                  No Geodata yet.
+                </p>
+              )}{' '}
             </TabsContent>
           </Tabs>
         </main>

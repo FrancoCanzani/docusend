@@ -80,10 +80,10 @@ export default function FileViews({ fileViews }: FileViewsProps) {
   }, [countryFilter, table]);
 
   return (
-    <div className='space-y-4'>
-      <div className='flex items-center gap-4'>
+    <div className='w-full text-black'>
+      <div className='flex items-center pb-4 space-x-3'>
         <Input
-          placeholder='Filter emails...'
+          placeholder='Filter by email...'
           value={
             (table.getColumn('properties.email')?.getFilterValue() as string) ??
             ''
@@ -137,6 +137,7 @@ export default function FileViews({ fileViews }: FileViewsProps) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  className='hover:bg-gray-50'
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -183,7 +184,7 @@ export default function FileViews({ fileViews }: FileViewsProps) {
             </SelectContent>
           </Select>
         </div>
-        <div className='flex items-center space-x-2'>
+        <div className='flex items-center justify-end space-x-2 py-4'>
           <Button
             variant='outline'
             size='sm'
