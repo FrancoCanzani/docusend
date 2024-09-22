@@ -91,7 +91,9 @@ export function Dashboard({ documentMetadata }: DashboardProps) {
     <div className='container mx-auto px-3 py-6 md:px-6 md:py-8 space-y-8'>
       <div className='flex justify-between items-center'>
         <h1 className='text-3xl font-bold'>Documents</h1>
-        <Button onClick={() => setIsDialogOpen(true)}>Add Document</Button>
+        <Button size={'sm'} onClick={() => setIsDialogOpen(true)}>
+          Add Document
+        </Button>
       </div>
 
       {recentDocuments && (

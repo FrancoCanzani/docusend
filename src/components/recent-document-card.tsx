@@ -12,9 +12,11 @@ export default function RecentDocumentCard({
   return (
     <Link
       href={`/document/${document.document_id}`}
-      className='flex w-full h-full items-center justify-start space-x-2 border rounded-md bg-card text-card-foreground shadow-sm transition-shadow duration-300 hover:shadow p-2.5'
+      className='flex w-full h-full items-center justify-start space-x-2 border rounded-md bg-card text-card-foreground transition-colors duration-300 hover:bg-gray-50 p-2'
     >
-      <FileText size={40} className='p-2 bg-gray-100 rounded-md' />
+      <div className='h-10 w-10 flex items-center justify-center bg-gray-100 rounded-md'>
+        <FileText size={17} />
+      </div>
       <div className='flex flex-col'>
         <p className='font-medium'>{document.sanitized_name}</p>
         <div className='text-xs text-muted-foreground flex items-center justify-normal gap-x-2'>

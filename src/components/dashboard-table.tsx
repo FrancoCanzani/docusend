@@ -12,7 +12,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -138,11 +137,11 @@ export default function DashboardTable({
           className='max-w-sm'
         />
         <Button
-          variant='destructive'
+          variant='outline'
           size='sm'
           onClick={handleDeleteSelected}
           className={cn(
-            '',
+            'text-red-500 border-red-500 hover:text-red-600 hover:bg-red-50',
             table.getFilteredSelectedRowModel().rows.length === 0 && 'hidden'
           )}
         >
@@ -156,7 +155,7 @@ export default function DashboardTable({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className='h-10'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -178,7 +177,7 @@ export default function DashboardTable({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className='py-2.5'>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
