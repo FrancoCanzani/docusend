@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
 import { DocumentUploadDialog } from './document/document-upload-dialog';
 import { useUser } from '@/lib/hooks/use-user';
 import { toast } from 'sonner';
@@ -13,6 +12,7 @@ import { uploadDocument } from '@/lib/actions';
 import { v4 as uuidv4 } from 'uuid';
 import DashboardTable from './dashboard-table';
 import { DocumentMetadata } from '@/lib/types';
+import RecentDocumentCard from './recent-document-card';
 
 interface DashboardProps {
   documentMetadata: DocumentMetadata[];
@@ -29,7 +29,6 @@ export function Dashboard({ documentMetadata }: DashboardProps) {
       toast.error('You must be logged in to upload documents');
       return;
     }
-
     const documentId = uuidv4();
     const sanitizedName = sanitizeDocumentName(name);
     const uniqueDocumentName = `${documentId}_${sanitizedName}`;
@@ -44,9 +43,8 @@ export function Dashboard({ documentMetadata }: DashboardProps) {
         if (error) throw error;
 
         const currentDate = new Date().toISOString();
-
         const metadata: DocumentMetadata = {
-          id: uuidv4(), // Generate a new UUID for the metadata entry
+          id: uuidv4(),
           user_id: user.id,
           document_id: documentId,
           original_name: name,
@@ -80,19 +78,38 @@ export function Dashboard({ documentMetadata }: DashboardProps) {
     );
   };
 
+  const recentDocuments = useMemo(() => {
+    return documentMetadata
+      .sort(
+        (a, b) =>
+          new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime()
+      )
+      .slice(0, 3);
+  }, [documentMetadata]);
+
   return (
-    <div className='container mx-auto px-3 py-6 md:px-6 md:py-8'>
-      <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-3xl font-bold text-gray-900'>Dashboard</h1>
-        <Button
-          className='flex items-center gap-2'
-          onClick={() => setIsDialogOpen(true)}
-        >
-          <PlusCircle className='h-5 w-5' />
-          Add Document
-        </Button>
+    <div className='container mx-auto px-3 py-6 md:px-6 md:py-8 space-y-8'>
+      <div className='flex justify-between items-center'>
+        <h1 className='text-3xl font-bold'>Documents</h1>
+        <Button onClick={() => setIsDialogOpen(true)}>Add Document</Button>
       </div>
-      <DashboardTable documentMetadata={documentMetadata} />
+
+      {recentDocuments && (
+        <div>
+          <h3 className='font-medium text-lg mb-2'>Recent</h3>
+          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+            {recentDocuments.map((doc) => (
+              <RecentDocumentCard key={doc.id} document={doc} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <h3 className='font-medium text-lg mb-2'>All documents</h3>
+        <DashboardTable documentMetadata={documentMetadata} />
+      </div>
+
       <DocumentUploadDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}

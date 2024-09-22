@@ -12,7 +12,7 @@ export function Sidebar({
   documentMetadata: DocumentMetadata[];
 }) {
   return (
-    <div className='w-64 bg-white shadow-lg h-screen hidden sm:block'>
+    <div className='w-64 bg-white border-r h-screen hidden sm:block'>
       <div className='flex items-center justify-between h-16 px-6 border-b'>
         <Link href='/' className='flex items-center'>
           <span className='text-xl font-bold text-blue-600'>DocuSend</span>

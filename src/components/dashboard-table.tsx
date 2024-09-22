@@ -62,6 +62,8 @@ export default function DashboardTable({
     },
   });
 
+  console.log(documentMetadata);
+
   const handleDeleteDocument = async (
     documentsToDelete: DocumentMetadata[]
   ) => {
@@ -124,7 +126,7 @@ export default function DashboardTable({
 
   return (
     <div className='w-full text-black'>
-      <div className='flex items-center py-4 space-x-3'>
+      <div className='flex items-center pb-4 space-x-3'>
         <Input
           placeholder='Filter documents...'
           value={
@@ -140,17 +142,16 @@ export default function DashboardTable({
           size='sm'
           onClick={handleDeleteSelected}
           className={cn(
-            'flex items-center justify-center',
+            '',
             table.getFilteredSelectedRowModel().rows.length === 0 && 'hidden'
           )}
         >
-          <Trash2 className='mr-2' size={14} />
           Delete Selected
         </Button>
       </div>
       <div className='rounded-md border'>
         <Table>
-          <TableHeader>
+          <TableHeader className='bg-gray-100'>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

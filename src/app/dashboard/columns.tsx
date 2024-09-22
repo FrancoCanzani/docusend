@@ -1,92 +1,59 @@
 'use client';
 
+import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, Settings2 } from 'lucide-react';
+import { Settings2, FileType, FileText, FileSpreadsheet } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DocumentMetadata } from '@/lib/types';
-import { format, isValid, parseISO } from 'date-fns';
+import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
 import { getDocumentTypeFromMIME } from '@/lib/helpers/get-document-type';
-import CopyButton from '@/components/copy-button';
 import Link from 'next/link';
 import DocumentSettingsSheet from '@/components/document-settings-sheet';
+import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-const FILE_TYPE_MAP: { [key: string]: string } = {
-  pdf: 'PDF',
-  excel: 'XLS',
-  sheet: 'XLSX',
-  csv: 'CSV',
-  spreadsheet: 'ODS',
+const FILE_TYPE_MAP: {
+  [key: string]: { label: string; icon: React.ReactNode };
+} = {
+  pdf: { label: 'PDF', icon: <FileText size={16} /> },
+  excel: { label: 'XLS', icon: <FileSpreadsheet size={16} /> },
+  sheet: { label: 'XLSX', icon: <FileSpreadsheet size={16} /> },
+  csv: { label: 'CSV', icon: <FileText size={16} /> },
+  spreadsheet: { label: 'ODS', icon: <FileSpreadsheet size={16} /> },
 };
 
 export const columns: ColumnDef<DocumentMetadata>[] = [
   {
     id: 'select',
     header: ({ table }) => (
-      <div className='flex items-center justify-center h-full'>
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-        />
-      </div>
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+      />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center justify-center h-full'>
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-        />
-      </div>
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label='Select row'
+      />
     ),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'document_type',
-    header: ({ column }) => {
-      return (
-        <button
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent flex items-center justify-start'
-        >
-          Type
-          <ArrowUpDown className='ml-2 h-3 w-3' />
-        </button>
-      );
-    },
-    cell: ({ row }) => {
-      const mimeType = row.getValue('document_type');
-      if (typeof mimeType !== 'string') {
-        return <div>Unknown</div>;
-      }
-      const documentType = getDocumentTypeFromMIME(mimeType);
-      const displayType =
-        FILE_TYPE_MAP[documentType] || documentType.toUpperCase();
-      return (
-        <span className='border bg-gray-100 hover:bg-gray-200 font-semibold text-xs px-2 py-1 rounded-sm'>
-          {displayType}
-        </span>
-      );
-    },
-  },
-  {
     accessorKey: 'original_name',
-    header: ({ column }) => {
-      return (
-        <button
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent flex items-center justify-start'
-        >
-          Document Name
-          <ArrowUpDown className='ml-2 h-3 w-3' />
-        </button>
-      );
-    },
+    header: 'Document Name',
     cell: ({ row }) => (
       <Link
         href={`/document/${row.original.document_id}`}
-        className='font-medium max-w-44 truncate'
+        className='font-medium max-w-36 truncate'
         title={row.getValue('original_name')}
       >
         {row.getValue('original_name')}
@@ -94,79 +61,64 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     ),
   },
   {
-    accessorKey: 'document_id',
-    header: () => {
-      return <span className='hover:bg-transparent'>Share</span>;
-    },
-    cell: ({ row }) => <CopyButton documentId={row.getValue('document_id')} />,
-  },
-  {
-    accessorKey: 'document_size',
-    header: ({ column }) => {
-      return (
-        <button
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent flex items-center justify-start'
-        >
-          Size
-          <ArrowUpDown className='ml-2 h-3 w-3' />
-        </button>
-      );
-    },
+    accessorKey: 'document_type',
+    header: 'Type',
     cell: ({ row }) => {
-      const sizeInBytes = parseFloat(row.getValue('document_size'));
-      let sizeInMB = sizeInBytes / (1024 * 1024);
-      let unit = 'MB';
-
-      if (sizeInMB >= 1000) {
-        sizeInMB /= 1024;
-        unit = 'GB';
+      const mimeType = row.getValue('document_type');
+      if (typeof mimeType !== 'string') {
+        return <div>Unknown</div>;
       }
-
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'decimal',
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1,
-      }).format(sizeInMB);
-
+      const documentType = getDocumentTypeFromMIME(mimeType);
+      const { label, icon } = FILE_TYPE_MAP[documentType] || {
+        label: documentType.toUpperCase(),
+        icon: <FileType size={16} />,
+      };
       return (
-        <div className='font-medium'>
-          {formatted} {unit}
+        <div className='flex items-center space-x-2'>
+          {icon}
+          <span>{label}</span>
         </div>
       );
     },
   },
   {
     accessorKey: 'upload_date',
-    header: ({ column }) => {
-      return (
-        <button
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className='hover:bg-transparent min-w-[6.3rem] flex items-center justify-start'
-        >
-          Upload Date
-          <ArrowUpDown className='ml-2 h-3 w-3' />
-        </button>
-      );
-    },
+    header: 'Uploaded',
     cell: ({ row }) => {
       const uploadDate = row.getValue('upload_date');
-      if (typeof uploadDate !== 'string') {
-        return <span>Invalid date</span>;
-      }
+      if (typeof uploadDate !== 'string') return <span>Invalid date</span>;
       const date = parseISO(uploadDate);
-      if (!isValid(date)) {
-        return <span>Invalid date</span>;
-      }
-      return <time>{format(date, 'MM/dd/yyyy')}</time>;
+      if (!isValid(date)) return <span>Invalid date</span>;
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <time>
+                {formatDistanceToNowStrict(date, { addSuffix: true })}
+              </time>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{format(date, 'PPP')}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
+  },
+  {
+    accessorKey: 'is_public',
+    header: 'Visibility',
+    cell: ({ row }) => (
+      <Badge variant={row.original.is_public ? 'default' : 'secondary'}>
+        {row.original.is_public ? 'Public' : 'Private'}
+      </Badge>
+    ),
   },
   {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
       const document = row.original;
-
       return (
         <DocumentSettingsSheet documentMetadata={document}>
           <button className='p-1 bg-gray-100 border hover:bg-gray-200 rounded-sm'>
