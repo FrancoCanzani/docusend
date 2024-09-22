@@ -7,6 +7,8 @@ import { Separator } from '@/components/ui/separator';
 import FileViews from '@/components/file/file-views';
 import getFileAnalytics from '@/lib/helpers/get-file-analytics';
 import FileViewsMap from '@/components/file/file-views-map';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { MessageCircleOff, EyeOff, MapPinOff } from 'lucide-react';
 
 export default async function Page({ params }: { params: { fileId: string } }) {
   const { fileId } = params;
@@ -46,30 +48,48 @@ export default async function Page({ params }: { params: { fileId: string } }) {
               <TabsTrigger value='geolocation'>Geolocation</TabsTrigger>
             </TabsList>
             <TabsContent value='views' className='mt-6'>
-              {fileViews ? (
+              {fileViews && fileViews.length > 0 ? (
                 <FileViews fileViews={fileAnalytics.results} />
               ) : (
-                <p className='text-center text-muted-foreground'>
-                  No Views yet.
-                </p>
-              )}{' '}
+                <Alert>
+                  <EyeOff className='h-4 w-4' />
+                  <AlertTitle>No views recorded</AlertTitle>
+                  <AlertDescription>
+                    Your content hasn&apos;t been viewed yet. Share your links
+                    on social media and with your network to increase engagement
+                    and reach a wider audience.
+                  </AlertDescription>
+                </Alert>
+              )}
             </TabsContent>
             <TabsContent value='feedback' className='mt-6'>
-              {fileFeedback ? (
+              {fileFeedback && fileFeedback.length > 0 ? (
                 <FileFeedback feedback={fileFeedback} />
               ) : (
-                <p className='text-center text-muted-foreground'>
-                  No feedback yet.
-                </p>
+                <Alert>
+                  <MessageCircleOff className='h-4 w-4' />
+                  <AlertTitle>No feedback recorded</AlertTitle>
+                  <AlertDescription>
+                    Your content hasn&apos;t received any feedback yet. Share
+                    your links on social media and with your network to increase
+                    engagement and reach a wider audience.
+                  </AlertDescription>
+                </Alert>
               )}
             </TabsContent>
             <TabsContent value='geolocation' className='mt-6'>
-              {fileViews ? (
+              {fileViews && fileViews.length > 0 ? (
                 <FileViewsMap fileViews={fileAnalytics.results} />
               ) : (
-                <p className='text-center text-muted-foreground'>
-                  No Geodata yet.
-                </p>
+                <Alert>
+                  <MapPinOff className='h-4 w-4' />
+                  <AlertTitle>No geodata recorded</AlertTitle>
+                  <AlertDescription>
+                    Your content hasn&apos;t been viewed yet. Share your links
+                    on social media and with your network to increase engagement
+                    and reach a wider audience.
+                  </AlertDescription>
+                </Alert>
               )}{' '}
             </TabsContent>
           </Tabs>
