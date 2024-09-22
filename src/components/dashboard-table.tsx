@@ -24,15 +24,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { columns } from '@/app/dashboard/columns';
-import { FileMetadata } from '@/lib/types';
+import { DocumentMetadata } from '@/lib/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 
 export default function DashboardTable({
-  fileMetadata,
+  documentMetadata,
 }: {
-  fileMetadata: FileMetadata[];
+  documentMetadata: DocumentMetadata[];
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -44,7 +44,7 @@ export default function DashboardTable({
   const supabase = createClient();
 
   const table = useReactTable({
-    data: fileMetadata,
+    data: documentMetadata,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -62,58 +62,62 @@ export default function DashboardTable({
     },
   });
 
-  const handleDeleteFile = async (filesToDelete: FileMetadata[]) => {
-    if (filesToDelete.length === 0) {
-      throw new Error('No files selected for deletion');
+  const handleDeleteDocument = async (
+    documentsToDelete: DocumentMetadata[]
+  ) => {
+    if (documentsToDelete.length === 0) {
+      throw new Error('No documents selected for deletion');
     }
 
-    // Delete files from storage bucket
+    // Delete documents from storage bucket
     const { error: bucketError } = await supabase.storage
       .from('documents')
-      .remove(filesToDelete.map((file) => file.file_path));
+      .remove(documentsToDelete.map((document) => document.document_path));
 
     if (bucketError) throw bucketError;
 
     // Delete metadata from database
     const { error: dbError } = await supabase
-      .from('file_metadata')
+      .from('document_metadata')
       .delete()
       .in(
-        'file_id',
-        filesToDelete.map((file) => file.file_id)
+        'document_id',
+        documentsToDelete.map((document) => document.document_id)
       );
 
     if (dbError) throw dbError;
 
-    const fileWord = filesToDelete.length === 1 ? 'file' : 'files';
-    return `Successfully deleted ${filesToDelete.length} ${fileWord}.`;
+    const documentWord =
+      documentsToDelete.length === 1 ? 'document' : 'documents';
+    return `Successfully deleted ${documentsToDelete.length} ${documentWord}.`;
   };
 
   const handleDeleteSelected = async () => {
     const selectedRows = table.getFilteredSelectedRowModel().rows;
-    const filesToDelete = selectedRows.map((row) => row.original);
+    const documentsToDelete = selectedRows.map((row) => row.original);
 
-    if (filesToDelete.length === 0) {
-      toast.error('No files selected for deletion');
+    if (documentsToDelete.length === 0) {
+      toast.error('No documents selected for deletion');
       return;
     }
 
-    const fileWord = filesToDelete.length === 1 ? 'file' : 'files';
+    const documentWord =
+      documentsToDelete.length === 1 ? 'document' : 'documents';
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${filesToDelete.length} ${fileWord}?`
+      `Are you sure you want to delete ${documentsToDelete.length} ${documentWord}?`
     );
 
     if (!confirmDelete) return;
 
-    toast.promise(handleDeleteFile(filesToDelete), {
-      loading: `Deleting ${filesToDelete.length} ${fileWord}...`,
+    toast.promise(handleDeleteDocument(documentsToDelete), {
+      loading: `Deleting ${documentsToDelete.length} ${documentWord}...`,
       success: (message) => {
         window.location.reload();
         return message;
       },
       error: (error) => {
-        console.error('Error deleting files:', error);
-        return `Failed to delete ${fileWord}. Please try again.`;
+        console.error('Error deleting documents:', error);
+        return `Failed to delete ${documentWord}. Please try again.`;
       },
     });
   };
@@ -122,7 +126,7 @@ export default function DashboardTable({
     <div className='w-full text-black'>
       <div className='flex items-center py-4 space-x-3'>
         <Input
-          placeholder='Filter files...'
+          placeholder='Filter documents...'
           value={
             (table.getColumn('original_name')?.getFilterValue() as string) ?? ''
           }

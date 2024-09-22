@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export default function PasswordForm({ fileId }: { fileId: string }) {
+export default function PasswordForm({ documentId }: { documentId: string }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,15 +31,15 @@ export default function PasswordForm({ fileId }: { fileId: string }) {
 
     try {
       const { data, error } = await supabase
-        .from('file_metadata')
+        .from('document_metadata')
         .select('password')
-        .eq('file_id', fileId)
+        .eq('document_id', documentId)
         .single();
 
       if (error) throw error;
 
       if (data.password === password) {
-        document.cookie = `password_verified_${fileId}=true; path=/; Max-Age=1800;`;
+        document.cookie = `password_verified_${documentId}=true; path=/; Max-Age=1800;`;
         router.refresh();
       } else {
         setError('Incorrect password');
@@ -56,16 +56,18 @@ export default function PasswordForm({ fileId }: { fileId: string }) {
     <div className='flex items-center justify-center min-h-screen p-4 bg-gray-100'>
       <Card className='w-full rounded-sm max-w-md'>
         <CardHeader className='space-y-1'>
-          <CardTitle className='text-2xl'>Password Protected File</CardTitle>
+          <CardTitle className='text-2xl'>
+            Password Protected Document
+          </CardTitle>
           <CardDescription>
-            Enter the password to access this file
+            Enter the password to access this document
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='space-y-2'>
               <Label htmlFor='password' className='text-base'>
-                File Password
+                Document Password
               </Label>
               <div className='relative'>
                 <Input

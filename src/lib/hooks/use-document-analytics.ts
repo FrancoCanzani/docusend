@@ -3,7 +3,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useUser } from './use-user';
 import getEmailFromCookie from '../helpers/get-email-from-cookie';
 
-export function useFileAnalytics(fileId: string) {
+export function useDocumentAnalytics(documentId: string) {
   const posthog = usePostHog();
   const { user } = useUser();
   const [hasTracked, setHasTracked] = useState(false);
@@ -11,12 +11,12 @@ export function useFileAnalytics(fileId: string) {
   const trackPageView = useCallback(() => {
     const email = user?.email ?? getEmailFromCookie();
     console.log('Tracking with email:', email);
-    posthog.capture('file_view', {
-      file_id: fileId,
+    posthog.capture('document_view', {
+      document_id: documentId,
       email: email,
     });
     setHasTracked(true);
-  }, [fileId, user, posthog]);
+  }, [documentId, user, posthog]);
 
   useEffect(() => {
     if (user !== null && !hasTracked) {

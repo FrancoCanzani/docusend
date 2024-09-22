@@ -16,7 +16,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 
-export default function EmailForm({ fileId }: { fileId: string }) {
+export default function EmailForm({ documentId }: { documentId: string }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function EmailForm({ fileId }: { fileId: string }) {
       document.cookie = `user_email=${encodedEmail}; path=/; max-age=86400`; // Cookie expires in 24 hours
 
       // Set the verification cookie
-      document.cookie = `email_verified_${fileId}=true; path=/; max-age=86400`;
+      document.cookie = `email_verified_${documentId}=true; path=/; max-age=86400`;
 
       router.refresh();
     } catch (error) {
@@ -52,7 +52,7 @@ export default function EmailForm({ fileId }: { fileId: string }) {
         <CardHeader>
           <CardTitle>Email Verification</CardTitle>
           <CardDescription>
-            Please enter your email to access the file
+            Please enter your email to access the document
           </CardDescription>
         </CardHeader>
         <CardContent>

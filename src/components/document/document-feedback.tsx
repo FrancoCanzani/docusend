@@ -11,11 +11,11 @@ type FeedbackItem = {
   created_at: string;
 };
 
-type FileFeedbackProps = {
+type DocumentFeedbackProps = {
   feedback: FeedbackItem[];
 };
 
-export default function FileFeedback({ feedback }: FileFeedbackProps) {
+export default function DocumentFeedback({ feedback }: DocumentFeedbackProps) {
   const [showAll, setShowAll] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {}

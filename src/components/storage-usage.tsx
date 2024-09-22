@@ -1,14 +1,14 @@
 import React from 'react';
 import { totalStorage } from '@/lib/helpers/total-storage';
-import { FileMetadata } from '@/lib/types';
+import { DocumentMetadata } from '@/lib/types';
 import { Progress } from '@/components/ui/progress';
 
 interface StorageUsageProps {
-  fileMetadata: FileMetadata[];
+  documentMetadata: DocumentMetadata[];
 }
 
-export function StorageUsage({ fileMetadata }: StorageUsageProps) {
-  const usedStorage = totalStorage(fileMetadata);
+export function StorageUsage({ documentMetadata }: StorageUsageProps) {
+  const usedStorage = totalStorage(documentMetadata);
   const maxStorage = 100;
   const usagePercentage = (usedStorage / maxStorage) * 100;
 

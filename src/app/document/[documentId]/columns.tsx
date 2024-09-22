@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { formatDistanceToNowStrict } from 'date-fns';
 
-export type FileView = {
+export type DocumentView = {
   id: string;
   distinct_id: string;
   properties: {
@@ -20,7 +20,7 @@ export type FileView = {
   timestamp: string;
 };
 
-export const columns: ColumnDef<FileView>[] = [
+export const columns: ColumnDef<DocumentView>[] = [
   {
     id: 'properties.email',
     accessorKey: 'properties.email',

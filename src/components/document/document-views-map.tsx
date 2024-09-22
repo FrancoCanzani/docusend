@@ -21,16 +21,18 @@ type ViewData = {
 };
 
 type DocumentViewsMapProps = {
-  fileViews: ViewData[];
+  documentViews: ViewData[];
 };
 
-const FileViewsMap: React.FC<DocumentViewsMapProps> = ({ fileViews }) => {
+const DocumentViewsMap: React.FC<DocumentViewsMapProps> = ({
+  documentViews,
+}) => {
   const [tooltipContent, setTooltipContent] = useState('');
   const [position, setPosition] = useState({ coordinates: [0, 30], zoom: 1 });
 
   const countryData = useMemo(() => {
     const counts: { [key: string]: number } = {};
-    fileViews.forEach((view) => {
+    documentViews.forEach((view) => {
       const country = view.properties.$geoip_country_name;
       if (country) {
         counts[country] = (counts[country] || 0) + 1;
@@ -40,7 +42,7 @@ const FileViewsMap: React.FC<DocumentViewsMapProps> = ({ fileViews }) => {
       country,
       count,
     }));
-  }, [fileViews]);
+  }, [documentViews]);
 
   const maxViews = Math.max(...countryData.map((d) => d.count));
 
@@ -132,4 +134,4 @@ const FileViewsMap: React.FC<DocumentViewsMapProps> = ({ fileViews }) => {
   );
 };
 
-export default FileViewsMap;
+export default DocumentViewsMap;

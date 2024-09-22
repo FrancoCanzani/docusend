@@ -1,13 +1,14 @@
-import { FileMetadata } from '../types';
+import { DocumentMetadata } from '../types';
 
-export function totalStorage(data: FileMetadata[]): number {
+export function totalStorage(data: DocumentMetadata[]): number {
   if (!data || data.length === 0) {
     return 0;
   }
 
-  const totalBytes = data.reduce((total, file) => {
-    const fileSize = typeof file.file_size === 'number' ? file.file_size : 0;
-    return total + fileSize;
+  const totalBytes = data.reduce((total, document) => {
+    const documentSize =
+      typeof document.document_size === 'number' ? document.document_size : 0;
+    return total + documentSize;
   }, 0);
 
   // Convert bytes to MB and round to 2 decimal places

@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { FileMetadata } from '@/lib/types';
+import { DocumentMetadata } from '@/lib/types';
 import {
   Sheet,
   SheetContent,
@@ -33,23 +33,24 @@ interface DocumentSettings {
 }
 
 export default function DocumentSettingsSheet({
-  fileMetadata,
+  documentMetadata,
   children,
 }: {
-  fileMetadata: FileMetadata;
+  documentMetadata: DocumentMetadata;
   children: ReactNode;
 }) {
   const [settings, setSettings] = useState<DocumentSettings>({
-    isPublic: fileMetadata.is_public ?? true,
-    allowDownload: fileMetadata.allow_download ?? false,
-    requireEmail: fileMetadata.require_email ?? false,
-    isExpiring: fileMetadata.is_expiring ?? false,
-    expirationDate: fileMetadata.expiration_date ?? new Date().toISOString(),
-    requirePassword: fileMetadata.require_password ?? false,
-    password: fileMetadata.password ?? '',
-    enableFeedback: fileMetadata.enable_feedback ?? false,
-    requireNDA: fileMetadata.require_nda ?? false,
-    ndaText: fileMetadata.nda_text ?? ndaText,
+    isPublic: documentMetadata.is_public ?? true,
+    allowDownload: documentMetadata.allow_download ?? false,
+    requireEmail: documentMetadata.require_email ?? false,
+    isExpiring: documentMetadata.is_expiring ?? false,
+    expirationDate:
+      documentMetadata.expiration_date ?? new Date().toISOString(),
+    requirePassword: documentMetadata.require_password ?? false,
+    password: documentMetadata.password ?? '',
+    enableFeedback: documentMetadata.enable_feedback ?? false,
+    requireNDA: documentMetadata.require_nda ?? false,
+    ndaText: documentMetadata.nda_text ?? ndaText,
   });
 
   const handleSettingChange = (
@@ -61,7 +62,7 @@ export default function DocumentSettingsSheet({
 
   const handleSaveSettings = () => {
     toast.promise(
-      saveDocumentSettings(fileMetadata.file_id, {
+      saveDocumentSettings(documentMetadata.document_id, {
         is_public: settings.isPublic,
         allow_download: settings.allowDownload,
         require_email: settings.requireEmail,
@@ -88,7 +89,7 @@ export default function DocumentSettingsSheet({
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className='flex flex-col bg-white text-black'>
         <SheetHeader>
-          <SheetTitle>{fileMetadata.original_name}</SheetTitle>
+          <SheetTitle>{documentMetadata.original_name}</SheetTitle>
           <SheetDescription>Manage your document settings</SheetDescription>
         </SheetHeader>
         <div className='flex-grow overflow-y-auto py-4 space-y-6'>

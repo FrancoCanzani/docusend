@@ -16,10 +16,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2 } from 'lucide-react';
 
 export default function NDAForm({
-  fileId,
+  documentId,
   ndaText,
 }: {
-  fileId: string;
+  documentId: string;
   ndaText: string;
 }) {
   const [accepted, setAccepted] = useState(false);
@@ -31,7 +31,7 @@ export default function NDAForm({
     if (accepted) {
       setIsLoading(true);
       try {
-        document.cookie = `nda_accepted_${fileId}=true; path=/; Max-Age=86400;`;
+        document.cookie = `nda_accepted_${documentId}=true; path=/; Max-Age=86400;`;
         router.refresh();
       } catch (error) {
         console.error('Error accepting NDA:', error);

@@ -8,14 +8,14 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 interface DownloadButtonProps {
-  filePath: string;
-  fileName: string;
+  documentPath: string;
+  documentName: string;
   bucketName?: string;
   className?: string;
 }
 
-const getMimeType = (fileName: string): string => {
-  const extension = fileName.split('.').pop()?.toLowerCase();
+const getMimeType = (documentName: string): string => {
+  const extension = documentName.split('.').pop()?.toLowerCase();
   switch (extension) {
     case 'pdf':
       return 'application/pdf';
@@ -40,9 +40,9 @@ const getMimeType = (fileName: string): string => {
   }
 };
 
-export default function DownloadFileButton({
-  filePath,
-  fileName,
+export default function DownloadDocumentButton({
+  documentPath,
+  documentName,
   bucketName = 'documents',
   className,
 }: DownloadButtonProps) {
@@ -52,24 +52,24 @@ export default function DownloadFileButton({
     try {
       const { data, error } = await supabase.storage
         .from(bucketName)
-        .download(filePath);
+        .download(documentPath);
 
       if (error) {
         throw error;
       }
 
-      const mimeType = getMimeType(fileName);
+      const mimeType = getMimeType(documentName);
       const blob = new Blob([data], { type: mimeType });
       const downloadUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = fileName;
+      link.download = documentName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      toast.error('Error downloading file');
+      toast.error('Error downloading document');
     }
   };
 
@@ -78,7 +78,7 @@ export default function DownloadFileButton({
       onClick={handleDownload}
       size='icon'
       variant='outline'
-      title={`Download ${fileName}`}
+      title={`Download ${documentName}`}
       className={cn('h-8 w-8', className)}
     >
       <Download className='h-4 w-4' />

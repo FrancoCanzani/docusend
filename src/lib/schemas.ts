@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const viewDataSchema = z.object({
-  fileId: z.string(),
+  documentId: z.string(),
   userId: z.string().nullable(),
   email: z.string().email().nullable(),
   timeSpent: z.number().int(),

@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileMetadata } from '@/lib/types';
-import DownloadFileButton from './download-file-button';
+import { DocumentMetadata } from '@/lib/types';
+import DownloadDocumentButton from './download-document-button';
 import { useUser } from '@/lib/hooks/use-user';
-import FileFeedbackForm from '../forms/file-feedback-form';
+import DocumentFeedbackForm from '../forms/document-feedback-form';
 import { Loader } from 'lucide-react';
-import { useFileAnalytics } from '@/lib/hooks/use-file-analytics';
+import { useDocumentAnalytics } from '@/lib/hooks/use-document-analytics';
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];
@@ -20,13 +20,13 @@ interface Workbook {
 }
 
 interface SpreadsheetViewerProps {
-  fileUrl: string;
-  fileMetadata: FileMetadata;
+  documentUrl: string;
+  documentMetadata: DocumentMetadata;
 }
 
 export default function SpreadsheetViewer({
-  fileUrl,
-  fileMetadata,
+  documentUrl,
+  documentMetadata,
 }: SpreadsheetViewerProps) {
   const [workbook, setWorkbook] = useState<Workbook>({});
   const [sheetNames, setSheetNames] = useState<string[]>([]);
@@ -34,16 +34,16 @@ export default function SpreadsheetViewer({
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useUser();
 
-  useFileAnalytics(fileMetadata.file_id);
+  useDocumentAnalytics(documentMetadata.document_id);
 
   useEffect(() => {
     fetchSpreadsheetData();
-  }, [fileUrl]);
+  }, [documentUrl]);
 
   const fetchSpreadsheetData = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      const response = await fetch(fileUrl);
+      const response = await fetch(documentUrl);
       const arrayBuffer = await response.arrayBuffer();
       const data = new Uint8Array(arrayBuffer);
       const workbook = XLSX.read(data, { type: 'array' });
@@ -126,16 +126,16 @@ export default function SpreadsheetViewer({
               <ScrollBar orientation='horizontal' />
             </ScrollArea>
             <TabsList className='w-full justify-start overflow-x-auto rounded-sm'>
-              {fileMetadata.allow_download && (
-                <DownloadFileButton
-                  fileName={fileMetadata.sanitized_name}
-                  filePath={fileMetadata.file_path}
+              {documentMetadata.allow_download && (
+                <DownloadDocumentButton
+                  documentName={documentMetadata.sanitized_name}
+                  documentPath={documentMetadata.document_path}
                   className='border-none p-2'
                 />
               )}
-              {fileMetadata.enable_feedback && (
-                <FileFeedbackForm
-                  fileId={fileMetadata.file_id}
+              {documentMetadata.enable_feedback && (
+                <DocumentFeedbackForm
+                  documentId={documentMetadata.document_id}
                   user={user}
                   className='border-none p-2'
                 />

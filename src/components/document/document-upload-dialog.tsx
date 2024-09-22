@@ -13,7 +13,7 @@ import {
 import { X, Upload, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-interface FileUploadDialogProps {
+interface DocumentUploadDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onUpload: (file: File, name: string) => void;
@@ -31,22 +31,20 @@ const ACCEPTED_FILE_TYPES = {
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB in bytes
 
-export function FileUploadDialog({
+export function DocumentUploadDialog({
   isOpen,
   onClose,
   onUpload,
-}: FileUploadDialogProps) {
+}: DocumentUploadDialogProps) {
   const [documentName, setDocumentName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
-      if (acceptedFiles && acceptedFiles.length > 0) {
+      if (acceptedFiles.length > 0) {
         setFile(acceptedFiles[0]);
-        if (!documentName) {
-          setDocumentName(acceptedFiles[0].name);
-        }
+        setDocumentName(acceptedFiles[0].name);
         setError(null);
       } else if (fileRejections.length > 0) {
         const rejection = fileRejections[0];
@@ -61,7 +59,7 @@ export function FileUploadDialog({
         }
       }
     },
-    [documentName]
+    []
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -79,8 +77,15 @@ export function FileUploadDialog({
     }
   };
 
+  const handleClose = () => {
+    setDocumentName('');
+    setFile(null);
+    setError(null);
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Document</DialogTitle>

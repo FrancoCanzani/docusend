@@ -64,15 +64,15 @@ export async function signInWithEmail(formData: FormData) {
 
 export async function uploadDocument(metadata: {
   user_id: string;
-  file_id: string;
+  document_id: string;
   original_name: string;
   sanitized_name: string;
-  file_path: string;
-  file_size: number;
-  file_type: string;
+  document_path: string;
+  document_size: number;
+  document_type: string;
   last_modified: string;
 }) {
-  const { error } = await supabase.from('file_metadata').insert({
+  const { error } = await supabase.from('document_metadata').insert({
     ...metadata,
     upload_date: new Date().toISOString(),
   });
@@ -85,13 +85,13 @@ export async function uploadDocument(metadata: {
   revalidatePath('/dashboard');
 }
 
-export async function downloadDocument(filePath: string) {
+export async function downloadDocument(documentPath: string) {
   const { data, error } = await supabase.storage
     .from('documents')
-    .download(filePath);
+    .download(documentPath);
 
   if (error) {
-    console.error('Error downloading file:', error);
+    console.error('Error downloading document:', error);
     return null;
   }
 
@@ -100,7 +100,7 @@ export async function downloadDocument(filePath: string) {
 
 export async function listAllDocuments(userId: string) {
   const { data, error } = await supabase
-    .from('file_metadata')
+    .from('document_metadata')
     .select('*')
     .eq('user_id', userId)
     .order('upload_date', { ascending: false });
@@ -113,35 +113,35 @@ export async function listAllDocuments(userId: string) {
   return data;
 }
 
-export async function deleteDocument(fileId: string, userId: string) {
-  // First, get the file path
-  const { data: fileData, error: fetchError } = await supabase
-    .from('file_metadata')
-    .select('file_path')
-    .eq('file_id', fileId)
+export async function deleteDocument(documentId: string, userId: string) {
+  // First, get the document path
+  const { data: documentData, error: fetchError } = await supabase
+    .from('document_metadata')
+    .select('document_path')
+    .eq('document_id', documentId)
     .eq('user_id', userId)
     .single();
 
   if (fetchError) {
-    console.error('Error fetching file metadata:', fetchError);
+    console.error('Error fetching document metadata:', fetchError);
     return false;
   }
 
   // Delete from storage
   const { error: storageError } = await supabase.storage
     .from('documents')
-    .remove([fileData.file_path]);
+    .remove([documentData.document_path]);
 
   if (storageError) {
-    console.error('Error deleting file from storage:', storageError);
+    console.error('Error deleting document from storage:', storageError);
     return false;
   }
 
   // Delete metadata
   const { error: dbError } = await supabase
-    .from('file_metadata')
+    .from('document_metadata')
     .delete()
-    .match({ file_id: fileId, user_id: userId });
+    .match({ document_id: documentId, user_id: userId });
 
   if (dbError) {
     console.error('Error deleting document metadata:', dbError);
@@ -152,7 +152,7 @@ export async function deleteDocument(fileId: string, userId: string) {
 }
 
 export async function saveDocumentSettings(
-  fileId: string,
+  documentId: string,
   settings: {
     is_public: boolean;
     allow_download: boolean;
@@ -173,7 +173,7 @@ export async function saveDocumentSettings(
   }
 
   const { error } = await supabase
-    .from('file_metadata')
+    .from('document_metadata')
     .update({
       is_public: settings.is_public,
       allow_download: settings.allow_download,
@@ -187,7 +187,7 @@ export async function saveDocumentSettings(
       nda_text: settings.nda_text,
       last_modified: new Date().toISOString(),
     })
-    .match({ file_id: fileId, user_id: user.user.id });
+    .match({ document_id: documentId, user_id: user.user.id });
 
   if (error) {
     console.error('Error updating document settings:', error);
@@ -203,25 +203,25 @@ export async function recordDocumentView(formData: FormData) {
 
   try {
     const parsedData = viewDataSchema.parse({
-      fileId: formData.get('fileId'),
+      documentId: formData.get('documentId'),
       userId: formData.get('userId'),
       email: formData.get('email'),
       timeSpent: parseInt(formData.get('timeSpent') as string),
     });
 
     const viewData = {
-      file_id: parsedData.fileId,
+      document_id: parsedData.documentId,
       user_id: parsedData.userId,
       email: parsedData.email,
       time_spent: parsedData.timeSpent,
       timestamp: new Date().toISOString(),
     };
 
-    const { error } = await supabase.from('file_views').insert(viewData);
+    const { error } = await supabase.from('document_views').insert(viewData);
 
     if (error) throw error;
 
-    revalidatePath(`/file/${parsedData.fileId}`);
+    revalidatePath(`/document/${parsedData.documentId}`);
 
     return { success: true };
   } catch (error) {

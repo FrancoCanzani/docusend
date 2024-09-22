@@ -1,45 +1,46 @@
 import { createClient } from '@/lib/supabase/server';
-import FileMetadata from '@/components/file/file-metadata';
+import DocumentMetadata from '@/components/document/document-metadata';
 import { Sidebar } from '@/components/sidebar';
-import FileFeedback from '@/components/file/file-feedback';
+import DocumentFeedback from '@/components/document/document-feedback';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import FileViews from '@/components/file/file-views';
-import getFileAnalytics from '@/lib/helpers/get-file-analytics';
-import FileViewsMap from '@/components/file/file-views-map';
+import DocumentViews from '@/components/document/document-views';
+import getDocumentAnalytics from '@/lib/helpers/get-document-analytics';
+import DocumentViewsMap from '@/components/document/document-views-map';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MessageCircleOff, EyeOff, MapPinOff } from 'lucide-react';
 
-export default async function Page({ params }: { params: { fileId: string } }) {
-  const { fileId } = params;
+export default async function Page({
+  params,
+}: {
+  params: { documentId: string };
+}) {
+  const { documentId } = params;
   const supabase = createClient();
   const { data: authData } = await supabase.auth.getUser();
 
-  const { data: fileMetadata } = await supabase
-    .from('file_metadata')
+  const { data: documentMetadata } = await supabase
+    .from('document_metadata')
     .select('*')
-    .eq('file_id', fileId)
+    .eq('document_id', documentId)
     .eq('user_id', authData.user?.id)
     .single();
 
-  const { data: fileViews } = await supabase
-    .from('file_views')
+  const { data: documentFeedback } = await supabase
+    .from('document_feedback')
     .select('*')
-    .eq('file_id', fileId);
+    .eq('document_id', documentId);
 
-  const { data: fileFeedback } = await supabase
-    .from('file_feedback')
-    .select('*')
-    .eq('file_id', fileId);
+  const documentAnalytics = await getDocumentAnalytics(documentId);
 
-  const fileAnalytics = await getFileAnalytics(fileId);
+  console.log(documentAnalytics.results[0].properties);
 
   return (
     <div className='flex h-screen text-black'>
-      <Sidebar fileMetadata={fileMetadata} />
+      <Sidebar documentMetadata={documentMetadata} />
       <div className='flex-1 flex flex-col overflow-hidden'>
         <main className='flex-1 space-y-6 overflow-x-hidden overflow-y-auto bg-gray-50 container mx-auto px-3 py-6 md:px-6 md:py-8'>
-          <FileMetadata fileMetadata={fileMetadata} />
+          <DocumentMetadata documentMetadata={documentMetadata} />
           <Separator />
           <Tabs defaultValue='views' className='w-full'>
             <TabsList className='text-base lg:text-lg'>
@@ -48,8 +49,8 @@ export default async function Page({ params }: { params: { fileId: string } }) {
               <TabsTrigger value='geolocation'>Geolocation</TabsTrigger>
             </TabsList>
             <TabsContent value='views' className='mt-6'>
-              {fileViews && fileViews.length > 0 ? (
-                <FileViews fileViews={fileAnalytics.results} />
+              {documentAnalytics && documentAnalytics.results.length > 0 ? (
+                <DocumentViews documentViews={documentAnalytics.results} />
               ) : (
                 <Alert>
                   <EyeOff className='h-4 w-4' />
@@ -63,8 +64,8 @@ export default async function Page({ params }: { params: { fileId: string } }) {
               )}
             </TabsContent>
             <TabsContent value='feedback' className='mt-6'>
-              {fileFeedback && fileFeedback.length > 0 ? (
-                <FileFeedback feedback={fileFeedback} />
+              {documentFeedback && documentFeedback.length > 0 ? (
+                <DocumentFeedback feedback={documentFeedback} />
               ) : (
                 <Alert>
                   <MessageCircleOff className='h-4 w-4' />
@@ -78,8 +79,8 @@ export default async function Page({ params }: { params: { fileId: string } }) {
               )}
             </TabsContent>
             <TabsContent value='geolocation' className='mt-6'>
-              {fileViews && fileViews.length > 0 ? (
-                <FileViewsMap fileViews={fileAnalytics.results} />
+              {documentAnalytics && documentAnalytics.results.length > 0 ? (
+                <DocumentViewsMap documentViews={documentAnalytics.results} />
               ) : (
                 <Alert>
                   <MapPinOff className='h-4 w-4' />

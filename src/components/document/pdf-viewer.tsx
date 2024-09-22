@@ -13,20 +13,23 @@ import {
   Minimize,
   Loader,
 } from 'lucide-react';
-import { FileMetadata } from '@/lib/types';
-import DownloadFileButton from './download-file-button';
-import FileFeedbackForm from '../forms/file-feedback-form';
+import { DocumentMetadata } from '@/lib/types';
+import DownloadDocumentButton from './download-document-button';
+import DocumentFeedbackForm from '../forms/document-feedback-form';
 import { useUser } from '@/lib/hooks/use-user';
-import { useFileAnalytics } from '@/lib/hooks/use-file-analytics';
+import { useDocumentAnalytics } from '@/lib/hooks/use-document-analytics';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PDFViewerProps {
-  fileUrl: string;
-  fileMetadata: FileMetadata;
+  documentUrl: string;
+  documentMetadata: DocumentMetadata;
 }
 
-export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
+export default function PDFViewer({
+  documentUrl,
+  documentMetadata,
+}: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [scale, setScale] = useState(1);
@@ -35,7 +38,7 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
 
   const { user } = useUser();
 
-  useFileAnalytics(fileMetadata.file_id);
+  useDocumentAnalytics(documentMetadata.document_id);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }): void => {
     setNumPages(numPages);
@@ -78,8 +81,11 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
       style={{ height: 'calc(100vh - 64px)' }}
     >
       <div className='flex items-center justify-end w-full pb-4 px-4 space-x-2'>
-        {fileMetadata.enable_feedback && (
-          <FileFeedbackForm fileId={fileMetadata.file_id} user={user} />
+        {documentMetadata.enable_feedback && (
+          <DocumentFeedbackForm
+            documentId={documentMetadata.document_id}
+            user={user}
+          />
         )}
         <Button
           onClick={handleZoomOut}
@@ -105,10 +111,10 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
         >
           <Minimize className='h-4 w-4' />
         </Button>
-        {fileMetadata.allow_download && (
-          <DownloadFileButton
-            fileName={fileMetadata.sanitized_name}
-            filePath={fileMetadata.file_path}
+        {documentMetadata.allow_download && (
+          <DownloadDocumentButton
+            documentName={documentMetadata.sanitized_name}
+            documentPath={documentMetadata.document_path}
           />
         )}
       </div>
@@ -134,7 +140,7 @@ export default function PDFViewer({ fileUrl, fileMetadata }: PDFViewerProps) {
         </div>
         <div className='flex justify-center'>
           <Document
-            file={fileUrl}
+            file={documentUrl}
             onLoadSuccess={onDocumentLoadSuccess}
             className='flex justify-center'
             loading={

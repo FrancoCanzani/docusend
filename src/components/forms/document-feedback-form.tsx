@@ -30,17 +30,17 @@ type FormErrors = {
   [K in keyof FormData]?: string;
 };
 
-interface FileFeedbackFormProps {
-  fileId: string;
+interface DocumentFeedbackFormProps {
+  documentId: string;
   user: User | null;
   className?: string;
 }
 
-export default function FileFeedbackForm({
-  fileId,
+export default function DocumentFeedbackForm({
+  documentId,
   user,
   className,
-}: FileFeedbackFormProps) {
+}: DocumentFeedbackFormProps) {
   const [formData, setFormData] = useState<FormData>({
     name: user?.user_metadata?.full_name || '',
     email: user?.email || '',
@@ -96,8 +96,8 @@ export default function FileFeedbackForm({
       const supabase = createClient();
 
       const submitFeedback = async () => {
-        const { error } = await supabase.from('file_feedback').insert({
-          file_id: fileId,
+        const { error } = await supabase.from('document_feedback').insert({
+          document_id: documentId,
           name: formData.name,
           email: formData.email,
           message: formData.message,

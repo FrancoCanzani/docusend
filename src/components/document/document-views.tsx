@@ -28,13 +28,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { columns, FileView } from '@/app/file/[fileId]/columns';
+import { columns, DocumentView } from '@/app/document/[documentId]/columns';
 
-type FileViewsProps = {
-  fileViews: FileView[];
+type DocumentViewsProps = {
+  documentViews: DocumentView[];
 };
 
-export default function FileViews({ fileViews }: FileViewsProps) {
+export default function DocumentViews({ documentViews }: DocumentViewsProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -42,7 +42,7 @@ export default function FileViews({ fileViews }: FileViewsProps) {
   const [countryFilter, setCountryFilter] = React.useState<string | null>(null);
 
   const table = useReactTable({
-    data: fileViews,
+    data: documentViews,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
@@ -59,13 +59,13 @@ export default function FileViews({ fileViews }: FileViewsProps) {
   // Get unique countries for the filter dropdown
   const uniqueCountries = React.useMemo(() => {
     const countries = new Set<string>();
-    fileViews.forEach((view) => {
+    documentViews.forEach((view) => {
       if (view.properties.$geoip_country_name) {
         countries.add(view.properties.$geoip_country_name);
       }
     });
     return Array.from(countries).sort();
-  }, [fileViews]);
+  }, [documentViews]);
 
   React.useEffect(() => {
     if (countryFilter) {
