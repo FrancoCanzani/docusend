@@ -1,28 +1,48 @@
-import { useEffect, useCallback, useState } from 'react';
-import { usePostHog } from 'posthog-js/react';
+// app/pageview.js
+'use client';
+
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useUser } from './use-user';
-import getEmailFromCookie from '../helpers/get-email-from-cookie';
 
-export function useDocumentAnalytics(documentId: string) {
-  const posthog = usePostHog();
+export default function useDocumentAnalytics(document_id: string) {
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { user } = useUser();
-  const [hasTracked, setHasTracked] = useState(false);
-
-  const trackPageView = useCallback(() => {
-    const email = user?.email ?? getEmailFromCookie();
-    console.log('Tracking with email:', email);
-    posthog.capture('document_view', {
-      document_id: documentId,
-      email: email,
-    });
-    setHasTracked(true);
-  }, [documentId, user, posthog]);
+  const email = user?.email;
 
   useEffect(() => {
-    if (user !== null && !hasTracked) {
-      trackPageView();
+    let intervalId: NodeJS.Timeout;
+    if (isRunning) {
+      // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
+      intervalId = setInterval(() => setTime(time + 1), 10);
     }
-  }, [user, hasTracked, trackPageView]);
+    return () => clearInterval(intervalId);
+  }, [isRunning, time]);
+
+  // Hours calculation
+  const hours = Math.floor(time / 360000);
+
+  // Minutes calculation
+  const minutes = Math.floor((time % 360000) / 6000);
+
+  // Seconds calculation
+  const seconds = Math.floor((time % 6000) / 100);
+
+  // Milliseconds calculation
+  const milliseconds = time % 100;
+
+  // Track pageviews
+  useEffect(() => {
+    if (pathname) {
+      let url = window.origin + pathname;
+      if (searchParams.toString()) {
+        url = url + `?${searchParams.toString()}`;
+      }
+    }
+  }, [pathname, searchParams]);
 
   return null;
 }

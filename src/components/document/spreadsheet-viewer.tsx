@@ -9,7 +9,7 @@ import DownloadDocumentButton from './download-document-button';
 import { useUser } from '@/lib/hooks/use-user';
 import DocumentFeedbackForm from '../forms/document-feedback-form';
 import { Loader } from 'lucide-react';
-import { useDocumentAnalytics } from '@/lib/hooks/use-document-analytics';
+import useDocumentAnalytics from '@/lib/hooks/use-document-analytics';
 
 type CellValue = string | number | boolean | null;
 type SheetRow = CellValue[];

@@ -8,7 +8,7 @@ export default async function getPostContent(
 ): Promise<{ content: string; frontMatter: FrontMatter }> {
   const postsDirectory = path.join(process.cwd(), 'src', 'posts');
   const filePath = path.join(postsDirectory, `${slug}.mdx`);
-  const fileContents = fs.readDocumentSync(filePath, 'utf8');
+  const fileContents = fs.readFileSync(filePath, 'utf8');
 
   const { content, data } = matter(fileContents);
 

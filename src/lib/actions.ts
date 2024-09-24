@@ -6,9 +6,9 @@ import { createClient } from './supabase/server';
 import { viewDataSchema } from './schemas';
 import { z } from 'zod';
 
-const supabase = createClient();
-
 export async function login(formData: FormData) {
+  const supabase = createClient();
+
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
@@ -51,6 +51,8 @@ export async function signup(formData: FormData) {
 }
 
 export async function signInWithEmail(formData: FormData) {
+  const supabase = createClient();
+
   const email = formData.get('email') as string;
 
   const { data, error } = await supabase.auth.signInWithOtp({
@@ -72,6 +74,8 @@ export async function uploadDocument(metadata: {
   document_type: string;
   last_modified: string;
 }) {
+  const supabase = createClient();
+
   const { error } = await supabase.from('document_metadata').insert({
     ...metadata,
     upload_date: new Date().toISOString(),
@@ -86,6 +90,8 @@ export async function uploadDocument(metadata: {
 }
 
 export async function downloadDocument(documentPath: string) {
+  const supabase = createClient();
+
   const { data, error } = await supabase.storage
     .from('documents')
     .download(documentPath);
@@ -99,6 +105,8 @@ export async function downloadDocument(documentPath: string) {
 }
 
 export async function listAllDocuments(userId: string) {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from('document_metadata')
     .select('*')
@@ -114,6 +122,8 @@ export async function listAllDocuments(userId: string) {
 }
 
 export async function deleteDocument(documentId: string, userId: string) {
+  const supabase = createClient();
+
   // First, get the document path
   const { data: documentData, error: fetchError } = await supabase
     .from('document_metadata')
@@ -166,6 +176,8 @@ export async function saveDocumentSettings(
     nda_text: string | null;
   }
 ) {
+  const supabase = createClient();
+
   const { data: user } = await supabase.auth.getUser();
 
   if (!user || !user.user) {

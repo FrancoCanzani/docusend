@@ -9,6 +9,7 @@ import getDocumentAnalytics from '@/lib/helpers/get-document-analytics';
 import DocumentViewsMap from '@/components/document/document-views-map';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MessageCircleOff, EyeOff, MapPinOff } from 'lucide-react';
+import DocumentTimeMetrics from '@/components/document/document-time-metrics';
 
 export default async function Page({
   params,
@@ -33,7 +34,7 @@ export default async function Page({
 
   const documentAnalytics = await getDocumentAnalytics(documentId);
 
-  console.log(documentAnalytics.results[0].properties);
+  // console.log(documentAnalytics.results[0].properties);
 
   return (
     <div className='flex h-screen text-black'>
@@ -94,6 +95,7 @@ export default async function Page({
               )}{' '}
             </TabsContent>
           </Tabs>
+          {/* <DocumentTimeMetrics documentId={documentId} /> */}
         </main>
       </div>
     </div>

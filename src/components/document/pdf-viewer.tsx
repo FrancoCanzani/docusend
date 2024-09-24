@@ -17,7 +17,7 @@ import { DocumentMetadata } from '@/lib/types';
 import DownloadDocumentButton from './download-document-button';
 import DocumentFeedbackForm from '../forms/document-feedback-form';
 import { useUser } from '@/lib/hooks/use-user';
-import { useDocumentAnalytics } from '@/lib/hooks/use-document-analytics';
+import useDocumentAnalytics from '@/lib/hooks/use-document-analytics';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 

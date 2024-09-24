@@ -1,7 +1,21 @@
 import { type NextRequest } from 'next/server';
 import { updateSession } from './lib/supabase/middleware';
+import { geolocation, ipAddress, Geo } from '@vercel/functions';
 
 export async function middleware(request: NextRequest) {
+  const { city, country, countryRegion, flag, latitude, longitude, region } =
+    geolocation(request);
+  const requestHeaders = new Headers(request.headers);
+
+  const geo = {
+    city: city,
+    country: country,
+    countryRegion: countryRegion,
+    flag: flag,
+    latitude: latitude,
+    longitude: longitude,
+    region: region,
+  };
   return await updateSession(request);
 }
 

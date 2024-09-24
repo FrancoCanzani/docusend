@@ -1,7 +1,6 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 export type DocumentView = {
@@ -27,11 +26,9 @@ export const columns: ColumnDef<DocumentView>[] = [
     header: ({ column }) => {
       return (
         <button
-          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Email
-          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
@@ -43,11 +40,9 @@ export const columns: ColumnDef<DocumentView>[] = [
     header: ({ column }) => {
       return (
         <button
-          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Device Type
-          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
@@ -59,11 +54,9 @@ export const columns: ColumnDef<DocumentView>[] = [
     header: ({ column }) => {
       return (
         <button
-          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Browser
-          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
@@ -75,11 +68,9 @@ export const columns: ColumnDef<DocumentView>[] = [
     header: ({ column }) => {
       return (
         <button
-          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Time
-          <ArrowUpDown className='ml-2 h-3 w-3' />
+          Registered
         </button>
       );
     },
@@ -87,7 +78,9 @@ export const columns: ColumnDef<DocumentView>[] = [
       const timestamp = row.original.properties.$time;
       if (timestamp) {
         const date = new Date(timestamp * 1000);
-        return formatDistanceToNowStrict(date);
+        return formatDistanceToNowStrict(date, {
+          addSuffix: true,
+        });
       }
       return 'Unknown';
     },
@@ -98,11 +91,9 @@ export const columns: ColumnDef<DocumentView>[] = [
     header: ({ column }) => {
       return (
         <button
-          className='hover:bg-transparent flex items-center justify-start'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Country
-          <ArrowUpDown className='ml-2 h-3 w-3' />
         </button>
       );
     },
