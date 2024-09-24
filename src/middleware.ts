@@ -16,6 +16,8 @@ export async function middleware(request: NextRequest) {
     longitude: longitude,
     region: region,
   };
+  console.log(geo);
+
   return await updateSession(request);
 }
 
