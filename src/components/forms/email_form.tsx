@@ -31,11 +31,11 @@ export default function EmailForm({ documentId }: { documentId: string }) {
       // Encode the email to handle special characters
       const encodedEmail = encodeURIComponent(email);
 
-      // // Set the cookie with the email
-      // document.cookie = `user_email=${encodedEmail}; path=/; max-age=86400`; // Cookie expires in 24 hours
+      // Set the cookie with the email
+      document.cookie = `user_email=${encodedEmail}; path=/; max-age=86400`; // Cookie expires in 24 hours
 
-      // // Set the verification cookie
-      // document.cookie = `email_verified_${documentId}=true; path=/; max-age=86400`;
+      // Set the verification cookie
+      document.cookie = `email_verified_${documentId}=true; path=/; max-age=86400`;
 
       router.refresh();
     } catch (error) {

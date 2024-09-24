@@ -5,11 +5,8 @@ import DocumentFeedback from '@/components/document/document-feedback';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import DocumentViews from '@/components/document/document-views';
-import getDocumentAnalytics from '@/lib/helpers/get-document-analytics';
-import DocumentViewsMap from '@/components/document/document-views-map';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { MessageCircleOff, EyeOff, MapPinOff } from 'lucide-react';
-import DocumentTimeMetrics from '@/components/document/document-time-metrics';
+import { MessageCircleOff, EyeOff } from 'lucide-react';
 
 export default async function Page({
   params,
@@ -32,9 +29,10 @@ export default async function Page({
     .select('*')
     .eq('document_id', documentId);
 
-  const documentAnalytics = await getDocumentAnalytics(documentId);
-
-  // console.log(documentAnalytics.results[0].properties);
+  const { data: documentAnalytics } = await supabase
+    .from('document_analytics')
+    .select('*')
+    .eq('document_id', documentId);
 
   return (
     <div className='flex h-screen text-black'>
@@ -47,11 +45,10 @@ export default async function Page({
             <TabsList className='text-base lg:text-lg'>
               <TabsTrigger value='views'>Views</TabsTrigger>
               <TabsTrigger value='feedback'>Feedback</TabsTrigger>
-              <TabsTrigger value='geolocation'>Geolocation</TabsTrigger>
             </TabsList>
             <TabsContent value='views' className='mt-6'>
-              {documentAnalytics && documentAnalytics.results.length > 0 ? (
-                <DocumentViews documentViews={documentAnalytics.results} />
+              {documentAnalytics && documentAnalytics.length > 0 ? (
+                <DocumentViews documentViews={documentAnalytics} />
               ) : (
                 <Alert>
                   <EyeOff className='h-4 w-4' />
@@ -79,23 +76,7 @@ export default async function Page({
                 </Alert>
               )}
             </TabsContent>
-            <TabsContent value='geolocation' className='mt-6'>
-              {documentAnalytics && documentAnalytics.results.length > 0 ? (
-                <DocumentViewsMap documentViews={documentAnalytics.results} />
-              ) : (
-                <Alert>
-                  <MapPinOff className='h-4 w-4' />
-                  <AlertTitle>No geodata recorded</AlertTitle>
-                  <AlertDescription>
-                    Your content hasn&apos;t been viewed yet. Share your links
-                    on social media and with your network to increase engagement
-                    and reach a wider audience.
-                  </AlertDescription>
-                </Alert>
-              )}{' '}
-            </TabsContent>
           </Tabs>
-          {/* <DocumentTimeMetrics documentId={documentId} /> */}
         </main>
       </div>
     </div>

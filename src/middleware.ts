@@ -1,35 +1,50 @@
-import { type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from './lib/supabase/middleware';
-import { geolocation, ipAddress, Geo } from '@vercel/functions';
+import { geolocation, ipAddress } from '@vercel/functions';
 
 export async function middleware(request: NextRequest) {
-  const { city, country, countryRegion, flag, latitude, longitude, region } =
-    geolocation(request);
-  const requestHeaders = new Headers(request.headers);
+  const response = NextResponse.next();
 
-  const geo = {
-    city: city,
-    country: country,
-    countryRegion: countryRegion,
-    flag: flag,
-    latitude: latitude,
-    longitude: longitude,
-    region: region,
-  };
-  console.log(geo);
+  if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'development') {
+    // Mock data for development
+    const mockGeo = {
+      city: 'MockCity',
+      country: 'MockCountry',
+      countryRegion: 'MockRegion',
+      flag: '🏳️',
+      latitude: '0',
+      longitude: '0',
+      region: 'MockRegion',
+      ip: '127.0.0.1',
+    };
+    response.cookies.set('userGeoData', JSON.stringify(mockGeo), {
+      httpOnly: false,
+    });
+  } else {
+    const { city, country, countryRegion, flag, latitude, longitude, region } =
+      geolocation(request);
+    const ip = ipAddress(request);
+    const geo = {
+      city,
+      country,
+      countryRegion,
+      flag,
+      latitude,
+      longitude,
+      region,
+      ip,
+    };
+    response.cookies.set('userGeoData', JSON.stringify(geo), {
+      httpOnly: false,
+    });
+  }
 
-  return await updateSession(request);
+  await updateSession(request);
+  return response;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
