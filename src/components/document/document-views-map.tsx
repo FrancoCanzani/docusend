@@ -23,6 +23,8 @@ export default function DocumentViewsMap({
   const [tooltipContent, setTooltipContent] = useState('');
   const [position, setPosition] = useState({ coordinates: [0, 30], zoom: 1 });
 
+  console.log(documentViews);
+
   const countryData = useMemo(() => {
     const counts: { [key: string]: number } = {};
     documentViews.forEach((view) => {
