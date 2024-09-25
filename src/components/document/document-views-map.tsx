@@ -133,12 +133,6 @@ export default function DocumentViewsMap({
           </button>
         </div>
       </div>
-      <div className='mt-4'>
-        <h4 className='font-semibold'>Debug Info:</h4>
-        <pre className='bg-gray-100 p-2 rounded mt-2 text-sm overflow-auto max-h-40'>
-          {JSON.stringify(countryData, null, 2)}
-        </pre>
-      </div>
     </div>
   );
 }
