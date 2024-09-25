@@ -37,7 +37,7 @@ export default function useDocumentAnalytics(document_id: string) {
         ip: geoData?.ip || null,
         city: geoData?.city || null,
         country: geoData?.country || null,
-        country_code: geoData?.countryRegion || null,
+        country_region: geoData?.countryRegion || null,
         latitude: geoData?.latitude || null,
         longitude: geoData?.longitude || null,
       };

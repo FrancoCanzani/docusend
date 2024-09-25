@@ -1,4 +1,5 @@
 'use client';
+
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNowStrict, format, parseISO } from 'date-fns';
 import {
@@ -7,6 +8,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import getCountryData from '@/lib/helpers/get-country-data';
+import { decodeCityName } from '@/lib/helpers/decode-city-name';
 
 export type DocumentView = {
   id: string;
@@ -41,7 +44,7 @@ export const columns: ColumnDef<DocumentView>[] = [
         className='font-bold'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Device Type
+        Device
       </button>
     ),
     cell: ({ row }) => <div>{row.getValue('device_type') ?? 'Unknown'}</div>,
@@ -57,6 +60,77 @@ export const columns: ColumnDef<DocumentView>[] = [
       </button>
     ),
     cell: ({ row }) => <div>{row.getValue('browser') ?? 'Unknown'}</div>,
+  },
+  {
+    accessorKey: 'city',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        City
+      </button>
+    ),
+    cell: ({ row }) => (
+      <div>
+        {decodeCityName(row.getValue('city')) ??
+          row.getValue('city') ??
+          'Unknown'}
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'country',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Country
+      </button>
+    ),
+    cell: ({ row }) => {
+      const countryCode = row.getValue('country') as string;
+      const country = getCountryData(countryCode);
+      return (
+        <div className='space-x-1'>
+          {country?.flag && <span>{country?.flag}</span>}
+          <span>{country?.countryNameEn ?? countryCode ?? 'Unknown'}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'country',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Region
+      </button>
+    ),
+    cell: ({ row }) => {
+      const countryCode = row.getValue('country') as string;
+      const country = getCountryData(countryCode);
+      return (
+        <div className='space-x-1'>
+          <span>{country?.region ?? 'Unknown'}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'duration',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Duration
+      </button>
+    ),
+    cell: ({ row }) => <div>{`${row.getValue('duration')} seconds`}</div>,
   },
   {
     accessorKey: 'timestamp',
@@ -86,29 +160,5 @@ export const columns: ColumnDef<DocumentView>[] = [
         </TooltipProvider>
       );
     },
-  },
-  {
-    accessorKey: 'country',
-    header: ({ column }) => (
-      <button
-        className='font-bold'
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Country
-      </button>
-    ),
-    cell: ({ row }) => <div>{row.getValue('country') ?? 'Unknown'}</div>,
-  },
-  {
-    accessorKey: 'duration',
-    header: ({ column }) => (
-      <button
-        className='font-bold'
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Duration
-      </button>
-    ),
-    cell: ({ row }) => <div>{`${row.getValue('duration')} seconds`}</div>,
   },
 ];

@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useMemo } from 'react';
 import {
   BarChart,
@@ -51,7 +50,8 @@ const DocumentViewsChart: React.FC<DocumentViewsChartProps> = ({
     return Array.from(dataMap, ([date, data]) => ({
       date,
       visitors: data.visitors,
-      averageTimeSpent: data.totalTimeSpent / data.visitors,
+      averageTimeSpent:
+        Math.round((data.totalTimeSpent / data.visitors) * 10) / 10,
     })).sort((a, b) => a.date.localeCompare(b.date));
   }, [documentViews]);
 
@@ -78,7 +78,6 @@ const DocumentViewsChart: React.FC<DocumentViewsChartProps> = ({
           </BarChart>
         </ResponsiveContainer>
       </div>
-
       <div>
         <h3 className='text-lg font-semibold mb-2'>
           Average Time Spent per Day (seconds)

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { decode } from 'querystring';
 
 export async function POST(req: Request) {
   try {
@@ -20,9 +21,9 @@ export async function POST(req: Request) {
       timestamp: new Date(data.timestamp),
       duration: data.duration,
       ip: data.ip,
-      city: data.city,
+      city: decode(data.city),
       country: data.country,
-      country_code: data.country_code,
+      country_code: data.country_region,
       latitude: data.latitude,
       longitude: data.longitude,
     };

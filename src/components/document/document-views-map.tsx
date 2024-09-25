@@ -7,11 +7,11 @@ import {
   Geography,
   ZoomableGroup,
 } from 'react-simple-maps';
-import { scaleLinear } from 'd3-scale';
 import { geoMap } from '@/lib/constants/geo-map';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { Plus, Minus } from 'lucide-react';
 import { DocumentView } from '@/app/document/[documentId]/columns';
+import getCountryData from '@/lib/helpers/get-country-data';
 
 type DocumentViewsMapProps = {
   documentViews: DocumentView[];
@@ -23,26 +23,30 @@ export default function DocumentViewsMap({
   const [tooltipContent, setTooltipContent] = useState('');
   const [position, setPosition] = useState({ coordinates: [0, 30], zoom: 1 });
 
-  console.log(documentViews);
-
   const countryData = useMemo(() => {
-    const counts: { [key: string]: number } = {};
+    const counts: { [key: string]: { count: number; name: string } } = {};
     documentViews.forEach((view) => {
-      if (view.country) {
-        counts[view.country] = (counts[view.country] || 0) + 1;
+      if (view.country && view.country !== 'MOCKCOUNTRY') {
+        const countryInfo = getCountryData(view.country);
+        if (countryInfo) {
+          const countryName = countryInfo.countryNameEn;
+          if (!counts[countryName]) {
+            counts[countryName] = {
+              count: 0,
+              name: countryName,
+            };
+          }
+          counts[countryName].count += 1;
+        }
       }
     });
-    return Object.entries(counts).map(([country, count]) => ({
-      country,
-      count,
-    }));
+    return counts;
   }, [documentViews]);
 
-  const maxViews = Math.max(...countryData.map((d) => d.count));
-
-  const colorScale = scaleLinear<string>()
-    .domain([0, maxViews])
-    .range(['#60a5fa', '#172554']);
+  const maxCount = Math.max(
+    ...Object.values(countryData).map((d) => d.count),
+    1
+  );
 
   const handleZoomIn = () => {
     if (position.zoom >= 4) return;
@@ -70,24 +74,24 @@ export default function DocumentViewsMap({
               onMoveEnd={handleMoveEnd}
             >
               <Geographies geography={geoMap}>
-                {({ geographies }) =>
-                  geographies.map((geo) => {
-                    const d = countryData.find(
-                      (s) => s.country === geo.properties.name
-                    );
+                {({ geographies }) => {
+                  return geographies.map((geo) => {
+                    const countryName = geo.properties.name;
+                    const d = countryData[countryName];
+                    const fillColor = d
+                      ? `rgba(23, 37, 84, ${d.count / maxCount})`
+                      : '#e5e7eb';
                     return (
                       <Tooltip.Root key={geo.rsmKey}>
                         <Tooltip.Trigger asChild>
                           <Geography
                             geography={geo}
-                            fill={d ? colorScale(d.count) : '#9ca3af'}
+                            fill={fillColor}
                             stroke='#FFFFFF'
                             strokeWidth={0.5}
                             onMouseEnter={() => {
                               setTooltipContent(
-                                `${geo.properties.name}: ${
-                                  d ? d.count : 0
-                                } views`
+                                `${countryName}: ${d ? d.count : 0} views`
                               );
                             }}
                             style={{
@@ -108,8 +112,8 @@ export default function DocumentViewsMap({
                         </Tooltip.Portal>
                       </Tooltip.Root>
                     );
-                  })
-                }
+                  });
+                }}
               </Geographies>
             </ZoomableGroup>
           </ComposableMap>
@@ -128,6 +132,12 @@ export default function DocumentViewsMap({
             <Minus size={18} />
           </button>
         </div>
+      </div>
+      <div className='mt-4'>
+        <h4 className='font-semibold'>Debug Info:</h4>
+        <pre className='bg-gray-100 p-2 rounded mt-2 text-sm overflow-auto max-h-40'>
+          {JSON.stringify(countryData, null, 2)}
+        </pre>
       </div>
     </div>
   );
