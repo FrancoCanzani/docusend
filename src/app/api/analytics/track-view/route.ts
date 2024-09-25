@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       ip: data.ip,
       city: decode(data.city),
       country: data.country,
-      country_code: data.country_region,
+      country_region: data.country_region,
       latitude: data.latitude,
       longitude: data.longitude,
     };
@@ -33,6 +33,8 @@ export async function POST(req: Request) {
       .insert(analyticsEntry);
 
     if (error) {
+      console.log(error);
+
       throw error;
     }
 
@@ -43,6 +45,8 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.log(error);
+
     if (error instanceof Error) {
       return NextResponse.json(
         { message: 'Failed to process analytics data', error: error.message },

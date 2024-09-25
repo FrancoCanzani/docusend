@@ -35,8 +35,6 @@ export async function middleware(request: NextRequest) {
       ip,
     };
 
-    console.log(geo);
-
     response.cookies.set('userGeoData', JSON.stringify(geo), {
       httpOnly: false,
     });
