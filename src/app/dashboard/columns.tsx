@@ -54,7 +54,14 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
   },
   {
     accessorKey: 'original_name',
-    header: 'Document Name',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Name
+      </button>
+    ),
     cell: ({ row }) => (
       <Link
         href={`/document/${row.original.document_id}`}
@@ -67,7 +74,14 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
   },
   {
     accessorKey: 'document_type',
-    header: 'Type',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Type
+      </button>
+    ),
     cell: ({ row }) => {
       const mimeType = row.getValue('document_type');
       if (typeof mimeType !== 'string') {
@@ -88,7 +102,14 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
   },
   {
     accessorKey: 'upload_date',
-    header: 'Uploaded',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Uploaded
+      </button>
+    ),
     cell: ({ row }) => {
       const uploadDate = row.getValue('upload_date');
       if (typeof uploadDate !== 'string') return <span>Invalid date</span>;
@@ -112,7 +133,14 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
   },
   {
     accessorKey: 'is_public',
-    header: 'Visibility',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Visibility
+      </button>
+    ),
     cell: ({ row }) => (
       <Badge variant={row.original.is_public ? 'default' : 'secondary'}>
         {row.original.is_public ? 'Public' : 'Private'}
