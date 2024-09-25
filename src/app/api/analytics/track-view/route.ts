@@ -33,20 +33,16 @@ export async function POST(req: Request) {
       .insert(analyticsEntry);
 
     if (error) {
-      console.log(error);
-
       throw error;
     }
 
-    revalidatePath(`/document/${data.document_id}`);
+    revalidatePath(`/document/[documentId]`);
 
     return NextResponse.json(
       { message: 'Analytics data processed successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
-
     if (error instanceof Error) {
       return NextResponse.json(
         { message: 'Failed to process analytics data', error: error.message },

@@ -23,6 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { columns, DocumentView } from '@/app/document/[documentId]/columns';
+import { useRouter } from 'next/navigation';
 
 type DocumentViewsProps = {
   documentViews: DocumentView[];
@@ -38,6 +39,7 @@ export default function DocumentViewsTable({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const router = useRouter();
 
   const table = useReactTable({
     data: documentViews,
@@ -69,6 +71,9 @@ export default function DocumentViewsTable({
           }
           className='max-w-sm'
         />
+        <Button variant={'outline'} onClick={() => router.refresh()}>
+          Refresh data
+        </Button>
       </div>
       <div className='rounded-md border'>
         <Table>
