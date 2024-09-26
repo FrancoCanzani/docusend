@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { decode } from 'querystring';
+import { decodeCityName } from '@/lib/helpers/decode-city-name';
 
 export async function POST(req: Request) {
   try {
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       timestamp: new Date(data.timestamp),
       duration: data.duration,
       ip: data.ip,
-      city: decode(data.city),
+      city: decodeCityName(data.city),
       country: data.country,
       country_region: data.country_region,
       latitude: data.latitude,
