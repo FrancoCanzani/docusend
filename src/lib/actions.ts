@@ -16,11 +16,12 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   };
 
-  console.log(data);
-
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: authData, error } = await supabase.auth.signInWithPassword(
+    data
+  );
 
   console.log(error);
+  console.log(authData);
 
   if (error) {
     redirect('/error');

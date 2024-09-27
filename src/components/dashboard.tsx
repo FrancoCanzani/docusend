@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { DocumentUploadDialog } from './document/document-upload-dialog';
@@ -91,8 +92,13 @@ export function Dashboard({ documentMetadata }: DashboardProps) {
     <div className='container mx-auto px-3 py-6 md:px-6 md:py-8 space-y-8'>
       <div className='flex justify-between items-center'>
         <h1 className='text-3xl font-bold'>Documents</h1>
-        <Button size={'sm'} onClick={() => setIsDialogOpen(true)}>
-          Add Document
+        <Button
+          className='bg-blue-800 hover:bg-blue-800/90'
+          size={'sm'}
+          onClick={() => setIsDialogOpen(true)}
+        >
+          <Plus size={16} className='mr-2' />
+          New
         </Button>
       </div>
 

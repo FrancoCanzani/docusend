@@ -15,17 +15,20 @@ import {
 import { useUser } from '@/lib/hooks/use-user';
 
 export default function User() {
-  const { user, loading } = useUser();
+  const { user, isLoading, error } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const supabase = createClient();
   const router = useRouter();
+
+  console.log(user);
+  console.log(error);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className='w-full max-w-md p-2 px-3 mb-2 space-y-4'>
         <div className='flex items-center space-x-4'>

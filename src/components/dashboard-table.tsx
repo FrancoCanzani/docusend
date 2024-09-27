@@ -61,8 +61,6 @@ export default function DashboardTable({
     },
   });
 
-  console.log(documentMetadata);
-
   const handleDeleteDocument = async (
     documentsToDelete: DocumentMetadata[]
   ) => {
