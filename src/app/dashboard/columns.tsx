@@ -1,8 +1,6 @@
-'use client';
-
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Settings2, FileType, FileText, FileSpreadsheet } from 'lucide-react';
+import { Settings2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DocumentMetadata } from '@/lib/types';
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
@@ -17,14 +15,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-const FILE_TYPE_MAP: {
-  [key: string]: { label: string; icon: React.ReactNode };
-} = {
-  pdf: { label: 'PDF', icon: <FileText size={16} /> },
-  excel: { label: 'XLS', icon: <FileSpreadsheet size={16} /> },
-  sheet: { label: 'XLSX', icon: <FileSpreadsheet size={16} /> },
-  csv: { label: 'CSV', icon: <FileText size={16} /> },
-  spreadsheet: { label: 'ODS', icon: <FileSpreadsheet size={16} /> },
+const formatFileSize = (bytes: number): string => {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let size = bytes;
+  let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+  return `${size.toFixed(2)} ${units[unitIndex]}`;
 };
 
 export const columns: ColumnDef<DocumentMetadata>[] = [
@@ -62,43 +61,36 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
         Name
       </button>
     ),
-    cell: ({ row }) => (
-      <Link
-        href={`/document/${row.original.document_id}`}
-        className='font-medium max-w-36 truncate'
-        title={row.getValue('original_name')}
-      >
-        {row.getValue('original_name')}
-      </Link>
-    ),
+    cell: ({ row }) => {
+      const mimeType = row.original.document_type;
+      const documentType = getDocumentTypeFromMIME(mimeType);
+
+      return (
+        <div className='font-medium  flex items-end space-x-1'>
+          <span className='uppercase'>{documentType}</span>
+          <span>‧</span>
+          <Link
+            href={`/document/${row.original.document_id}`}
+            className='max-w-36 truncate'
+            title={row.getValue('original_name')}
+          >
+            {row.getValue('original_name')}
+          </Link>
+        </div>
+      );
+    },
   },
   {
-    accessorKey: 'document_type',
+    accessorKey: 'document_size',
     header: ({ column }) => (
       <button
         className='font-bold'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Type
+        Size
       </button>
     ),
-    cell: ({ row }) => {
-      const mimeType = row.getValue('document_type');
-      if (typeof mimeType !== 'string') {
-        return <div>Unknown</div>;
-      }
-      const documentType = getDocumentTypeFromMIME(mimeType);
-      const { label, icon } = FILE_TYPE_MAP[documentType] || {
-        label: documentType.toUpperCase(),
-        icon: <FileType size={16} />,
-      };
-      return (
-        <div className='flex items-center space-x-2'>
-          {icon}
-          <span>{label}</span>
-        </div>
-      );
-    },
+    cell: ({ row }) => formatFileSize(row.getValue('document_size')),
   },
   {
     accessorKey: 'upload_date',

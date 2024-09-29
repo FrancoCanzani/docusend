@@ -3,14 +3,8 @@
 import Link from 'next/link';
 import { LayoutDashboard, FileText, Users, Settings } from 'lucide-react';
 import User from './user';
-import { DocumentMetadata } from '@/lib/types';
-import { StorageUsage } from './storage-usage';
 
-export function Sidebar({
-  documentMetadata,
-}: {
-  documentMetadata: DocumentMetadata[];
-}) {
+export function Sidebar() {
   return (
     <div className='w-64 bg-white border-r h-screen hidden sm:block'>
       <div className='flex items-center justify-between h-16 px-6 border-b'>

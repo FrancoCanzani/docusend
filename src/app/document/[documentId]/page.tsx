@@ -36,7 +36,7 @@ export default async function Page({
 
   return (
     <div className='flex h-screen text-black'>
-      <Sidebar documentMetadata={documentMetadata} />
+      <Sidebar />
       <div className='flex-1 flex flex-col overflow-hidden'>
         <main className='flex-1 space-y-6 overflow-x-hidden overflow-y-auto bg-gray-50 container mx-auto px-3 py-6 md:px-6 md:py-8'>
           <DocumentMetadata documentMetadata={documentMetadata} />

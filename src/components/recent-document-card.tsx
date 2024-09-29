@@ -18,7 +18,7 @@ export default function RecentDocumentCard({
         <FileText size={17} />
       </div>
       <div className='flex flex-col'>
-        <p className='font-medium'>{document.sanitized_name}</p>
+        <p className='font-medium truncate w-56'>{document.sanitized_name}</p>
         <div className='text-xs text-muted-foreground flex items-center justify-normal gap-x-2'>
           {getFileSize(document.document_size)}
           <p>

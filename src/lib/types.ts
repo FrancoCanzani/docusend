@@ -19,6 +19,13 @@ export type DocumentMetadata = {
   enable_feedback: boolean | null;
   require_nda: boolean | null;
   nda_text: string | null;
+  folder_id: string | null;
+};
+
+export type Folder = {
+  id: string;
+  name: string;
+  user_id: string;
 };
 
 export interface FrontMatter {

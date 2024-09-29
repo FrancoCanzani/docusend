@@ -1,6 +1,5 @@
 'use client';
 
-import { Plus } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { DocumentUploadDialog } from './document/document-upload-dialog';
@@ -97,8 +96,7 @@ export function Dashboard({ documentMetadata }: DashboardProps) {
           size={'sm'}
           onClick={() => setIsDialogOpen(true)}
         >
-          <Plus size={16} className='mr-2' />
-          New
+          New Document
         </Button>
       </div>
 

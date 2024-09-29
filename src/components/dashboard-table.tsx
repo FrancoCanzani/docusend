@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import {
   ColumnFiltersState,
@@ -27,6 +25,15 @@ import { DocumentMetadata } from '@/lib/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
+import { ArrowUpDown } from 'lucide-react';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function DashboardTable({
   documentMetadata,
@@ -125,7 +132,7 @@ export default function DashboardTable({
     <div className='w-full text-black'>
       <div className='flex items-center pb-4 space-x-3'>
         <Input
-          placeholder='Filter documents...'
+          placeholder='Filter by name...'
           value={
             (table.getColumn('original_name')?.getFilterValue() as string) ?? ''
           }
@@ -134,6 +141,46 @@ export default function DashboardTable({
           }
           className='max-w-sm'
         />
+        <Select
+          value={
+            (table.getColumn('document_type')?.getFilterValue() as string) ??
+            'all'
+          }
+          onValueChange={(value) =>
+            table
+              .getColumn('document_type')
+              ?.setFilterValue(value === 'all' ? '' : value)
+          }
+        >
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Filter by type' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>All types</SelectItem>
+            <SelectItem value='pdf'>PDF</SelectItem>
+            <SelectItem value='excel'>Excel</SelectItem>
+            <SelectItem value='csv'>CSV</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={
+            (table.getColumn('is_public')?.getFilterValue() as string) ?? 'all'
+          }
+          onValueChange={(value) =>
+            table
+              .getColumn('is_public')
+              ?.setFilterValue(value === 'all' ? '' : value)
+          }
+        >
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Filter by visibility' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>All</SelectItem>
+            <SelectItem value='true'>Public</SelectItem>
+            <SelectItem value='false'>Private</SelectItem>
+          </SelectContent>
+        </Select>
         <Button
           variant='outline'
           size='sm'
@@ -154,12 +201,17 @@ export default function DashboardTable({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className='h-10'>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
+                      {header.isPlaceholder ? null : (
+                        <div className='flex items-center'>
+                          {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
+                          {header.column.getCanSort() && (
+                            <ArrowUpDown className='ml-2 h-4 w-4' />
+                          )}
+                        </div>
+                      )}
                     </TableHead>
                   );
                 })}
@@ -186,10 +238,7 @@ export default function DashboardTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
+                <TableCell colSpan={columns.length} className='text-center'>
                   No results.
                 </TableCell>
               </TableRow>

@@ -31,7 +31,7 @@ const ACCEPTED_FILE_TYPES = {
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB in bytes
 
-export function DocumentUploadDialog({
+export default function DocumentUploadDialog({
   isOpen,
   onClose,
   onUpload,
