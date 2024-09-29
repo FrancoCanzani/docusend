@@ -19,8 +19,8 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
     <div
       ref={setNodeRef}
       className={`
-        p-2 cursor-pointer rounded-md transition-all duration-200 ease-in-out bg-gray-50
-        ${isActive ? 'bg-blue-100' : 'hover:bg-blue-50'}
+        p-2 cursor-pointer rounded-md transition-all duration-200 ease-in-out border
+        ${isActive ? 'bg-blue-50' : 'hover:bg-blue-50/50'}
         ${isOver ? 'border border-blue-500 bg-blue-50' : ''}
         ${level > 0 ? `ml-${level * 4}` : ''}
       `}
@@ -28,9 +28,9 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
     >
       <div className='flex items-center space-x-2'>
         {folder.id === 'all' ? (
-          <File size={18} className='text-gray-500' />
+          <File size={18} fill='#bfdbfe' stroke='#93c5fd' />
         ) : (
-          <Folder size={18} />
+          <Folder size={18} fill='#bfdbfe' stroke='#93c5fd' />
         )}
         <span className={`flex-grow ${isActive ? 'font-medium' : ''}`}>
           {folder.name}
@@ -55,7 +55,7 @@ function FolderList({
   onFolderClick,
 }: FolderListProps) {
   return (
-    <div className='space-y-1'>
+    <div className='space-y-2 w-full'>
       <h3 className='text-lg font-semibold mb-3'>Folders</h3>
       <FolderItem
         folder={{ id: 'all', name: 'All Documents' }}

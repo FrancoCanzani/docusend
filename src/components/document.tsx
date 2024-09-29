@@ -6,6 +6,7 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { Eye, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { getDocumentTypeFromMime } from '@/lib/helpers/get-document-type';
 
 interface DocumentProps {
   document: DocumentMetadata;
@@ -25,16 +26,18 @@ export default function Document({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className={`bg-white border hover:bg-gray-50 p-2 mb-2 rounded-md shadow-sm transition-all duration-200 ease-in-out ${
+      className={`bg-white border hover:bg-gray-50 p-2.5 mb-2 rounded-md transition-all duration-200 ease-in-out ${
         isDragging ? 'opacity-75' : ''
       }`}
     >
       <div className='flex items-center justify-between'>
-        <div className='flex flex-col min-w-0 flex-1'>
-          <span className='font-medium truncate block text-gray-900'>
-            {document.original_name}
-          </span>
-
+        <div className='flex flex-col space-y-1 min-w-0 flex-1'>
+          <div className='font-medium truncate flex space-x-2 items-center justify-start'>
+            <span className='bg-blue-50 font-semibold p-0.5 rounded-sm border text-xs'>
+              {getDocumentTypeFromMime(document.document_type)}
+            </span>
+            <p>{document.original_name}</p>
+          </div>
           <div className='flex items-center text-xs text-gray-500'>
             <time>
               {formatDistanceToNowStrict(new Date(document.upload_date), {

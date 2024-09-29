@@ -141,11 +141,18 @@ function DragDropDocumentSystem({
         <div className='flex justify-between items-center mb-8'>
           <h2 className='text-2xl font-bold'>Documents</h2>
           <div className='flex items-end space-x-2'>
-            <Button size={'sm'} onClick={() => setIsNewFolderDialogOpen(true)}>
+            <Button
+              size={'sm'}
+              variant={'outline'}
+              className='bg-blue-950 text-white hover:bg-blue-950/90 hover:text-white'
+              onClick={() => setIsNewFolderDialogOpen(true)}
+            >
               New Folder
             </Button>
             <Button
               size={'sm'}
+              variant={'outline'}
+              className='bg-blue-950 text-white hover:bg-blue-950/90 hover:text-white'
               onClick={() => setIsDocumentUploadDialogOpen(true)}
             >
               Upload Document

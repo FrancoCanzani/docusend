@@ -1,19 +1,35 @@
-export const getDocumentTypeFromMIME = (mimeType: string): string => {
-  // Split the MIME type by '/'
-  const parts = mimeType.split('/');
+export function getDocumentTypeFromMime(mimeType: string): string {
+  const [type, subtype] = mimeType.split('/');
 
-  // If there's no '/' in the string, return the original string
-  if (parts.length === 1) return mimeType;
-
-  // Get the last part (which should be the document type)
-  let documentType = parts[parts.length - 1];
-
-  // Special handling for some MIME types
-  if (documentType.startsWith('vnd.')) {
-    // For types like 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    const subParts = documentType.split('.');
-    documentType = subParts[subParts.length - 1];
+  switch (type) {
+    case 'application':
+      switch (subtype) {
+        case 'pdf':
+          return 'PDF';
+        case 'msword':
+        case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
+          return 'Word';
+        case 'vnd.ms-excel':
+        case 'vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+          return 'Excel';
+        case 'vnd.ms-powerpoint':
+        case 'vnd.openxmlformats-officedocument.presentationml.presentation':
+          return 'PowerPoint';
+        case 'zip':
+        case 'x-rar-compressed':
+          return 'Archive';
+        default:
+          return 'Document';
+      }
+    case 'text':
+      return 'Text';
+    case 'image':
+      return 'Image';
+    case 'audio':
+      return 'Audio';
+    case 'video':
+      return 'Video';
+    default:
+      return 'Other';
   }
-
-  return documentType;
-};
+}
