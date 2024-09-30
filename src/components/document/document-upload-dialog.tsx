@@ -9,14 +9,18 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { X, Upload, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
 
 interface DocumentUploadDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onUpload: (file: File, name: string) => void;
+  folderId: string | null;
 }
 
 const ACCEPTED_FILE_TYPES = {
@@ -31,14 +35,33 @@ const ACCEPTED_FILE_TYPES = {
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB in bytes
 
+function getDocumentType(fileName: string): string {
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'xls':
+    case 'xlsx':
+      return 'Excel';
+    case 'csv':
+      return 'CSV';
+    case 'ods':
+      return 'OpenDocument Spreadsheet';
+    case 'pdf':
+      return 'PDF';
+    default:
+      return 'Unknown';
+  }
+}
+
 export default function DocumentUploadDialog({
-  isOpen,
-  onClose,
-  onUpload,
+  folderId,
 }: DocumentUploadDialogProps) {
   const [documentName, setDocumentName] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+  const supabase = createClient();
 
   const onDrop = useCallback(
     (acceptedFiles: File[], fileRejections: FileRejection[]) => {
@@ -69,29 +92,82 @@ export default function DocumentUploadDialog({
     multiple: false,
   });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (file && documentName) {
-      onUpload(file, documentName);
-      onClose();
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) {
+        toast.error('User not authenticated');
+        return;
+      }
+
+      // Generate a unique file name
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2, 15)}.${fileExt}`;
+      const filePath = `${authData.user.id}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (error) {
+        console.error('Error uploading file:', error);
+        toast.error('Error uploading file. Please try again.');
+        return;
+      }
+
+      const documentType = getDocumentType(file.name);
+
+      const { error: documentError } = await supabase
+        .from('document_metadata')
+        .insert([
+          {
+            user_id: authData.user.id,
+            document_id: uuidv4(),
+            original_name: documentName,
+            sanitized_name: documentName,
+            document_path: data.path,
+            document_size: file.size,
+            folder_id: folderId,
+            document_type: documentType,
+            last_modified: new Date().toISOString(),
+          },
+        ]);
+
+      if (documentError) {
+        console.error('Error creating document metadata:', documentError);
+        toast.error('Error saving document information. Please try again.');
+      } else {
+        toast.success('Document uploaded successfully');
+        router.refresh(); // Revalidate and refresh the current route
+        setIsOpen(false);
+      }
     }
   };
 
-  const handleClose = () => {
-    setDocumentName('');
-    setFile(null);
-    setError(null);
-    onClose();
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          size={'sm'}
+          variant={'outline'}
+          className='bg-blue-950 text-white hover:bg-blue-950/90 hover:text-white'
+        >
+          Upload Document
+        </Button>
+      </DialogTrigger>
+      <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>Add New Document</DialogTitle>
           <DialogDescription>
-            Upload a new document to your DocuSend account. Supported file
-            types: XLS, XLSX, CSV, ODS, PDF. Maximum file size: 50 MB.
+            Upload a new document to your DocuSend account.
+            {folderId
+              ? 'The document will be uploaded to the selected folder.'
+              : 'The document will be uploaded to the root folder.'}
+            Supported file types: XLS, XLSX, CSV, ODS, PDF. Maximum file size:
+            50 MB.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className='space-y-4'>
@@ -143,13 +219,11 @@ export default function DocumentUploadDialog({
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          <Button
-            type='submit'
-            className='w-full'
-            disabled={!file || !documentName}
-          >
-            Upload Document
-          </Button>
+          <DialogFooter>
+            <Button type='submit' disabled={!file || !documentName}>
+              Upload Document
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

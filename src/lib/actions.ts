@@ -3,8 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from './supabase/server';
-import { viewDataSchema } from './schemas';
-import { z } from 'zod';
 
 export async function login(formData: FormData) {
   const supabase = createClient();
@@ -209,4 +207,49 @@ export async function saveDocumentSettings(
 
   revalidatePath('/dashboard');
   return { success: true };
+}
+
+export async function deleteFolder(folderId: string) {
+  const supabase = createClient();
+
+  try {
+    // 1. Fetch documents in the folder
+    const { data: documents, error: fetchError } = await supabase
+      .from('document_metadata')
+      .select('document_path')
+      .eq('folder_id', folderId);
+
+    if (fetchError) throw fetchError;
+
+    // 2. Delete files from the storage bucket
+    if (documents && documents.length > 0) {
+      const filePaths = documents.map((doc) => doc.document_path);
+      const { error: deleteStorageError } = await supabase.storage
+        .from('documents')
+        .remove(filePaths);
+
+      if (deleteStorageError) throw deleteStorageError;
+    }
+
+    // 3. Delete document metadata
+    const { error: metadataError } = await supabase
+      .from('document_metadata')
+      .delete()
+      .eq('folder_id', folderId);
+
+    if (metadataError) throw metadataError;
+
+    // 4. Delete the folder
+    const { error: folderError } = await supabase
+      .from('folders')
+      .delete()
+      .eq('id', folderId);
+
+    if (folderError) throw folderError;
+  } catch (err) {
+    console.error('Error deleting folder:', err);
+    throw err;
+  } finally {
+    revalidatePath('/dashboard');
+  }
 }

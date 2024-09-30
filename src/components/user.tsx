@@ -20,9 +20,6 @@ export default function User() {
   const supabase = createClient();
   const router = useRouter();
 
-  console.log(user);
-  console.log(error);
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');

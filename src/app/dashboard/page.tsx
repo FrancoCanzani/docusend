@@ -1,6 +1,8 @@
+import React from 'react';
 import { Sidebar } from '@/components/sidebar';
-import DragDropDocumentSystem from '@/components/drag-and-drop-document-system';
+import Dashboard from '@/components/dashboard';
 import { createClient } from '@/lib/supabase/server';
+import { DocumentMetadata, Folder } from '@/lib/types';
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -29,14 +31,12 @@ export default async function DashboardPage() {
   return (
     <div className='flex h-screen'>
       <Sidebar />
-      <div className='flex-1 flex flex-col overflow-hidden'>
-        <main className='flex-1 overflow-x-hidden overflow-y-auto'>
-          <DragDropDocumentSystem
-            initialDocuments={docsData || []}
-            initialFolders={foldersData || []}
-          />
-        </main>
-      </div>
+      <main className='flex-1 p-4'>
+        <Dashboard
+          documents={(docsData as DocumentMetadata[]) || []}
+          folders={(foldersData as Folder[]) || []}
+        />
+      </main>
     </div>
   );
 }

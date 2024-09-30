@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
-import { Folder, ChevronRight, File } from 'lucide-react';
+import { Folder, File, Trash } from 'lucide-react';
 import { Folder as FolderType } from '@/lib/types';
+import { DeleteFolderDialog } from './delete-folder-dialog';
 
 interface FolderItemProps {
   folder: FolderType | { id: 'all'; name: 'All Documents' };
@@ -19,7 +20,7 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
     <div
       ref={setNodeRef}
       className={`
-        p-2 cursor-pointer rounded-md transition-all duration-200 ease-in-out border
+        p-2 cursor-pointer group rounded-md transition-all duration-200 ease-in-out border
         ${isActive ? 'bg-blue-50' : 'hover:bg-blue-50/50'}
         ${isOver ? 'border border-blue-500 bg-blue-50' : ''}
         ${level > 0 ? `ml-${level * 4}` : ''}
@@ -28,15 +29,22 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
     >
       <div className='flex items-center space-x-2'>
         {folder.id === 'all' ? (
-          <File size={18} fill='#bfdbfe' stroke='#93c5fd' />
+          <File size={18} fill='#171717' stroke='#171717' />
         ) : (
-          <Folder size={18} fill='#bfdbfe' stroke='#93c5fd' />
+          <Folder size={18} fill='#171717' stroke='#171717' />
         )}
         <span className={`flex-grow ${isActive ? 'font-medium' : ''}`}>
           {folder.name}
         </span>
         {folder.id !== 'all' && (
-          <ChevronRight size={16} className='text-gray-400' />
+          <DeleteFolderDialog folder={folder}>
+            <button
+              aria-label='Delete folder'
+              className='p-1 hover:bg-red-100 rounded-md sm:hidden group-hover:block '
+            >
+              <Trash size={16} className='text-red-600' />
+            </button>
+          </DeleteFolderDialog>
         )}
       </div>
     </div>
@@ -57,19 +65,21 @@ function FolderList({
   return (
     <div className='space-y-2 w-full'>
       <h3 className='text-lg font-semibold mb-3'>Folders</h3>
-      <FolderItem
-        folder={{ id: 'all', name: 'All Documents' }}
-        isActive={!activeFolderId}
-        onClick={() => onFolderClick(null)}
-      />
-      {folders.map((folder) => (
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3'>
         <FolderItem
-          key={folder.id}
-          folder={folder}
-          isActive={activeFolderId === folder.id}
-          onClick={() => onFolderClick(folder.id)}
+          folder={{ id: 'all', name: 'All Documents' }}
+          isActive={!activeFolderId}
+          onClick={() => onFolderClick(null)}
         />
-      ))}
+        {folders.map((folder) => (
+          <FolderItem
+            key={folder.id}
+            folder={folder}
+            isActive={activeFolderId === folder.id}
+            onClick={() => onFolderClick(folder.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }

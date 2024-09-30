@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import {
   ColumnFiltersState,
@@ -21,25 +23,23 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { columns } from '@/app/dashboard/columns';
-import { DocumentMetadata } from '@/lib/types';
+import { DocumentMetadata, Folder } from '@/lib/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { ArrowUpDown } from 'lucide-react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+interface DashboardTableProps {
+  documentMetadata: DocumentMetadata[];
+  folders: Folder[];
+  activeFolderId: string | null;
+}
 
 export default function DashboardTable({
   documentMetadata,
-}: {
-  documentMetadata: DocumentMetadata[];
-}) {
+  folders,
+  activeFolderId,
+}: DashboardTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -65,6 +65,9 @@ export default function DashboardTable({
       columnFilters,
       columnVisibility,
       rowSelection,
+    },
+    meta: {
+      folders,
     },
   });
 
@@ -128,8 +131,49 @@ export default function DashboardTable({
     });
   };
 
+  const handleMoveToFolder = async () => {
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    const documentsToMove = selectedRows.map((row) => row.original);
+
+    if (documentsToMove.length === 0) {
+      toast.error('No documents selected to move');
+      return;
+    }
+
+    const folderToMoveTo = prompt(
+      'Enter the ID of the folder to move to (or leave empty for root):'
+    );
+
+    if (folderToMoveTo === null) return; // User cancelled the prompt
+
+    const folderId = folderToMoveTo === '' ? null : folderToMoveTo;
+
+    const { error } = await supabase
+      .from('document_metadata')
+      .update({ folder_id: folderId })
+      .in(
+        'document_id',
+        documentsToMove.map((document) => document.document_id)
+      );
+
+    if (error) {
+      console.error('Error moving documents:', error);
+      toast.error('Failed to move documents. Please try again.');
+    } else {
+      toast.success(
+        `Successfully moved ${documentsToMove.length} document(s).`
+      );
+      window.location.reload();
+    }
+  };
+
+  const activeFolder = folders.find((f) => f.id === activeFolderId);
+  const tableName = activeFolder ? activeFolder.name : 'All Documents';
+
   return (
     <div className='w-full text-black'>
+      <h3 className='text-lg font-semibold mb-3'>{tableName}</h3>
+
       <div className='flex items-center pb-4 space-x-3'>
         <Input
           placeholder='Filter by name...'
@@ -141,46 +185,6 @@ export default function DashboardTable({
           }
           className='max-w-sm'
         />
-        <Select
-          value={
-            (table.getColumn('document_type')?.getFilterValue() as string) ??
-            'all'
-          }
-          onValueChange={(value) =>
-            table
-              .getColumn('document_type')
-              ?.setFilterValue(value === 'all' ? '' : value)
-          }
-        >
-          <SelectTrigger className='w-[180px]'>
-            <SelectValue placeholder='Filter by type' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>All types</SelectItem>
-            <SelectItem value='pdf'>PDF</SelectItem>
-            <SelectItem value='excel'>Excel</SelectItem>
-            <SelectItem value='csv'>CSV</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={
-            (table.getColumn('is_public')?.getFilterValue() as string) ?? 'all'
-          }
-          onValueChange={(value) =>
-            table
-              .getColumn('is_public')
-              ?.setFilterValue(value === 'all' ? '' : value)
-          }
-        >
-          <SelectTrigger className='w-[180px]'>
-            <SelectValue placeholder='Filter by visibility' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>All</SelectItem>
-            <SelectItem value='true'>Public</SelectItem>
-            <SelectItem value='false'>Private</SelectItem>
-          </SelectContent>
-        </Select>
         <Button
           variant='outline'
           size='sm'
@@ -191,6 +195,17 @@ export default function DashboardTable({
           )}
         >
           Delete Selected
+        </Button>
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={handleMoveToFolder}
+          className={cn(
+            'text-blue-500 border-blue-500 hover:text-blue-600 hover:bg-blue-50',
+            table.getFilteredSelectedRowModel().rows.length === 0 && 'hidden'
+          )}
+        >
+          Move to Folder
         </Button>
       </div>
       <div className='rounded-md border'>
@@ -223,11 +238,10 @@ export default function DashboardTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className='hover:bg-gray-50'
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className='py-2.5'>
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -238,7 +252,7 @@ export default function DashboardTable({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className='text-center'>
+                <TableCell colSpan={columns.length + 1} className='text-center'>
                   No results.
                 </TableCell>
               </TableRow>

@@ -2,9 +2,9 @@ import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Settings2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DocumentMetadata } from '@/lib/types';
+import { DocumentMetadata, Folder } from '@/lib/types';
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
-import { getDocumentTypeFromMIME } from '@/lib/helpers/get-document-type';
+import { getDocumentTypeFromMime } from '@/lib/helpers/get-document-type';
 import Link from 'next/link';
 import DocumentSettingsSheet from '@/components/document-settings-sheet';
 import { Badge } from '@/components/ui/badge';
@@ -63,10 +63,10 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     ),
     cell: ({ row }) => {
       const mimeType = row.original.document_type;
-      const documentType = getDocumentTypeFromMIME(mimeType);
+      const documentType = getDocumentTypeFromMime(mimeType);
 
       return (
-        <div className='font-medium  flex items-end space-x-1'>
+        <div className='font-medium flex items-end space-x-1'>
           <span className='uppercase'>{documentType}</span>
           <span>‧</span>
           <Link
@@ -138,6 +138,25 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
         {row.original.is_public ? 'Public' : 'Private'}
       </Badge>
     ),
+  },
+  {
+    accessorKey: 'folder_id',
+    header: ({ column }) => (
+      <button
+        className='font-bold'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Folder
+      </button>
+    ),
+    cell: ({ row, table }) => {
+      const folderId = row.getValue('folder_id') as string | null;
+      const folders = (table.options.meta as { folders: Folder[] }).folders;
+      const folderName = folderId
+        ? folders.find((f) => f.id === folderId)?.name || 'Unknown'
+        : 'None';
+      return <span>{folderName}</span>;
+    },
   },
   {
     id: 'actions',
