@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 
 export function CreateFolderDialog() {
   const [newFolderName, setNewFolderName] = useState('');
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -40,11 +41,12 @@ export function CreateFolderDialog() {
     } else if (data) {
       setNewFolderName('');
       router.refresh();
+      setOpen(false);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size={'sm'} variant={'outline'}>
           New Folder
@@ -72,7 +74,9 @@ export function CreateFolderDialog() {
           />
         </form>
         <DialogFooter>
-          <Button type='submit'>Create Folder</Button>
+          <Button type='submit' onClick={handleNewFolderCreated}>
+            Create Folder
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

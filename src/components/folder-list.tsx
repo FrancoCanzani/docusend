@@ -33,7 +33,7 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
         ) : (
           <Folder size={18} fill='#171717' stroke='#171717' />
         )}
-        <span className={`flex-grow ${isActive ? 'font-medium' : ''}`}>
+        <span className={`flex-grow truncate ${isActive ? 'font-medium' : ''}`}>
           {folder.name}
         </span>
         {folder.id !== 'all' && (
