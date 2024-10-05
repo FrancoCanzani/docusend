@@ -1,6 +1,6 @@
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Settings2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DocumentMetadata, Folder } from '@/lib/types';
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
@@ -15,6 +15,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { formatFileSize } from '@/lib/helpers/format-file-size';
+
+const renderSortIcon = (column: any) => {
+  if (column.getIsSorted() === 'desc') {
+    return <ArrowDown size={14} className='ml-1' />;
+  } else if (column.getIsSorted() === 'asc') {
+    return <ArrowUp size={14} className='ml-1' />;
+  }
+  return null;
+};
 
 export const columns: ColumnDef<DocumentMetadata>[] = [
   {
@@ -45,10 +54,11 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     accessorKey: 'original_name',
     header: ({ column }) => (
       <button
-        className='font-bold'
+        className='font-bold flex items-center'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Name
+        {renderSortIcon(column)}
       </button>
     ),
     cell: ({ row }) => {
@@ -74,22 +84,28 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     accessorKey: 'document_size',
     header: ({ column }) => (
       <button
-        className='font-bold'
+        className='font-bold lg:flex items-center hidden'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Size
+        {renderSortIcon(column)}
       </button>
     ),
-    cell: ({ row }) => formatFileSize(row.getValue('document_size')),
+    cell: ({ row }) => (
+      <span className='hidden lg:block'>
+        {formatFileSize(row.getValue('document_size'))}
+      </span>
+    ),
   },
   {
     accessorKey: 'upload_date',
     header: ({ column }) => (
       <button
-        className='font-bold'
+        className='font-bold lg:flex items-center hidden'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Uploaded
+        {renderSortIcon(column)}
       </button>
     ),
     cell: ({ row }) => {
@@ -101,11 +117,11 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <time>
+              <time className='hidden lg:block'>
                 {formatDistanceToNowStrict(date, { addSuffix: true })}
               </time>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className='hidden lg:block'>
               <p>{format(date, 'PPP')}</p>
             </TooltipContent>
           </Tooltip>
@@ -117,10 +133,11 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     accessorKey: 'is_public',
     header: ({ column }) => (
       <button
-        className='font-bold'
+        className='font-bold flex items-center'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Visibility
+        {renderSortIcon(column)}
       </button>
     ),
     cell: ({ row }) => (
@@ -133,10 +150,11 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     accessorKey: 'folder_id',
     header: ({ column }) => (
       <button
-        className='font-bold'
+        className='font-bold items-center hidden lg:flex'
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Folder
+        {renderSortIcon(column)}
       </button>
     ),
     cell: ({ row, table }) => {
@@ -145,7 +163,7 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
       const folderName = folderId
         ? folders.find((f) => f.id === folderId)?.name || 'Unknown'
         : 'None';
-      return <span>{folderName}</span>;
+      return <span className='hidden lg:block'>{folderName}</span>;
     },
   },
   {

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useCallback } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
@@ -12,7 +14,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { X, Upload, AlertCircle } from 'lucide-react';
+import { X, Upload, AlertCircle, File } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -59,6 +61,7 @@ export default function DocumentUploadDialog({
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const router = useRouter();
   const supabase = createClient();
@@ -95,13 +98,14 @@ export default function DocumentUploadDialog({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (file && documentName) {
+      setIsUploading(true);
       const { data: authData } = await supabase.auth.getUser();
       if (!authData.user) {
         toast.error('User not authenticated');
+        setIsUploading(false);
         return;
       }
 
-      // Generate a unique file name
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random()
         .toString(36)
@@ -115,6 +119,7 @@ export default function DocumentUploadDialog({
       if (error) {
         console.error('Error uploading file:', error);
         toast.error('Error uploading file. Please try again.');
+        setIsUploading(false);
         return;
       }
 
@@ -141,51 +146,60 @@ export default function DocumentUploadDialog({
         toast.error('Error saving document information. Please try again.');
       } else {
         toast.success('Document uploaded successfully');
-        router.refresh(); // Revalidate and refresh the current route
+        router.refresh();
         setIsOpen(false);
       }
+      setIsUploading(false);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size={'sm'} variant={'outline'}>
+        <Button size='sm' variant='outline'>
           Upload Document
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
-          <DialogTitle>Add New Document</DialogTitle>
+          <DialogTitle className='flex items-center'>
+            Add New Document
+          </DialogTitle>
           <DialogDescription>
             Upload a new document to your DocuSend account.
-            {folderId
-              ? 'The document will be uploaded to the selected folder.'
-              : 'The document will be uploaded to the root folder.'}
-            Supported file types: XLS, XLSX, CSV, ODS, PDF. Maximum file size:
-            50 MB.
+            <span className='font-semibold text-black'>
+              {folderId
+                ? ' The document will be uploaded to the selected folder.'
+                : ' The document will be uploaded to the root folder.'}
+            </span>
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div>
+        <form onSubmit={handleSubmit} className='space-y-6'>
+          <div className='space-y-2'>
             <Label htmlFor='documentName'>Document Name</Label>
             <Input
               id='documentName'
               value={documentName}
               onChange={(e) => setDocumentName(e.target.value)}
               placeholder='Enter document name'
+              className='w-full'
             />
           </div>
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-md p-4 text-center cursor-pointer ${
-              isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+            className={`border border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors duration-200 ${
+              isDragActive
+                ? 'border-primary bg-primary/5'
+                : 'border-muted hover:border-primary/50'
             }`}
           >
             <input {...getInputProps()} />
             {file ? (
               <div className='flex items-center justify-between'>
-                <span>{file.name}</span>
+                <div className='flex items-center'>
+                  <File className='w-4 h-4 text-primary mr-3' />
+                  <span className='text-sm font-medium'>{file.name}</span>
+                </div>
                 <Button
                   type='button'
                   variant='ghost'
@@ -194,16 +208,19 @@ export default function DocumentUploadDialog({
                     e.stopPropagation();
                     setFile(null);
                     setError(null);
+                    setDocumentName('');
                   }}
                 >
-                  <X className='h-4 w-4' />
+                  <X className='w-4 h-4' />
                 </Button>
               </div>
             ) : (
               <div className='flex flex-col items-center'>
-                <Upload className='h-10 w-10 text-gray-400 mb-2' />
-                <p>Drag & drop a file here, or click to select a file</p>
-                <p className='text-sm text-gray-500 mt-1'>
+                <Upload className='w-6 h-6 text-muted-foreground mb-3' />
+                <p className='text-sm font-medium mb-1'>
+                  Drag & drop a file here, or click to select a file
+                </p>
+                <p className='text-xs text-muted-foreground'>
                   Supported files: XLS, XLSX, CSV, ODS, PDF (max 50 MB)
                 </p>
               </div>
@@ -211,13 +228,16 @@ export default function DocumentUploadDialog({
           </div>
           {error && (
             <Alert variant='destructive'>
-              <AlertCircle className='h-4 w-4' />
+              <AlertCircle className='w-4 h-4' />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           <DialogFooter>
-            <Button type='submit' disabled={!file || !documentName}>
-              Upload Document
+            <Button
+              type='submit'
+              disabled={!file || !documentName || isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Upload Document'}
             </Button>
           </DialogFooter>
         </form>

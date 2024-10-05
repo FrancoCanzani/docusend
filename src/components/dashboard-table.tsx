@@ -27,7 +27,6 @@ import { DocumentMetadata, Folder } from '@/lib/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
-import { ArrowUpDown } from 'lucide-react';
 import { MoveToFolderDialog } from './move-to-folder-dialog';
 
 interface DashboardTableProps {
@@ -187,9 +186,6 @@ export default function DashboardTable({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                          {header.column.getCanSort() && (
-                            <ArrowUpDown className='ml-2 h-4 w-4' />
-                          )}
                         </div>
                       )}
                     </TableHead>
@@ -206,7 +202,7 @@ export default function DashboardTable({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className='py-2.5'>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
