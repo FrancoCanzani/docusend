@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { DocumentMetadata } from '@/lib/types';
-import formatFileSize from '@/lib/helpers/format-file-size';
+import { formatFileSize } from '@/lib/helpers/format-file-size';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { Eye, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
