@@ -150,11 +150,7 @@ export default function DocumentUploadDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button
-          size={'sm'}
-          variant={'outline'}
-          className='bg-blue-950 text-white hover:bg-blue-950/90 hover:text-white'
-        >
+        <Button size={'sm'} variant={'outline'}>
           Upload Document
         </Button>
       </DialogTrigger>

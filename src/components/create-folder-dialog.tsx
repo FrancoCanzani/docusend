@@ -46,11 +46,7 @@ export function CreateFolderDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          size={'sm'}
-          variant={'outline'}
-          className='bg-blue-950 text-white hover:bg-blue-950/90 hover:text-white'
-        >
+        <Button size={'sm'} variant={'outline'}>
           New Folder
         </Button>
       </DialogTrigger>

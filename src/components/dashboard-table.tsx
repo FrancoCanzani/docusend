@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { ArrowUpDown } from 'lucide-react';
+import { MoveToFolderDialog } from './move-to-folder-dialog';
 
 interface DashboardTableProps {
   documentMetadata: DocumentMetadata[];
@@ -131,44 +132,12 @@ export default function DashboardTable({
     });
   };
 
-  const handleMoveToFolder = async () => {
-    const selectedRows = table.getFilteredSelectedRowModel().rows;
-    const documentsToMove = selectedRows.map((row) => row.original);
-
-    if (documentsToMove.length === 0) {
-      toast.error('No documents selected to move');
-      return;
-    }
-
-    const folderToMoveTo = prompt(
-      'Enter the ID of the folder to move to (or leave empty for root):'
-    );
-
-    if (folderToMoveTo === null) return; // User cancelled the prompt
-
-    const folderId = folderToMoveTo === '' ? null : folderToMoveTo;
-
-    const { error } = await supabase
-      .from('document_metadata')
-      .update({ folder_id: folderId })
-      .in(
-        'document_id',
-        documentsToMove.map((document) => document.document_id)
-      );
-
-    if (error) {
-      console.error('Error moving documents:', error);
-      toast.error('Failed to move documents. Please try again.');
-    } else {
-      toast.success(
-        `Successfully moved ${documentsToMove.length} document(s).`
-      );
-      window.location.reload();
-    }
-  };
-
   const activeFolder = folders.find((f) => f.id === activeFolderId);
   const tableName = activeFolder ? activeFolder.name : 'All Documents';
+
+  const selectedDocuments = table
+    .getFilteredSelectedRowModel()
+    .rows.map((row) => row.original);
 
   return (
     <div className='w-full text-black'>
@@ -196,17 +165,13 @@ export default function DashboardTable({
         >
           Delete Selected
         </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          onClick={handleMoveToFolder}
-          className={cn(
-            'text-blue-500 border-blue-500 hover:text-blue-600 hover:bg-blue-50',
-            table.getFilteredSelectedRowModel().rows.length === 0 && 'hidden'
-          )}
-        >
-          Move to Folder
-        </Button>
+        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+          <MoveToFolderDialog
+            documents={selectedDocuments}
+            folders={folders}
+            onMoveSuccess={() => window.location.reload()}
+          />
+        )}
       </div>
       <div className='rounded-md border'>
         <Table>

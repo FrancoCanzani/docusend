@@ -31,7 +31,7 @@ export default async function DashboardPage() {
   return (
     <div className='flex h-screen'>
       <Sidebar />
-      <main className='flex-1 p-4'>
+      <main className='flex-1 p-4 overflow-auto'>
         <Dashboard
           documents={(docsData as DocumentMetadata[]) || []}
           folders={(foldersData as Folder[]) || []}

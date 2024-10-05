@@ -14,17 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-
-const formatFileSize = (bytes: number): string => {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  let size = bytes;
-  let unitIndex = 0;
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
-    unitIndex++;
-  }
-  return `${size.toFixed(2)} ${units[unitIndex]}`;
-};
+import { formatFileSize } from '@/lib/helpers/format-file-size';
 
 export const columns: ColumnDef<DocumentMetadata>[] = [
   {
