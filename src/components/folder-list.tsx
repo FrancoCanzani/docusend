@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDroppable } from '@dnd-kit/core';
 import { Folder, File, Trash } from 'lucide-react';
 import { Folder as FolderType } from '@/lib/types';
 import { DeleteFolderDialog } from './delete-folder-dialog';
@@ -12,17 +11,11 @@ interface FolderItemProps {
 }
 
 function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
-  const { setNodeRef, isOver } = useDroppable({
-    id: folder.id,
-  });
-
   return (
     <div
-      ref={setNodeRef}
       className={`
         p-2 cursor-pointer group rounded-md transition-all duration-200 ease-in-out border
-        ${isActive ? 'bg-blue-50' : 'hover:bg-blue-50/50'}
-        ${isOver ? 'border border-blue-500 bg-blue-50' : ''}
+        ${isActive ? 'bg-gray-50' : 'hover:bg-gray-50/50'}
         ${level > 0 ? `ml-${level * 4}` : ''}
       `}
       onClick={onClick}

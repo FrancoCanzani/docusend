@@ -76,47 +76,47 @@ export default function PDFViewer({
   }, []);
 
   return (
-    <div
-      className='flex flex-col items-center w-full mx-auto'
-      style={{ height: 'calc(100vh - 64px)' }}
-    >
-      <div className='flex items-center justify-end w-full pb-4 px-4 space-x-2'>
-        {documentMetadata.enable_feedback && (
-          <DocumentFeedbackForm
-            documentId={documentMetadata.document_id}
-            user={user}
-          />
-        )}
-        <Button
-          onClick={handleZoomOut}
-          size='icon'
-          variant='outline'
-          className='h-8 w-8'
-        >
-          <ZoomOut className='h-4 w-4' />
-        </Button>
-        <Button
-          onClick={handleZoomIn}
-          size='icon'
-          variant='outline'
-          className='h-8 w-8'
-        >
-          <ZoomIn className='h-4 w-4' />
-        </Button>
-        <Button
-          onClick={() => setScale(1)}
-          size='icon'
-          variant='outline'
-          className='h-8 w-8'
-        >
-          <Minimize className='h-4 w-4' />
-        </Button>
-        {documentMetadata.allow_download && (
-          <DownloadDocumentButton
-            documentName={documentMetadata.sanitized_name}
-            documentPath={documentMetadata.document_path}
-          />
-        )}
+    <div className='flex flex-col items-center w-full mx-auto'>
+      <div className='flex items-center justify-between w-full p-4'>
+        <h1 className='text-xl font-bold'>{documentMetadata.original_name}</h1>
+        <div className='space-x-2'>
+          {documentMetadata.enable_feedback && (
+            <DocumentFeedbackForm
+              documentId={documentMetadata.document_id}
+              user={user}
+            />
+          )}
+          <Button
+            onClick={handleZoomOut}
+            size='icon'
+            variant='outline'
+            className='h-8 w-8'
+          >
+            <ZoomOut className='h-4 w-4' />
+          </Button>
+          <Button
+            onClick={handleZoomIn}
+            size='icon'
+            variant='outline'
+            className='h-8 w-8'
+          >
+            <ZoomIn className='h-4 w-4' />
+          </Button>
+          <Button
+            onClick={() => setScale(1)}
+            size='icon'
+            variant='outline'
+            className='h-8 w-8'
+          >
+            <Minimize className='h-4 w-4' />
+          </Button>
+          {documentMetadata.allow_download && (
+            <DownloadDocumentButton
+              documentName={documentMetadata.sanitized_name}
+              documentPath={documentMetadata.document_path}
+            />
+          )}
+        </div>
       </div>
       <div
         ref={containerRef}
@@ -138,7 +138,7 @@ export default function PDFViewer({
             <ChevronRight className='h-10 w-10' aria-hidden='true' />
           </button>
         </div>
-        <div className='flex justify-center'>
+        <div className='flex justify-center pb-6'>
           <Document
             file={documentUrl}
             onLoadSuccess={onDocumentLoadSuccess}

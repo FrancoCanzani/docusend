@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { FolderPlus } from 'lucide-react';
 
 export function CreateFolderDialog() {
   const [newFolderName, setNewFolderName] = useState('');
@@ -49,7 +50,8 @@ export function CreateFolderDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size={'sm'} variant={'outline'}>
-          New Folder
+          <FolderPlus size={22} className='sm:hidden' />
+          <span className='hidden sm:block'>New Folder</span>
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px] space-y-2'>

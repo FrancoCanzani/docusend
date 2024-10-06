@@ -21,6 +21,7 @@ import {
 import { DocumentMetadata, Folder } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface MoveToFolderDialogProps {
   documents: DocumentMetadata[];
@@ -36,6 +37,7 @@ export function MoveToFolderDialog({
   const [open, setOpen] = useState(false);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const supabase = createClient();
+  const router = useRouter();
 
   const handleMove = async () => {
     if (documents.length === 0) {
@@ -55,9 +57,9 @@ export function MoveToFolderDialog({
       console.error('Error moving documents:', error);
       toast.error('Failed to move documents. Please try again.');
     } else {
-      toast.success(`Successfully moved ${documents.length} document(s).`);
       onMoveSuccess();
       setOpen(false);
+      router.refresh();
     }
   };
 

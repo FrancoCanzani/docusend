@@ -75,11 +75,28 @@ export default function SpreadsheetViewer({
   }
 
   return (
-    <div className='flex flex-col w-full h-[calc(100vh-4rem)] max-w-6xl mx-auto'>
+    <div className='flex flex-col w-full h-[calc(100vh-4rem)] mx-auto'>
+      <div className='flex items-center justify-between w-full p-4'>
+        <h1 className='text-xl font-bold'>{documentMetadata.original_name}</h1>
+        <div className='space-x-2'>
+          {documentMetadata.allow_download && (
+            <DownloadDocumentButton
+              documentName={documentMetadata.sanitized_name}
+              documentPath={documentMetadata.document_path}
+            />
+          )}
+          {documentMetadata.enable_feedback && (
+            <DocumentFeedbackForm
+              documentId={documentMetadata.document_id}
+              user={user}
+            />
+          )}
+        </div>
+      </div>
       <Tabs
         value={currentSheet}
         onValueChange={setCurrentSheet}
-        className='w-full h-full'
+        className='max-w-6xl h-full mx-auto'
       >
         {sheetNames.map((name) => (
           <TabsContent
@@ -126,20 +143,6 @@ export default function SpreadsheetViewer({
               <ScrollBar orientation='horizontal' />
             </ScrollArea>
             <TabsList className='w-full justify-start overflow-x-auto rounded-sm'>
-              {documentMetadata.allow_download && (
-                <DownloadDocumentButton
-                  documentName={documentMetadata.sanitized_name}
-                  documentPath={documentMetadata.document_path}
-                  className='border-none p-2'
-                />
-              )}
-              {documentMetadata.enable_feedback && (
-                <DocumentFeedbackForm
-                  documentId={documentMetadata.document_id}
-                  user={user}
-                  className='border-none p-2'
-                />
-              )}
               {sheetNames.map((name) => (
                 <TabsTrigger key={name} value={name} className='p-2'>
                   {name}

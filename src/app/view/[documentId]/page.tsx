@@ -6,7 +6,6 @@ import EmailForm from '@/components/forms/email_form';
 import PasswordForm from '@/components/forms/password_form';
 import NDAForm from '@/components/forms/nda_form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import DocumentWatermark from '@/components/document/document-watermark';
 
 export default async function DocumentViewerPage({
   params,
@@ -87,14 +86,10 @@ export default async function DocumentViewerPage({
 
     return (
       <div className='container mx-auto'>
-        <h1 className='text-xl font-bold pt-6'>
-          {documentMetadata.original_name}
-        </h1>
         <DocumentViewer
           documentUrl={documentUrl}
           documentMetadata={documentMetadata}
         />
-        <DocumentWatermark />
       </div>
     );
   } catch (error) {

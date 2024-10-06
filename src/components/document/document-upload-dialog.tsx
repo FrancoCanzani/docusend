@@ -14,7 +14,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { X, Upload, AlertCircle, File } from 'lucide-react';
+import { X, Upload, AlertCircle, File, FilePlus } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -156,8 +156,9 @@ export default function DocumentUploadDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size='sm' variant='outline'>
-          Upload Document
+        <Button size={'sm'} variant={'outline'}>
+          <FilePlus size={22} className='sm:hidden' />
+          <span className='hidden sm:block'>Upload Document</span>
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[500px]'>
