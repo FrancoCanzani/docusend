@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import DocumentMetadata from '@/components/document/document-metadata';
 import { Sidebar } from '@/components/sidebar';
 import DocumentFeedback from '@/components/document/document-feedback';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
+import DocumentHeader from '@/components/document/document-header';
 import DocumentViews from '@/components/document/document-views';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MessageCircleOff, EyeOff } from 'lucide-react';
@@ -37,10 +36,9 @@ export default async function Page({
   return (
     <div className='flex h-screen text-black'>
       <Sidebar />
-      <div className='flex-1 flex flex-col overflow-hidden'>
-        <main className='flex-1 space-y-6 overflow-x-hidden overflow-y-auto bg-gray-50 container mx-auto px-3 py-6 md:px-6 md:py-8'>
-          <DocumentMetadata documentMetadata={documentMetadata} />
-          <Separator />
+      <div className='flex-1 flex flex-col overflow-hidden p-4'>
+        <main className='flex-1 space-y-6 overflow-x-hidden overflow-y-auto container mx-auto'>
+          <DocumentHeader documentMetadata={documentMetadata} />
           <Tabs defaultValue='views' className='w-full'>
             <TabsList className='text-base lg:text-lg'>
               <TabsTrigger value='views'>Views</TabsTrigger>

@@ -18,9 +18,6 @@ export async function login(formData: FormData) {
     data
   );
 
-  console.log(error);
-  console.log(authData);
-
   if (error) {
     redirect('/error');
   }

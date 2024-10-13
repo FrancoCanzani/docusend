@@ -75,7 +75,7 @@ export default function SpreadsheetViewer({
   }
 
   return (
-    <div className='flex flex-col w-full h-[calc(100vh-4rem)] mx-auto'>
+    <div className='flex flex-col overflow-auto w-full mx-auto'>
       <div className='flex items-center justify-between w-full p-4'>
         <h1 className='text-xl font-bold'>{documentMetadata.original_name}</h1>
         <div className='space-x-2'>
@@ -102,9 +102,9 @@ export default function SpreadsheetViewer({
           <TabsContent
             key={name}
             value={name}
-            className='border bg-white text-black rounded-b-lg flex-grow relative'
+            className='border bg-white text-black rounded-b-sm flex-grow relative'
           >
-            <ScrollArea className='h-[calc(100vh-8rem)] w-full'>
+            <ScrollArea className='h-[calc(100vh-9rem)] w-full'>
               <div className='min-w-max'>
                 <table className='w-full border-collapse'>
                   <thead>
