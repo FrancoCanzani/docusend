@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { formatDate } from 'date-fns';
 
 type FeedbackItem = {
   id: string;
@@ -21,14 +22,6 @@ export default function DocumentFeedback({ feedback }: DocumentFeedbackProps) {
     {}
   );
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   const truncateMessage = (message: string, maxLength: number = 100) => {
     return message.length > maxLength
       ? `${message.slice(0, maxLength)}...`
@@ -47,7 +40,7 @@ export default function DocumentFeedback({ feedback }: DocumentFeedbackProps) {
         {displayedFeedback.map((item) => (
           <div
             key={item.id}
-            className='bg-white border w-full hover:shadow-sm transition-shadow duration-200 rounded-sm p-2.5'
+            className='border border-black w-full rounded-sm p-2.5'
           >
             <div className='flex items-start space-x-4'>
               <div className='flex-grow space-y-2'>
@@ -61,7 +54,7 @@ export default function DocumentFeedback({ feedback }: DocumentFeedbackProps) {
                     </span>
                   </div>
                   <time className='flex items-center justify-center text-xs text-gray-500'>
-                    {formatDate(item.created_at)}
+                    {formatDate(item.created_at, 'MM/dd/yyyy')}
                   </time>
                 </div>
                 <div className='text-sm text-gray-700'>

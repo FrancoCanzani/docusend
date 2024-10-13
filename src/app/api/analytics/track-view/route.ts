@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       throw error;
     }
 
-    revalidatePath(`/document/[documentId]`);
+    revalidatePath(`/document/[documentId]`, 'page');
 
     return NextResponse.json(
       { message: 'Analytics data processed successfully' },

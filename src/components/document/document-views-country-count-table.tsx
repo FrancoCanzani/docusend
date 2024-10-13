@@ -126,10 +126,7 @@ export default function DocumentViewsCountryCountTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
+                <TableCell colSpan={columns.length} className='text-center'>
                   No results.
                 </TableCell>
               </TableRow>
@@ -137,9 +134,6 @@ export default function DocumentViewsCountryCountTable({
           </TableBody>
         </Table>
       </div>
-      {countryData.length === 0 && (
-        <p className='text-center py-4 text-gray-500'>No data available</p>
-      )}
     </div>
   );
 }
