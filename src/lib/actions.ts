@@ -160,6 +160,8 @@ export async function deleteDocument(documentId: string, userId: string) {
 export async function saveDocumentSettings(
   documentId: string,
   settings: {
+    original_name: string;
+    sanitized_name: string;
     is_public: boolean;
     allow_download: boolean;
     require_email: boolean;
@@ -183,6 +185,8 @@ export async function saveDocumentSettings(
   const { error } = await supabase
     .from('document_metadata')
     .update({
+      original_name: settings.original_name,
+      sanitized_name: settings.sanitized_name,
       is_public: settings.is_public,
       allow_download: settings.allow_download,
       require_email: settings.require_email,

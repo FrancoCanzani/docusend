@@ -6,7 +6,7 @@ import { DocumentMetadata, Folder } from '@/lib/types';
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
 import { getDocumentTypeFromMime } from '@/lib/helpers/get-document-type';
 import Link from 'next/link';
-import DocumentSettingsSheet from '@/components/document-settings-sheet';
+import DocumentSettingsSheet from '@/components/document/document-settings-sheet';
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,

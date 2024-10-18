@@ -8,18 +8,20 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetFooter,
-} from './ui/sheet';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Checkbox } from './ui/checkbox';
-import { Textarea } from './ui/textarea';
+} from '../ui/sheet';
+import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Checkbox } from '../ui/checkbox';
+import { Textarea } from '../ui/textarea';
 import { ndaText } from '@/lib/constants/nda-text';
 import { saveDocumentSettings } from '@/lib/actions';
 import { toast } from 'sonner';
 
 interface DocumentSettings {
+  original_name: string;
+  sanitized_name: string;
   isPublic: boolean;
   allowDownload: boolean;
   requireEmail: boolean;
@@ -40,6 +42,8 @@ export default function DocumentSettingsSheet({
   children: ReactNode;
 }) {
   const [settings, setSettings] = useState<DocumentSettings>({
+    original_name: documentMetadata.original_name,
+    sanitized_name: documentMetadata.sanitized_name,
     isPublic: documentMetadata.is_public ?? true,
     allowDownload: documentMetadata.allow_download ?? false,
     requireEmail: documentMetadata.require_email ?? false,
@@ -63,6 +67,8 @@ export default function DocumentSettingsSheet({
   const handleSaveSettings = () => {
     toast.promise(
       saveDocumentSettings(documentMetadata.document_id, {
+        original_name: settings.original_name,
+        sanitized_name: settings.sanitized_name,
         is_public: settings.isPublic,
         allow_download: settings.allowDownload,
         require_email: settings.requireEmail,
@@ -76,9 +82,7 @@ export default function DocumentSettingsSheet({
       }),
       {
         loading: 'Saving...',
-        success: () => {
-          return `Settings saved successfully`;
-        },
+        success: () => 'Settings saved successfully',
         error: 'Failed to update settings',
       }
     );
@@ -89,7 +93,18 @@ export default function DocumentSettingsSheet({
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className='flex flex-col bg-white text-black'>
         <SheetHeader>
-          <SheetTitle>{documentMetadata.original_name}</SheetTitle>
+          <SheetTitle>
+            <input
+              type='text'
+              value={settings.sanitized_name}
+              className='outline-none'
+              onChange={(e) => {
+                const newName = e.target.value.trim();
+                handleSettingChange('sanitized_name', newName);
+                handleSettingChange('original_name', newName);
+              }}
+            />
+          </SheetTitle>
           <SheetDescription>Manage your document settings</SheetDescription>
         </SheetHeader>
         <div className='flex-grow overflow-y-auto py-4 space-y-6'>
@@ -219,7 +234,7 @@ export default function DocumentSettingsSheet({
                 value={settings.ndaText}
                 onChange={(e) => handleSettingChange('ndaText', e.target.value)}
                 placeholder='Enter NDA text'
-                rows={3}
+                rows={8}
               />
             )}
           </div>

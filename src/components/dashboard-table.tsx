@@ -172,14 +172,17 @@ export default function DashboardTable({
           />
         )}
       </div>
-      <div className='rounded-md border'>
+      <div className='rounded-sm border border-black'>
         <Table>
-          <TableHeader className='bg-gray-100'>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className='bg-gray-50/50'>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className='h-10'>
+                    <TableHead
+                      key={header.id}
+                      className='h-10 border-b border-black text-black font-bold'
+                    >
                       {header.isPlaceholder ? null : (
                         <div className='flex items-center'>
                           {flexRender(
