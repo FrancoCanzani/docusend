@@ -18,8 +18,11 @@ export function InvoiceCurrency({
 }: InvoiceCurrencyProps) {
   return (
     <Select onValueChange={onValueChange}>
-      <SelectTrigger className='w-[180px]'>
-        <SelectValue defaultValue={value} placeholder={`Currency: ${value}`} />
+      <SelectTrigger
+        className='w-[180px] h-0 border-none outline-none underline'
+        icon={false}
+      >
+        <SelectValue defaultValue={value} placeholder={value} />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value='AFN'>Afghan afghani</SelectItem>
