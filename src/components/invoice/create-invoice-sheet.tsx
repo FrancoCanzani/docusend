@@ -75,7 +75,10 @@ export default function CreateInvoiceSheet() {
         className='w-[100vw] bg-white sm:max-w-[100vw] md:w-[80vw] lg:w-[60vw] overflow-y-auto'
       >
         <div className='mt-4'>
-          <form className='bg-white text-black p-6 pt-3'>
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className='bg-white text-black p-6 pt-3'
+          >
             <div className='mb-8'>
               <Input
                 type='text'
@@ -161,10 +164,10 @@ export default function CreateInvoiceSheet() {
               </div>
             </div>
 
-            <table className='w-full mb-8'>
+            <table className='w-full mb-3'>
               <thead>
                 <tr className='border-b'>
-                  <th className='text-left py-2'>ITEM</th>
+                  <th className='text-left py-2 w-3/5'>ITEM</th>
                   <th className='text-center py-2'>QTY</th>
                   <th className='text-right py-2'>RATE</th>
                 </tr>
@@ -172,14 +175,16 @@ export default function CreateInvoiceSheet() {
               <tbody>
                 {items.map((item, index) => (
                   <tr key={index} className='border-b'>
-                    <td className='py-2'>
+                    <td
+                      className='py-2 w-3/5
+                    '
+                    >
                       <Input
                         type='text'
                         value={item.description}
                         onChange={(e) =>
                           handleItemChange(index, 'description', e.target.value)
                         }
-                        className='w-full p-1 border-none text-sm text-gray-500'
                         placeholder='Description'
                       />
                     </td>
@@ -187,6 +192,7 @@ export default function CreateInvoiceSheet() {
                       <Input
                         type='number'
                         value={item.quantity}
+                        min={0}
                         onChange={(e) =>
                           handleItemChange(
                             index,
@@ -194,13 +200,14 @@ export default function CreateInvoiceSheet() {
                             parseFloat(e.target.value)
                           )
                         }
-                        className='w-full p-1 border-none text-center'
+                        className='text-right [&::-webkit-inner-spin-button]:appearance-none'
                       />
                     </td>
                     <td className='py-2'>
                       <Input
                         type='number'
                         value={item.rate}
+                        min={0}
                         onChange={(e) =>
                           handleItemChange(
                             index,
@@ -208,16 +215,16 @@ export default function CreateInvoiceSheet() {
                             parseFloat(e.target.value)
                           )
                         }
-                        className='w-full p-1 border-none text-right'
+                        className='text-right [&::-webkit-inner-spin-button]:appearance-none'
                       />
                     </td>
                     <td className='py-2 text-right'>
                       <Button
-                        variant='ghost'
+                        variant='outline'
                         size='icon'
                         onClick={() => deleteItem(index)}
                       >
-                        <Minus />
+                        <Minus size={15} />
                       </Button>
                     </td>
                   </tr>
@@ -227,7 +234,7 @@ export default function CreateInvoiceSheet() {
             <Button variant={'outline'} size={'sm'} onClick={addItem}>
               Add Item
             </Button>
-            <div className='mt-8 flex items-end justify-between space-x-3'>
+            <div className='mt-8 flex items-end justify-between space-x-6'>
               <div className='w-1/2'>
                 <Label htmlFor='notes' className='font-bold block mb-2'>
                   Notes
@@ -254,7 +261,7 @@ export default function CreateInvoiceSheet() {
                     type='number'
                     value={discount}
                     onChange={(e) => setDiscount(parseFloat(e.target.value))}
-                    className='w-24 text-right p-0 border-none outline-none'
+                    className='w-24 text-right p-0 border-none outline-none [&::-webkit-inner-spin-button]:appearance-none'
                   />
                 </div>
                 <div className='flex justify-between font-bold text-base'>
@@ -267,7 +274,9 @@ export default function CreateInvoiceSheet() {
             </div>
 
             <div className='flex justify-end mt-8'>
-              <Button className='font-bold text-white'>Create & Send</Button>
+              <Button type='submit' className='font-bold text-white'>
+                Create & Send
+              </Button>
             </div>
           </form>{' '}
         </div>
