@@ -12,12 +12,13 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { X, Upload, AlertCircle, File, FilePlus } from 'lucide-react';
+import { X, Upload, AlertCircle, FilePlus } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
+import { ScrollArea } from '../ui/scroll-area';
 
 interface DocumentUploadDialogProps {
   folderId: string | null;
@@ -200,32 +201,36 @@ export default function DocumentUploadDialog({
           </div>
           {files.length > 0 && (
             <div className='space-y-2'>
-              <Label>Selected Files</Label>
-              {files.map((fileWithName, index) => (
-                <div
-                  key={index}
-                  className='flex items-center justify-between bg-muted p-2 rounded'
-                >
-                  <div className='flex items-center flex-grow mr-2'>
-                    <File className='w-4 h-4 text-primary mr-3' />
-                    <Input
-                      value={fileWithName.customName}
-                      onChange={(e) => handleNameChange(index, e.target.value)}
-                      className='text-sm font-medium'
-                    />
-                  </div>
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => removeFile(index)}
+              <Label className='font-bold'>Selected Files</Label>
+              <ScrollArea className='h-[250px]'>
+                {files.map((fileWithName, index) => (
+                  <div
+                    key={index}
+                    className='flex items-center my-1 justify-between bg-gray-50/50 p-2 rounded'
                   >
-                    <X className='w-4 h-4' />
-                  </Button>
-                </div>
-              ))}
+                    <div className='flex items-center flex-grow mr-2'>
+                      <Input
+                        value={fileWithName.customName}
+                        onChange={(e) =>
+                          handleNameChange(index, e.target.value)
+                        }
+                        className='text-sm font-medium'
+                      />
+                    </div>
+                    <Button
+                      type='button'
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => removeFile(index)}
+                    >
+                      <X className='w-4 h-4' />
+                    </Button>
+                  </div>
+                ))}
+              </ScrollArea>
             </div>
           )}
+
           {errors.length > 0 && (
             <Alert variant='destructive'>
               <AlertCircle className='w-4 h-4' />

@@ -98,6 +98,7 @@ export default function DocumentSettingsSheet({
               type='text'
               value={settings.sanitized_name}
               className='outline-none'
+              autoFocus
               onChange={(e) => {
                 const newName = e.target.value.trim();
                 handleSettingChange('sanitized_name', newName);

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { LayoutDashboard, FileText, Users, Settings } from 'lucide-react';
 import User from './user';
 
 export function Sidebar() {
@@ -12,33 +11,29 @@ export function Sidebar() {
           <span className='text-2xl font-bold'>DocuSend</span>
         </Link>
       </div>
-      <nav className='mt-6'>
+      <nav className='font-medium'>
         <Link
           href='/dashboard'
-          className='flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100'
+          className='flex items-center px-6 py-3  hover:bg-gray-100'
         >
-          <LayoutDashboard className='h-5 w-5 mr-3' />
           Dashboard
         </Link>
         <Link
-          href='/documents'
-          className='flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100'
+          href='/invoices'
+          className='flex items-center px-6 py-3  hover:bg-gray-100'
         >
-          <FileText className='h-5 w-5 mr-3' />
-          Documents
+          Invoices
         </Link>
         <Link
           href='/team'
-          className='flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100'
+          className='flex items-center px-6 py-3  hover:bg-gray-100'
         >
-          <Users className='h-5 w-5 mr-3' />
           Team
         </Link>
         <Link
           href='/settings'
-          className='flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100'
+          className='flex items-center px-6 py-3  hover:bg-gray-100'
         >
-          <Settings className='h-5 w-5 mr-3' />
           Settings
         </Link>
       </nav>
