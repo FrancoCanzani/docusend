@@ -46,3 +46,28 @@ export interface Geolocation {
   latitude?: string | undefined;
   longitude?: string | undefined;
 }
+
+export interface InvoiceData {
+  invoiceID: string;
+  logo: string | null;
+  senderEmail: string;
+  senderDetails: string;
+  customerEmail: string;
+  customerDetails: string;
+  currency: string;
+  dates: {
+    issueDate: string;
+    dueDate: string;
+  };
+  items: Array<{
+    description: string;
+    quantity: number;
+    rate: number;
+    vat: number;
+    total: number;
+  }>;
+  discount: number;
+  notes: string;
+  subtotal: number;
+  total: number;
+}
