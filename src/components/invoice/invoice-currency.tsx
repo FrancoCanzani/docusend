@@ -17,12 +17,12 @@ export function InvoiceCurrency({
   value,
 }: InvoiceCurrencyProps) {
   return (
-    <Select onValueChange={onValueChange}>
+    <Select onValueChange={onValueChange} value={value}>
       <SelectTrigger
         className='w-[180px] h-0 border-none outline-none underline'
         icon={false}
       >
-        <SelectValue defaultValue={value} placeholder={value} />
+        <SelectValue placeholder={value} />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value='AFN'>Afghan afghani</SelectItem>

@@ -65,6 +65,30 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
     return false;
   };
 
+  // Updated wrapText function
+  const wrapText = (text: string, maxWidth: number): string[] => {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+
+    words.forEach((word) => {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const testWidth = doc.getTextWidth(testLine);
+      if (testWidth > maxWidth) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    });
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    return lines;
+  };
+
   // Add "Invoice" title
   doc.setFontSize(40);
   doc.setTextColor(20, 20, 20);
@@ -104,14 +128,28 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
     data.customerEmail,
     ...data.customerDetails.split('\n'),
   ];
-  const maxLines = Math.max(senderDetails.length, customerDetails.length);
 
-  for (let i = 0; i < maxLines; i++) {
-    if (senderDetails[i]) doc.text(senderDetails[i], margin, yPos);
-    if (customerDetails[i]) doc.text(customerDetails[i], pageWidth / 2, yPos);
-    yPos += 5;
-  }
-  yPos += 10;
+  const maxWidth = pageWidth / 2 - margin - 5; // 5 is for some extra padding
+  let senderYPos = yPos;
+  let customerYPos = yPos;
+
+  senderDetails.forEach((detail) => {
+    const lines = wrapText(detail, maxWidth);
+    lines.forEach((line) => {
+      doc.text(line, margin, senderYPos);
+      senderYPos += 5;
+    });
+  });
+
+  customerDetails.forEach((detail) => {
+    const lines = wrapText(detail, maxWidth);
+    lines.forEach((line) => {
+      doc.text(line, pageWidth / 2, customerYPos);
+      customerYPos += 5;
+    });
+  });
+
+  yPos = Math.max(senderYPos, customerYPos) + 10;
 
   // Add invoice details
   setBoldStyle();
@@ -130,17 +168,29 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
   const rateStart = pageWidth - margin - rateWidth;
   const cellPadding = 2;
 
-  // Function to add table headers
+  // Function to add table headers with rounded corners
   const addTableHeaders = () => {
-    doc.setFillColor(248, 248, 248);
-    doc.rect(tableStart, yPos - 5, pageWidth - 2 * margin, 10, 'F');
+    doc.setFillColor(250, 250, 250); // Even lighter grey color
+    const headerHeight = 8;
+    const cornerRadius = 2;
+    doc.roundedRect(
+      tableStart,
+      yPos - 4,
+      pageWidth - 2 * margin,
+      headerHeight,
+      cornerRadius,
+      cornerRadius,
+      'F'
+    );
     setBoldStyle();
-    doc.text('Item', tableStart + cellPadding, yPos);
-    doc.text('Quantity', quantityStart, yPos, { align: 'right' });
-    doc.text('Rate', rateStart + rateWidth - cellPadding, yPos, {
+    const textHeight = doc.getTextDimensions('Item').h;
+    const textYPos = yPos - 4 + headerHeight / 2 + textHeight / 2; // Center text vertically
+    doc.text('Item', tableStart + cellPadding, textYPos);
+    doc.text('Quantity', quantityStart, textYPos, { align: 'right' });
+    doc.text('Rate', rateStart + rateWidth - cellPadding, textYPos, {
       align: 'right',
     });
-    yPos += 12;
+    yPos += headerHeight + 2; // Add a small gap after the header
   };
 
   // Add initial table headers
@@ -156,26 +206,23 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
     doc.text(item.description, tableStart + cellPadding, yPos);
     setMonoStyle();
     doc.text(item.quantity.toString(), quantityStart, yPos, { align: 'right' });
-    doc.text(
-      `${item.rate.toFixed(2)}`,
-      rateStart + rateWidth - cellPadding,
-      yPos,
-      { align: 'right' }
-    );
+    doc.text(item.rate.toFixed(2), rateStart + rateWidth - cellPadding, yPos, {
+      align: 'right',
+    });
     setNormalStyle();
     yPos += 10;
   });
   yPos += 5;
 
   // Check if we need a new page before adding totals
-  checkNewPage(50);
+  checkNewPage(60);
 
-  // Add subtotal, discount, and total
+  // Add subtotal, discount, tax, and total
   const rightAlign = pageWidth - margin;
   setBoldStyle();
   doc.text('Subtotal:', rightAlign - 70, yPos);
   setMonoStyle();
-  doc.text(`${data.subtotal.toFixed(2)}`, rightAlign - cellPadding, yPos, {
+  doc.text(data.subtotal.toFixed(2), rightAlign - cellPadding, yPos, {
     align: 'right',
   });
   yPos += 8;
@@ -184,7 +231,17 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
   doc.text(`Discount (${data.discount}%):`, rightAlign - 70, yPos);
   setMonoStyle();
   const discountAmount = data.subtotal * (data.discount / 100);
-  doc.text(`${discountAmount.toFixed(2)}`, rightAlign - cellPadding, yPos, {
+  doc.text(discountAmount.toFixed(2), rightAlign - cellPadding, yPos, {
+    align: 'right',
+  });
+  yPos += 8;
+
+  // Add tax information
+  setBoldStyle();
+  doc.text(`Tax (${data.tax}%):`, rightAlign - 70, yPos);
+  setMonoStyle();
+  const taxAmount = (data.subtotal - discountAmount) * (data.tax / 100);
+  doc.text(taxAmount.toFixed(2), rightAlign - cellPadding, yPos, {
     align: 'right',
   });
   yPos += 12;
@@ -194,12 +251,9 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
   doc.text('Total:', rightAlign - 70, yPos);
   setMonoStyle();
   doc.setFontSize(11);
-  doc.text(
-    `${data.currency} ${data.total.toFixed(2)}`,
-    rightAlign - cellPadding,
-    yPos,
-    { align: 'right' }
-  );
+  doc.text(data.total.toFixed(2), rightAlign - cellPadding, yPos, {
+    align: 'right',
+  });
   yPos += 20;
 
   // Check if we need a new page before adding terms and notes
@@ -214,23 +268,28 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
   setBoldStyle();
   doc.text('Terms', margin, yPos);
   doc.text('Notes', pageWidth / 2, yPos);
-  yPos += 10;
+  yPos += 5; // Small gap after headers
 
   setNormalStyle();
+  doc.text(`Currency: ${data.currency}`, margin, yPos);
+  yPos += 5;
   doc.text(
     `Invoice date: ${new Date(data.dates.issueDate).toLocaleDateString()}`,
     margin,
     yPos
   );
-  doc.text(data.notes || 'Thanks for your business!', pageWidth / 2, yPos, {
-    maxWidth: pageWidth / 2 - margin,
-  });
   yPos += 5;
   doc.text(
     `Due date: ${new Date(data.dates.dueDate).toLocaleDateString()}`,
     margin,
     yPos
   );
+
+  // Reset yPos for notes
+  yPos -= 10;
+  const noteText = data.notes || 'Thanks for your business!';
+  const noteLines = doc.splitTextToSize(noteText, pageWidth / 2 - margin - 5);
+  doc.text(noteLines, pageWidth / 2, yPos);
 
   // Add footer to all pages
   const pageCount = doc.getNumberOfPages();

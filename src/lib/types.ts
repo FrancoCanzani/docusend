@@ -63,10 +63,9 @@ export interface InvoiceData {
     description: string;
     quantity: number;
     rate: number;
-    vat: number;
-    total: number;
   }>;
   discount: number;
+  tax: number;
   notes: string;
   subtotal: number;
   total: number;
