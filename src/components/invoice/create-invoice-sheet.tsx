@@ -1,27 +1,33 @@
 'use client';
 
-import React, { useState, useRef, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '../ui/textarea';
 import { Input } from '@/components/ui/input';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Label } from '../ui/label';
 import { DatePicker } from '../ui/date-picker';
 import { InvoiceCurrency } from './invoice-currency';
 import { Minus } from 'lucide-react';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { InvoiceData } from '@/lib/types';
-import { createInvoicePdf } from '@/lib/helpers/create-invoice-pdf';
 import { toast } from 'sonner';
+import { createInvoicePdf } from './create-invoice-pdf';
 
 export default function CreateInvoiceSheet() {
-  const [invoiceID, setInvoiceId] = useState('Invoice #001');
+  const [invoiceId, setInvoiceId] = useState('Invoice #001');
+  const [senderName, setSenderName] = useState('');
   const [senderEmail, setSenderEmail] = useState('');
   const [senderDetails, setSenderDetails] = useState('');
+  const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerDetails, setCustomerDetails] = useState('');
   const [notes, setNotes] = useState('');
+  const [paymentDetails, setPaymentDetails] = useState('');
   const [currency, setCurrency] = useState('USD');
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
@@ -29,8 +35,6 @@ export default function CreateInvoiceSheet() {
     issueDate: new Date(),
     dueDate: new Date(),
   });
-  const [logo, setLogo] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [items, setItems] = useState([
     { description: '', quantity: 1, rate: 0 },
@@ -68,32 +72,36 @@ export default function CreateInvoiceSheet() {
 
   const handleCurrencyChange = (value: string) => setCurrency(value);
 
-  const handleIconClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleIconChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          setLogo(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
+  const invoiceData: InvoiceData = {
+    invoiceId,
+    senderName,
+    senderEmail,
+    senderDetails,
+    customerName,
+    customerEmail,
+    customerDetails,
+    currency,
+    dates: {
+      issueDate: dates.issueDate.toISOString(),
+      dueDate: dates.dueDate.toISOString(),
+    },
+    items,
+    discount,
+    tax,
+    notes,
+    paymentDetails,
+    subtotal: calculateSubtotal(),
+    total: calculateTotal(),
   };
 
   const handleCreatePdf = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const invoiceData: InvoiceData = {
-      invoiceID,
-      logo,
+      invoiceId,
+      senderName,
       senderEmail,
       senderDetails,
+      customerName,
       customerEmail,
       customerDetails,
       currency,
@@ -105,23 +113,26 @@ export default function CreateInvoiceSheet() {
       discount,
       tax,
       notes,
+      paymentDetails,
       subtotal: calculateSubtotal(),
       total: calculateTotal(),
     };
 
     try {
-      const pdfDataUri = await createInvoicePdf(invoiceData);
+      const pdfUrl = await createInvoicePdf(invoiceData);
 
       // Create a link element and trigger download
       const link = document.createElement('a');
-      link.href = pdfDataUri;
-      link.download = `${invoiceID}.pdf`;
+      link.href = pdfUrl;
+      link.download = `${invoiceId}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(pdfUrl);
 
       toast.success('PDF has been generated and downloaded');
     } catch (error) {
+      console.error('Error creating PDF:', error);
       toast.error('Error creating PDF');
     }
   };
@@ -133,6 +144,7 @@ export default function CreateInvoiceSheet() {
           Create Invoice
         </Button>
       </SheetTrigger>
+      <SheetTitle className='sr-only'>Invoice</SheetTitle>
       <SheetContent
         side='right'
         className='w-full bg-white sm:max-w-[100vw] md:w-[80vw] lg:w-[60vw] overflow-y-auto p-4 sm:p-6'
@@ -147,7 +159,7 @@ export default function CreateInvoiceSheet() {
           <Input
             type='text'
             className='text-3xl sm:text-5xl mb-4 sm:mb-8 font-bold w-full outline-none border-none p-0'
-            value={invoiceID}
+            value={invoiceId}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setInvoiceId(e.target.value)
             }
@@ -190,76 +202,50 @@ export default function CreateInvoiceSheet() {
                 />
               </div>
             </div>
-            <div>
-              <div
-                className={cn(
-                  'rounded-sm transition-colors duration-200 flex items-center justify-center cursor-pointer',
-                  !logo &&
-                    'border border-dashed border-gray-300 hover:bg-muted/50'
-                )}
-                onClick={handleIconClick}
-              >
-                {logo ? (
-                  <div className='flex flex-col space-y-1'>
-                    <Image
-                      src={logo}
-                      alt='Invoice Icon'
-                      width={120}
-                      height={120}
-                      className='rounded-sm'
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setLogo(null);
-                      }}
-                      className='text-xs hover:underline'
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ) : (
-                  <div className='text-gray-600 font-bold w-20 h-20 flex justify-center items-center'>
-                    <p>Logo</p>
-                  </div>
-                )}
-              </div>
-              <input
-                type='file'
-                ref={fileInputRef}
-                onChange={handleIconChange}
-                accept='image/*'
-                className='hidden'
-              />
-            </div>
           </div>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 mb-4 sm:mb-8'>
             <div>
               <h3 className='font-bold mb-2'>Bill from</h3>
               <Input
+                type='name'
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+                className='w-full mb-2'
+                placeholder='ACME Inc'
+              />
+              <Input
                 type='email'
                 value={senderEmail}
                 onChange={(e) => setSenderEmail(e.target.value)}
                 className='w-full mb-2'
-                placeholder='Email'
+                placeholder='acme@company.com'
               />
               <Textarea
                 value={senderDetails}
                 onChange={(e) => setSenderDetails(e.target.value)}
                 className='w-full'
                 rows={6}
-                placeholder='Who is this invoice from?'
+                placeholder='1355 Sansome St #4, 
+                San Francisco, CA 94111,
+                United States of America'
               />
             </div>
             <div>
               <h3 className='font-bold mb-2'>Bill to</h3>
               <Input
+                type='customerName'
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className='w-full mb-2'
+                placeholder='Apple Inc'
+              />
+              <Input
                 type='email'
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 className='w-full mb-2'
-                placeholder='Email'
+                placeholder='apple@icloud.com'
                 required
               />
               <Textarea
@@ -267,7 +253,10 @@ export default function CreateInvoiceSheet() {
                 onChange={(e) => setCustomerDetails(e.target.value)}
                 className='w-full'
                 rows={6}
-                placeholder='Who is this invoice to?'
+                placeholder='One Apple Park Way, 
+                Cupertino, CA 95014,
+                United States of America
+                '
               />
             </div>
           </div>
@@ -292,7 +281,7 @@ export default function CreateInvoiceSheet() {
                           handleItemChange(index, 'description', e.target.value)
                         }
                         required={index == 0}
-                        placeholder='Description'
+                        placeholder='Human Resources Consultancy'
                       />
                     </td>
                     <td className='py-2'>
@@ -348,8 +337,66 @@ export default function CreateInvoiceSheet() {
           >
             Add Item
           </Button>
-          <div className='mt-8 flex flex-col sm:flex-row items-start sm:items-end justify-between sm:space-x-6'>
-            <div className='w-full sm:w-1/2 mb-4 sm:mb-0'>
+
+          <div className='w-full mt-4'>
+            <div className='flex justify-end'>
+              <div className='w-full sm:w-1/2 text-sm space-y-1'>
+                <div className='flex justify-between'>
+                  <span className='font-bold'>Subtotal</span>
+                  <span className='font-mono'>
+                    {calculateSubtotal().toFixed(2)}
+                  </span>
+                </div>
+                <div className='flex justify-between items-center'>
+                  <span className='font-bold'>Discount (%)</span>
+                  <Input
+                    type='number'
+                    min={0}
+                    max={100}
+                    value={discount}
+                    onChange={(e) =>
+                      setDiscount(parseFloat(e.target.value) || 0)
+                    }
+                    className='w-24 text-right h-5 p-0 border-none outline-none [&::-webkit-inner-spin-button]:appearance-none'
+                  />
+                </div>
+                <div className='flex justify-between items-center'>
+                  <span className='font-bold'>Tax (%)</span>
+                  <Input
+                    type='number'
+                    min={0}
+                    max={100}
+                    value={tax}
+                    onChange={(e) => setTax(parseFloat(e.target.value) || 0)}
+                    className='w-24 text-right h-5 p-0 border-none outline-none [&::-webkit-inner-spin-button]:appearance-none'
+                  />
+                </div>
+                <div className='flex justify-between font-bold text-base pt-2 border-t'>
+                  <span>Total</span>
+                  <span className='font-mono'>
+                    {currency} {calculateTotal().toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className='mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6'>
+            <div>
+              <Label htmlFor='paymentDetails' className='font-bold block mb-2'>
+                Payment Details
+              </Label>
+              <Textarea
+                id='paymentDetails'
+                value={paymentDetails}
+                onChange={(e) => setPaymentDetails(e.target.value)}
+                placeholder='Bank of America,
+                IBAN: GB54 BOFA 165050 12345678'
+                className='w-full'
+                rows={4}
+              />
+            </div>
+            <div>
               <Label htmlFor='notes' className='font-bold block mb-2'>
                 Notes
               </Label>
@@ -362,42 +409,7 @@ export default function CreateInvoiceSheet() {
                 rows={4}
               />
             </div>
-            <div className='w-full sm:w-1/2 text-sm'>
-              <div className='flex justify-between'>
-                <span className='font-bold'>Subtotal</span>
-                <span className='font-mono'>
-                  {calculateSubtotal().toFixed(2)}
-                </span>
-              </div>
-              <div className='flex justify-between items-center'>
-                <span className='font-bold'>Discount (%)</span>
-                <Input
-                  type='number'
-                  min={0}
-                  max={100}
-                  value={discount}
-                  onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
-                  className='w-24 text-right p-0 border-none outline-none [&::-webkit-inner-spin-button]:appearance-none'
-                />
-              </div>
-              <div className='flex justify-between items-center'>
-                <span className='font-bold'>Tax (%)</span>
-                <Input
-                  type='number'
-                  min={0}
-                  max={100}
-                  value={tax}
-                  onChange={(e) => setTax(parseFloat(e.target.value) || 0)}
-                  className='w-24 text-right h-5 p-0 border-none outline-none [&::-webkit-inner-spin-button]:appearance-none'
-                />
-              </div>
-              <div className='flex justify-between font-bold text-base'>
-                <span>Total</span>
-                <span className='font-mono'>{calculateTotal().toFixed(2)}</span>
-              </div>
-            </div>
           </div>
-
           <div className='flex justify-end mt-8 space-x-3'>
             <Button type='submit' className='font-bold text-white'>
               Create & Send
