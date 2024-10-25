@@ -17,6 +17,7 @@ import { Minus } from 'lucide-react';
 import { InvoiceData } from '@/lib/types';
 import { toast } from 'sonner';
 import { createInvoicePdf } from './create-invoice-pdf';
+import { InvoiceTemplate } from './invoice-template';
 
 export default function CreateInvoiceSheet() {
   const [invoiceId, setInvoiceId] = useState('Invoice #001');
@@ -97,25 +98,46 @@ export default function CreateInvoiceSheet() {
       total: calculateTotal(),
     };
 
-    try {
-      // Get the HTML string from the server action
-      const html = await createInvoicePdf(invoiceData);
+    const generatePdfPromise = new Promise(async (resolve, reject) => {
+      try {
+        // Get the base64 PDF data from the server action
+        const base64PDF = await createInvoicePdf(invoiceData);
 
-      // Create a new window/tab
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) {
-        throw new Error('Unable to open print window');
+        // Convert base64 to binary
+        const binaryStr = atob(base64PDF);
+        const len = binaryStr.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryStr.charCodeAt(i);
+        }
+
+        // Create blob and URL
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        // Create a link and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${invoiceId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        resolve(invoiceId);
+      } catch (error) {
+        console.error('Error creating PDF:', error);
+        reject(error);
       }
+    });
 
-      // Write the HTML content to the new window
-      printWindow.document.write(html);
-      printWindow.document.close();
-
-      toast.success('PDF generation started');
-    } catch (error) {
-      console.error('Error creating PDF:', error);
-      toast.error('Error creating PDF');
-    }
+    toast.promise(generatePdfPromise, {
+      loading: 'Generating PDF...',
+      success: (id) => `Invoice ${id} has been generated`,
+      error: 'Failed to generate PDF',
+    });
   };
 
   return (

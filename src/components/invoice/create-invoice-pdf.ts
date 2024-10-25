@@ -3,12 +3,16 @@
 import { compile } from '@fileforge/react-print';
 import { createElement } from 'react';
 import { InvoiceData } from '@/lib/types';
+import puppeteer from 'puppeteer';
 import { InvoiceTemplate } from './invoice-template';
 
-export async function createInvoicePdf(data: InvoiceData): Promise<string> {
+export async function createInvoicePdf(data: InvoiceData) {
+  let browser;
   try {
     const element = createElement(InvoiceTemplate, { data });
+
     const html = await compile(element);
+
     const fullHtml = `
       <!DOCTYPE html>
       <html>
@@ -16,41 +20,47 @@ export async function createInvoicePdf(data: InvoiceData): Promise<string> {
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script src="https://cdn.tailwindcss.com"></script>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
         </head>
         <body>
           ${html}
-          <script>
-            // Configure pdf options
-            const opt = {
-              margin: [10, 10],
-              filename: '${data.invoiceId}.pdf',
-              image: { type: 'jpeg', quality: 0.98 },
-              html2canvas: { 
-                scale: 2,
-                useCORS: true,
-                letterRendering: true
-              },
-              jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait'
-              }
-            };
-
-            // Get the content div
-            const element = document.body;
-
-            // Generate and download PDF
-            html2pdf().set(opt).from(element).save();
           </script>
         </body>
       </html>
     `;
 
-    return fullHtml;
+    // Launch browser
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox'],
+    });
+
+    const page = await browser.newPage();
+
+    // Set content and wait for all resources
+    await page.setContent(fullHtml, {
+      waitUntil: ['networkidle0', 'domcontentloaded'],
+    });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '0',
+        right: '0',
+        bottom: '0',
+        left: '0',
+      },
+      preferCSSPageSize: true,
+      scale: 1,
+    });
+
+    const base64 = Buffer.from(pdfBuffer).toString('base64');
+    return base64;
   } catch (error) {
-    console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
   }
 }

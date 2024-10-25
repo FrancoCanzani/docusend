@@ -11,10 +11,9 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
   const taxAmount = (data.subtotal - discountAmount) * (data.tax / 100);
 
   return (
-    <div className='bg-white text-black font-sans'>
+    <div className='bg-white min-h-screen py-14 px-10 text-black font-mono'>
       <PageTop>
-        {/* Header Section */}
-        <div className='flex justify-between items-center mb-8'>
+        <div className='flex justify-between items-center mb-14'>
           <h1 className='text-6xl font-bold'>Invoice</h1>
           <div className='text-right'>
             <div className='font-bold text-lg'>{data.invoiceId}</div>
@@ -23,8 +22,7 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
           </div>
         </div>
 
-        {/* From and To Section */}
-        <div className='grid grid-cols-2 gap-8 mb-8'>
+        <div className='grid grid-cols-2 gap-8 mb-14'>
           <div>
             <h2 className='font-bold text-gray-600 mb-3'>Invoice From</h2>
             <div className='space-y-1'>
@@ -43,8 +41,7 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
           </div>
         </div>
 
-        {/* Items Table */}
-        <table className='w-full mb-8'>
+        <table className='w-full mb-12'>
           <thead>
             <tr className='border-b border-gray-300'>
               <th className='text-left py-2'>Description</th>
@@ -55,7 +52,7 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
           </thead>
           <tbody>
             {data.items.map((item, index) => (
-              <tr key={index} className='border-b border-gray-100'>
+              <tr key={index}>
                 <td className='py-2'>{item.description}</td>
                 <td className='text-right py-2'>{item.quantity}</td>
                 <td className='text-right py-2'>{item.rate.toFixed(2)}</td>
@@ -67,9 +64,8 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
           </tbody>
         </table>
 
-        {/* Totals Section */}
-        <div className='flex justify-end mb-8'>
-          <div className='w-64 space-y-2'>
+        <div className='flex justify-end mb-20'>
+          <div className='w-64 space-y-1'>
             <div className='flex justify-between'>
               <span>Subtotal:</span>
               <span>{data.subtotal.toFixed(2)}</span>
@@ -91,7 +87,6 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
           </div>
         </div>
 
-        {/* Payment Details and Notes */}
         <div className='grid grid-cols-2 gap-8'>
           <div>
             <h2 className='font-bold text-gray-600 mb-3'>Payment Details</h2>
@@ -105,9 +100,8 @@ export const InvoiceTemplate = ({ data }: { data: InvoiceData }) => {
       </PageTop>
 
       <PageBottom>
-        <div className='flex justify-between text-sm text-gray-400'>
+        <div className='flex justify-start text-sm text-gray-600 fixed bottom-2 w-full pt-2'>
           <span>Generated with DocuSend</span>
-          <span>Page 1 of 1</span>
         </div>
       </PageBottom>
     </div>
