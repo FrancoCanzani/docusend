@@ -57,6 +57,7 @@ export async function createInvoicePdf(data: InvoiceData) {
     const base64 = Buffer.from(pdfBuffer).toString('base64');
     return base64;
   } catch (error) {
+    console.log(error);
     throw new Error('Failed to generate PDF');
   } finally {
     if (browser) {
