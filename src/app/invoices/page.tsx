@@ -7,7 +7,7 @@ export default function InvoicesPage() {
       <Sidebar />
       <main className='flex-1 p-4 overflow-auto'>
         <div className='flex justify-between items-center mb-8'>
-          <h2 className='text-2xl font-bold'>Documents</h2>
+          <h2 className='text-2xl font-bold'>Invoices</h2>
           <div className='flex items-end space-x-2'>
             <CreateInvoiceSheet />
           </div>

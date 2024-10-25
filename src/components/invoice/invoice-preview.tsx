@@ -1,6 +1,6 @@
 import React from 'react';
 import { PDFViewer } from '@react-pdf/renderer';
-import { InvoicePDF } from './invoice-pdf';
+import { InvoiceTemplate } from './invoice-template';
 import { InvoiceData } from '@/lib/types';
 
 interface InvoicePreviewProps {
@@ -9,6 +9,6 @@ interface InvoicePreviewProps {
 
 export const InvoicePreview = ({ data }: InvoicePreviewProps) => (
   <PDFViewer className='w-full h-full'>
-    <InvoicePDF data={data} />
+    <InvoiceTemplate data={data} />
   </PDFViewer>
 );

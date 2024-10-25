@@ -72,30 +72,9 @@ export default function CreateInvoiceSheet() {
 
   const handleCurrencyChange = (value: string) => setCurrency(value);
 
-  const invoiceData: InvoiceData = {
-    invoiceId,
-    senderName,
-    senderEmail,
-    senderDetails,
-    customerName,
-    customerEmail,
-    customerDetails,
-    currency,
-    dates: {
-      issueDate: dates.issueDate.toISOString(),
-      dueDate: dates.dueDate.toISOString(),
-    },
-    items,
-    discount,
-    tax,
-    notes,
-    paymentDetails,
-    subtotal: calculateSubtotal(),
-    total: calculateTotal(),
-  };
-
   const handleCreatePdf = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const invoiceData: InvoiceData = {
       invoiceId,
       senderName,
@@ -119,18 +98,20 @@ export default function CreateInvoiceSheet() {
     };
 
     try {
-      const pdfUrl = await createInvoicePdf(invoiceData);
+      // Get the HTML string from the server action
+      const html = await createInvoicePdf(invoiceData);
 
-      // Create a link element and trigger download
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = `${invoiceId}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(pdfUrl);
+      // Create a new window/tab
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        throw new Error('Unable to open print window');
+      }
 
-      toast.success('PDF has been generated and downloaded');
+      // Write the HTML content to the new window
+      printWindow.document.write(html);
+      printWindow.document.close();
+
+      toast.success('PDF generation started');
     } catch (error) {
       console.error('Error creating PDF:', error);
       toast.error('Error creating PDF');
