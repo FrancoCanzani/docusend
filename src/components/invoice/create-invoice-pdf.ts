@@ -4,15 +4,20 @@ import { compile } from '@fileforge/react-print';
 import { createElement } from 'react';
 import { InvoiceData } from '@/lib/types';
 import puppeteer from 'puppeteer';
+import puppeteerCore from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import { InvoiceTemplate } from './invoice-template';
 
 export async function createInvoicePdf(data: InvoiceData) {
   let browser;
   try {
+    // Create the element
     const element = createElement(InvoiceTemplate, { data });
 
+    // Generate HTML
     const html = await compile(element);
 
+    // Create a complete HTML document with proper styling
     const fullHtml = `
       <!DOCTYPE html>
       <html>
@@ -20,44 +25,55 @@ export async function createInvoicePdf(data: InvoiceData) {
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script src="https://cdn.tailwindcss.com"></script>
+          <style>
+            /* Your styles here */
+          </style>
         </head>
         <body>
           ${html}
-          </script>
         </body>
       </html>
     `;
 
-    // Launch browser
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox'],
-    });
+    // Launch browser based on environment
+    if (process.env.NODE_ENV === 'development') {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } else {
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    }
 
     const page = await browser.newPage();
 
-    // Set content and wait for all resources
+    // Set content and wait for network idle
     await page.setContent(fullHtml, {
-      waitUntil: ['networkidle0', 'domcontentloaded'],
+      waitUntil: 'networkidle0',
     });
 
+    // Generate PDF
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '0',
-        right: '0',
-        bottom: '0',
-        left: '0',
+        top: '20px',
+        right: '20px',
+        bottom: '20px',
+        left: '20px',
       },
-      preferCSSPageSize: true,
-      scale: 1,
     });
 
+    // Convert to base64
     const base64 = Buffer.from(pdfBuffer).toString('base64');
     return base64;
   } catch (error) {
-    console.log(error);
+    console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
   } finally {
     if (browser) {
