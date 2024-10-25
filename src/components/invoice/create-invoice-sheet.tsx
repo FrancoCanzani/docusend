@@ -97,7 +97,7 @@ export default function CreateInvoiceSheet() {
       total: calculateTotal(),
     };
 
-    const generatePdfPromise = new Promise(async (resolve, reject) => {
+    const generatePdfPromise = (async () => {
       try {
         // Get the base64 PDF data from the server action
         const base64PDF = await createInvoicePdf(invoiceData);
@@ -125,12 +125,12 @@ export default function CreateInvoiceSheet() {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        resolve(invoiceId);
+        return invoiceId; // Return the invoiceId for the success toast
       } catch (error) {
         console.error('Error creating PDF:', error);
-        reject(error);
+        throw new Error('Failed to create PDF'); // Reject the promise on error
       }
-    });
+    })();
 
     toast.promise(generatePdfPromise, {
       loading: 'Generating PDF...',
