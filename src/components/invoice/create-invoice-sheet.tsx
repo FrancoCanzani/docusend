@@ -17,7 +17,6 @@ import { Minus } from 'lucide-react';
 import { InvoiceData } from '@/lib/types';
 import { toast } from 'sonner';
 import { createInvoicePdf } from './create-invoice-pdf';
-import { InvoiceTemplate } from './invoice-template';
 
 export default function CreateInvoiceSheet() {
   const [invoiceId, setInvoiceId] = useState('Invoice #001');

@@ -53,6 +53,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
+    "react-pdf": "^9.1.1",
     "react-simple-maps": "^3.0.0",
     "recharts": "^2.12.7",
     "shadcn": "^2.0.3",
