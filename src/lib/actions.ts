@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from './supabase/server';
+import { InvoiceData } from './types';
 
 export async function login(formData: FormData) {
   const supabase = await createClient();
@@ -253,4 +254,97 @@ export async function deleteFolder(folderId: string) {
   } finally {
     revalidatePath('/dashboard');
   }
+}
+
+export async function createInvoice(data: InvoiceData) {
+  try {
+    const supabase = await createClient();
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError) {
+      console.error('Auth error:', userError);
+      throw userError;
+    }
+
+    if (!userData.user) {
+      throw new Error('No authenticated user found');
+    }
+
+    const invoiceData = {
+      user_id: userData.user.id,
+      invoice_id: data.invoiceId,
+      sender_name: data.senderName,
+      sender_email: data.senderEmail,
+      sender_details: data.senderDetails,
+      customer_name: data.customerName,
+      customer_email: data.customerEmail,
+      customer_details: data.customerDetails,
+      currency: data.currency,
+      issue_date: new Date(data.dates.issueDate),
+      due_date: new Date(data.dates.dueDate),
+      items: data.items,
+      discount: data.discount,
+      tax: data.tax,
+      notes: data.notes,
+      payment_details: data.paymentDetails,
+      subtotal: data.subtotal,
+      total: data.total,
+      received: false,
+    };
+
+    const { data: invoice, error } = await supabase
+      .from('invoices')
+      .insert(invoiceData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Insert error:', error);
+      throw error;
+    }
+
+    return invoice;
+  } catch (error) {
+    console.error('Create invoice error:', error);
+    throw error;
+  }
+}
+
+export async function getInvoice(id: string) {
+  const supabase = await createClient();
+
+  const { data: invoice, error } = await supabase
+    .from('invoices')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  return invoice;
+}
+
+export async function getUserInvoices() {
+  const supabase = await createClient();
+
+  const { data: invoices, error } = await supabase
+    .from('invoices')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return invoices;
+}
+
+export async function markInvoiceAsReceived(id: string) {
+  const supabase = await createClient();
+
+  const { data: invoice, error } = await supabase
+    .from('invoices')
+    .update({ received: true })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return invoice;
 }
