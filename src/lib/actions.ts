@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from './supabase/server';
 
 export async function login(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
@@ -27,7 +27,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
@@ -47,7 +47,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function signInWithEmail(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const email = formData.get('email') as string;
 
@@ -70,7 +70,7 @@ export async function uploadDocument(metadata: {
   document_type: string;
   last_modified: string;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { error } = await supabase.from('document_metadata').insert({
     ...metadata,
@@ -86,7 +86,7 @@ export async function uploadDocument(metadata: {
 }
 
 export async function downloadDocument(documentPath: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase.storage
     .from('documents')
@@ -101,7 +101,7 @@ export async function downloadDocument(documentPath: string) {
 }
 
 export async function listAllDocuments(userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('document_metadata')
@@ -118,7 +118,7 @@ export async function listAllDocuments(userId: string) {
 }
 
 export async function deleteDocument(documentId: string, userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // First, get the document path
   const { data: documentData, error: fetchError } = await supabase
@@ -174,7 +174,7 @@ export async function saveDocumentSettings(
     nda_text: string | null;
   }
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: user } = await supabase.auth.getUser();
 
@@ -211,7 +211,7 @@ export async function saveDocumentSettings(
 }
 
 export async function deleteFolder(folderId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     // 1. Fetch documents in the folder
