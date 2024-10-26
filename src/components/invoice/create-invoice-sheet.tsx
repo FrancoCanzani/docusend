@@ -16,7 +16,8 @@ import { InvoiceCurrency } from './invoice-currency';
 import { Minus } from 'lucide-react';
 import { InvoiceData } from '@/lib/types';
 import { toast } from 'sonner';
-import { createInvoicePdf } from './create-invoice-pdf';
+import { compile } from '@fileforge/react-print';
+import { InvoiceTemplate } from './invoice-template';
 
 export default function CreateInvoiceSheet() {
   const [invoiceId, setInvoiceId] = useState('Invoice #001');
@@ -97,46 +98,27 @@ export default function CreateInvoiceSheet() {
       total: calculateTotal(),
     };
 
-    const generatePdfPromise = (async () => {
-      try {
-        // Get the base64 PDF data from the server action
-        const base64PDF = await createInvoicePdf(invoiceData);
+    const html = await compile(<InvoiceTemplate data={invoiceData} />);
 
-        // Convert base64 to binary
-        const binaryStr = atob(base64PDF);
-        const len = binaryStr.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-          bytes[i] = binaryStr.charCodeAt(i);
-        }
-
-        // Create blob and URL
-        const blob = new Blob([bytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-
-        // Create a link and trigger download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${invoiceId}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-
-        // Cleanup
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-
-        return invoiceId; // Return the invoiceId for the success toast
-      } catch (error) {
-        console.error('Error creating PDF:', error);
-        throw new Error('Failed to create PDF'); // Reject the promise on error
-      }
-    })();
-
-    toast.promise(generatePdfPromise, {
-      loading: 'Generating PDF...',
-      success: (id) => `Invoice ${id} has been generated`,
-      error: 'Failed to generate PDF',
+    const response = await fetch('/api/html-to-pdf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ html: html }),
     });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${invoiceId.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   return (
