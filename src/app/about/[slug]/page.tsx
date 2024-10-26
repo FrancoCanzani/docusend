@@ -1,38 +1,40 @@
-import { MDXRemote } from "next-mdx-remote/rsc";
-import getPostContent from "@/lib/helpers/get-post-content";
-import fs from "fs";
-import path from "path";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import getPostContent from '@/lib/helpers/get-post-content';
+import fs from 'fs';
+import path from 'path';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
-interface PostProps {
+// Define proper types for the page props
+type PageProps = {
   params: { slug: string };
-}
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 export async function generateStaticParams() {
-  const postsDirectory = path.join(process.cwd(), "src", "posts");
+  const postsDirectory = path.join(process.cwd(), 'src', 'posts');
   const filenames = fs.readdirSync(postsDirectory);
 
   return filenames.map((filename) => ({
-    slug: filename.replace(".mdx", ""),
+    slug: filename.replace('.mdx', ''),
   }));
 }
 
-export default async function Post({ params }: PostProps) {
+export default async function Post({ params, searchParams }: PageProps) {
   const { content, frontMatter } = await getPostContent(params.slug);
 
   return (
-    <div className="flex max-w-3xl py-8 space-y-4 mx-auto flex-col items-start justify-start">
+    <div className='flex max-w-3xl py-8 space-y-4 mx-auto flex-col items-start justify-start'>
       <Link
-        href={"/"}
-        className="flex items-center font-medium text-sm text-gray-800"
+        href='/'
+        className='flex items-center font-medium text-sm text-gray-800'
       >
-        <ArrowLeft size={13} className="mr-1" />
-        <span className="hover:underline">Go Back</span>
+        <ArrowLeft size={13} className='mr-1' />
+        <span className='hover:underline'>Go Back</span>
       </Link>
-      <article className="px-4 prose">
+      <article className='px-4 prose'>
         <h1>{frontMatter.title}</h1>
-        <p className="text-sm text-gray-500">
+        <p className='text-sm text-gray-500'>
           {new Date(frontMatter.date).toLocaleDateString()}
         </p>
         <MDXRemote source={content} />
