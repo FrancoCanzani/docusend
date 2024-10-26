@@ -5,7 +5,7 @@ import { decodeCityName } from '@/lib/helpers/decode-city-name';
 
 export async function POST(req: Request) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const data = await req.json();
 
     if (!data.document_id) {

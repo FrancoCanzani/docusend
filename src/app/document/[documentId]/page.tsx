@@ -11,7 +11,7 @@ type Params = Promise<{ documentId: string }>;
 
 export default async function Page({ params }: { params: Params }) {
   const { documentId } = await params;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
   const { data: documentMetadata } = await supabase

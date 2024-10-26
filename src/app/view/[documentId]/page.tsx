@@ -15,7 +15,7 @@ export default async function DocumentViewerPage({
   params: Params;
 }) {
   const { documentId } = await params;
-  const supabase = createClient();
+  const supabase = await createClient();
   const cookieStore = await cookies();
   const {
     data: { user },

@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { DocumentMetadata, Folder } from '@/lib/types';
 
 export default async function DashboardPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user?.id) {
