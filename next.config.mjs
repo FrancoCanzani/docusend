@@ -22,6 +22,7 @@ const nextConfig = {
    * See https://github.com/vercel/next.js/pull/66817
    */
   swcMinify: false,
+  transpilePackages: ['next-mdx-remote'],
 };
 
 export default nextConfig;

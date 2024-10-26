@@ -5,11 +5,7 @@ import path from 'path';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-// Define proper types for the page props
-type PageProps = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+type Params = Promise<{ slug: string }>;
 
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), 'src', 'posts');
@@ -20,13 +16,15 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function Post({ params, searchParams }: PageProps) {
-  const { content, frontMatter } = await getPostContent(params.slug);
+export default async function Post({ params }: { params: Params }) {
+  const { slug } = await params;
+
+  const { content, frontMatter } = await getPostContent(slug);
 
   return (
-    <div className='flex max-w-3xl py-8 space-y-4 mx-auto flex-col items-start justify-start'>
+    <div className='flex max-w-4xl w-full py-8 space-y-4 mx-auto flex-col items-start justify-start'>
       <Link
-        href='/'
+        href={'/'}
         className='flex items-center font-medium text-sm text-gray-800'
       >
         <ArrowLeft size={13} className='mr-1' />
