@@ -7,14 +7,16 @@ import PasswordForm from '@/components/forms/password_form';
 import NDAForm from '@/components/forms/nda_form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
+type Params = Promise<{ documentId: string }>;
+
 export default async function DocumentViewerPage({
   params,
 }: {
-  params: { documentId: string };
+  params: Params;
 }) {
-  const { documentId } = params;
+  const { documentId } = await params;
   const supabase = createClient();
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const {
     data: { user },
   } = await supabase.auth.getUser();

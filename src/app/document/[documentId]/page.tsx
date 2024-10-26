@@ -7,12 +7,10 @@ import DocumentViews from '@/components/document/document-views';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { MessageCircleOff, EyeOff } from 'lucide-react';
 
-export default async function Page({
-  params,
-}: {
-  params: { documentId: string };
-}) {
-  const { documentId } = params;
+type Params = Promise<{ documentId: string }>;
+
+export default async function Page({ params }: { params: Params }) {
+  const { documentId } = await params;
   const supabase = createClient();
   const { data: authData } = await supabase.auth.getUser();
 
