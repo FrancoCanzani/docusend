@@ -101,7 +101,11 @@ export const columns: ColumnDef<DocumentView>[] = [
     },
   },
   {
-    accessorKey: 'country',
+    accessorKey: 'region',
+    accessorFn: (row) => {
+      const country = getCountryData(row.country);
+      return country?.region ?? 'Unknown';
+    },
     header: ({ column }) => (
       <button
         className='font-bold'
@@ -110,12 +114,10 @@ export const columns: ColumnDef<DocumentView>[] = [
         Region
       </button>
     ),
-    cell: ({ row }) => {
-      const countryCode = row.getValue('country') as string;
-      const country = getCountryData(countryCode);
+    cell: ({ getValue }) => {
       return (
         <div className='space-x-1'>
-          <span>{country?.region ?? 'Unknown'}</span>
+          <span>{getValue() as string}</span>
         </div>
       );
     },
