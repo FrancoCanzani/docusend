@@ -242,16 +242,22 @@ export function InvoiceStats({ data }: InvoiceStatsProps) {
             <CardContent>
               <div className='h-[200px]'>
                 <ResponsiveContainer width='100%' height='100%'>
-                  <LineChart
+                  <BarChart
                     data={monthlyData}
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray='3 3' />
-                    <XAxis dataKey='month' stroke='#888888' fontSize={12} />
+                    <XAxis
+                      dataKey='month'
+                      stroke='#888888'
+                      fontSize={12}
+                      axisLine={false}
+                    />
                     <YAxis
                       stroke='#888888'
                       fontSize={12}
                       tickFormatter={(value) => `$${value.toLocaleString()}`}
+                      axisLine={false}
                     />
                     <Tooltip
                       formatter={(value: number) =>
@@ -261,15 +267,8 @@ export function InvoiceStats({ data }: InvoiceStatsProps) {
                         }).format(value)
                       }
                     />
-                    <Line
-                      type='monotone'
-                      dataKey='total'
-                      stroke='#8884d8'
-                      strokeWidth={2}
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 8 }}
-                    />
-                  </LineChart>
+                    <Bar dataKey='total' fill='black' radius={[2, 2, 0, 0]} />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>

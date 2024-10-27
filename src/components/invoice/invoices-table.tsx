@@ -64,7 +64,7 @@ export function InvoicesTable({ data }: InvoicesTableProps) {
           className='max-w-sm'
         />
       </div>
-      <div className='rounded-md border'>
+      <div className='rounded-sm border'>
         <DataTable columns={columns} table={table} />
       </div>
       <DataTablePagination table={table} />

@@ -26,7 +26,7 @@ export default async function InvoicesPage() {
   return (
     <div className='flex h-screen'>
       <Sidebar />
-      <main className='flex-1 flex flex-col p-4 w-full overflow-auto'>
+      <main className='flex-1 flex flex-col py-4 px-6 w-full overflow-auto'>
         <div className='flex flex-col w-full'>
           <div className='flex justify-between items-center mb-8'>
             <h2 className='text-2xl font-bold'>Invoices</h2>
