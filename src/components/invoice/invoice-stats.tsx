@@ -10,8 +10,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
   CartesianGrid,
 } from 'recharts';
 import { Users, DollarSign, FileText, TrendingUp } from 'lucide-react';
@@ -25,7 +23,6 @@ import {
   endOfDay,
   endOfMonth,
   endOfYear,
-  isToday,
 } from 'date-fns';
 import {
   Select,

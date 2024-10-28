@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Download } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 
 export type Invoice = {
   id: string;
@@ -35,21 +35,23 @@ export const columns: ColumnDef<Invoice>[] = [
   {
     id: 'select',
     header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-      />
+      <div className='flex items-end justify-start'>
+        <Checkbox
+          className='p-0'
+          checked={table.getIsAllPageRowsSelected()}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Select all'
+        />
+      </div>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-      />
+      <div className='flex items-end justify-start'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -58,7 +60,7 @@ export const columns: ColumnDef<Invoice>[] = [
     accessorKey: 'invoice_id',
     header: 'Invoice',
     cell: ({ row }) => (
-      <div className='font-medium'>{row.original.invoice_id}</div>
+      <div className='font-medium min-w-24'>{row.original.invoice_id}</div>
     ),
   },
   {
@@ -77,13 +79,21 @@ export const columns: ColumnDef<Invoice>[] = [
   },
   {
     accessorKey: 'issue_date',
-    header: 'Issue Date',
-    cell: ({ row }) => format(new Date(row.original.issue_date), 'MMM d, yyyy'),
+    header: () => <div className='hidden md:block'>Issue Date</div>,
+    cell: ({ row }) => (
+      <div className='hidden md:block'>
+        {format(new Date(row.original.issue_date), 'MMM d, yyyy')}
+      </div>
+    ),
   },
   {
     accessorKey: 'due_date',
-    header: 'Due Date',
-    cell: ({ row }) => format(new Date(row.original.due_date), 'MMM d, yyyy'),
+    header: () => <div className='hidden md:block'>Due Date</div>,
+    cell: ({ row }) => (
+      <div className='hidden md:block'>
+        {format(new Date(row.original.due_date), 'MMM d, yyyy')}
+      </div>
+    ),
   },
   {
     accessorKey: 'total',
@@ -95,16 +105,18 @@ export const columns: ColumnDef<Invoice>[] = [
         currency: row.original.currency,
       }).format(amount);
 
-      return <div className='font-mono'>{formatted}</div>;
+      return <div className='font-medium'>{formatted}</div>;
     },
   },
   {
     accessorKey: 'received',
-    header: 'Status',
+    header: () => <div className='hidden md:block'>Status</div>,
     cell: ({ row }) => (
-      <Badge variant={row.original.received ? 'default' : 'secondary'}>
-        {row.original.received ? 'Received' : 'Pending'}
-      </Badge>
+      <div className='hidden md:block'>
+        <Badge variant={row.original.received ? 'default' : 'secondary'}>
+          {row.original.received ? 'Received' : 'Pending'}
+        </Badge>
+      </div>
     ),
   },
   {
@@ -127,13 +139,12 @@ export const columns: ColumnDef<Invoice>[] = [
             >
               Copy invoice ID
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Download className='mr-2 h-4 w-4' />
-              Download PDF
-            </DropdownMenuItem>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem>Download PDF</DropdownMenuItem>
             {!invoice.received && (
               <DropdownMenuItem>Mark as Received</DropdownMenuItem>
             )}
+            <DropdownMenuItem>Mark as paid</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -51,7 +51,7 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'original_name',
+    accessorKey: 'sanitized_name',
     header: ({ column }) => (
       <button
         className='font-bold flex items-center'
@@ -67,14 +67,14 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
 
       return (
         <div className='font-medium flex items-end space-x-1'>
-          <span className='uppercase'>{documentType}</span>
+          <span className='uppercase font-bold'>{documentType}</span>
           <span>‧</span>
           <Link
             href={`/document/${row.original.document_id}`}
-            className='max-w-36 truncate'
-            title={row.getValue('original_name')}
+            className='max-w-lg truncate'
+            title={row.getValue('sanitized_name')}
           >
-            {row.getValue('original_name')}
+            {row.getValue('sanitized_name')}
           </Link>
         </div>
       );
