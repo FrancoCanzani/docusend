@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Invoice } from '@/app/invoices/columns';
+import { Invoice } from '@/app/(dashboard)/invoices/columns';
 import {
   BarChart,
   Bar,

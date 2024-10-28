@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
-import { columns, Invoice } from '@/app/invoices/columns';
+import { columns, Invoice } from '@/app/(dashboard)/invoices/columns';
 
 interface InvoicesTableProps {
   data: Invoice[];
