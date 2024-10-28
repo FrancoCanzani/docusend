@@ -12,7 +12,7 @@ import { InvoiceData } from '@/lib/types';
 import { toast } from 'sonner';
 import generateInvoicePDF from '@/lib/helpers/generate-invoice-pdf';
 import { createInvoice } from '@/lib/actions';
-import InvoicePreview from './invoice-preview';
+import InvoicePreviewDialog from './invoice-preview-dialog';
 
 export default function CreateInvoiceForm() {
   const [invoiceId, setInvoiceId] = useState('Invoice #001');
@@ -134,10 +134,10 @@ export default function CreateInvoiceForm() {
         }}
         className='bg-white text-black'
       >
-        <div className='flex items-center justify-between'>
-          <Input
+        <div className='flex items-center justify-between mb-6 lg:mb-8 '>
+          <input
             type='text'
-            className='text-3xl focus-visible:outline-none focus-visible:ring-0 focus-visible:border-none lg:text-5xl mb-4 lg:mb-8 font-bold w-1/2 outline-none border-none p-0'
+            className='text-3xl focus-visible:outline-none focus-visible:ring-0 focus-visible:border-none lg:text-5xl font-bold w-1/2 outline-none border-none p-0'
             value={invoiceId}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setInvoiceId(e.target.value)
@@ -146,12 +146,11 @@ export default function CreateInvoiceForm() {
             autoFocus
             placeholder='Invoice #'
           />
-
-          <InvoicePreview data={invoiceData} />
+          <InvoicePreviewDialog data={invoiceData} />
         </div>
 
-        <div className='flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 lg:mb-8'>
-          <div className='flex w-full flex-col space-y-2 text-sm mb-4 lg:mb-0'>
+        <div className='flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 lg:mb-8'>
+          <div className='flex w-full flex-col space-y-2 text-sm mb-6 lg:mb-0'>
             <div className='flex items-center space-x-2 justify-start'>
               <span className='font-bold'>Currency:</span>
               <InvoiceCurrency
@@ -187,7 +186,7 @@ export default function CreateInvoiceForm() {
           </div>
         </div>
 
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 mb-4 lg:mb-8'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 mb-6 lg:mb-8'>
           <div>
             <h3 className='font-bold mb-2'>Bill from</h3>
             <Input

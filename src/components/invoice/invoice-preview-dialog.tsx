@@ -22,7 +22,7 @@ const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString();
 };
 
-export default function InvoicePreview({ data }: InvoicePreviewProps) {
+export default function InvoicePreviewDialog({ data }: InvoicePreviewProps) {
   const discountAmount = data.subtotal * (data.discount / 100);
   const taxAmount = (data.subtotal - discountAmount) * (data.tax / 100);
 
