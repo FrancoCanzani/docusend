@@ -14,7 +14,7 @@ import {
   Line,
 } from 'recharts';
 import { format, parseISO, startOfDay } from 'date-fns';
-import { DocumentView } from '@/app/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
 
 type ChartData = {
   date: string;

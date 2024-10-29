@@ -8,7 +8,7 @@ export default function InvoicesLayout({
   return (
     <div className='flex h-screen'>
       <Sidebar />
-      <main className='flex-1 flex flex-col p-4 px-6 w-full overflow-auto'>
+      <main className='flex-1 flex flex-col py-4 px-6 w-full overflow-auto'>
         {children}
       </main>
     </div>

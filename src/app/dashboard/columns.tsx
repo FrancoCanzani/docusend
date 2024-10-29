@@ -6,7 +6,6 @@ import { DocumentMetadata, Folder } from '@/lib/types';
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
 import { getDocumentTypeFromMime } from '@/lib/helpers/get-document-type';
 import Link from 'next/link';
-import DocumentSettingsSheet from '@/components/document/document-settings-sheet';
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
@@ -171,14 +170,7 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const document = row.original;
-      return (
-        <DocumentSettingsSheet documentMetadata={document}>
-          <button className='p-1 bg-gray-100 border hover:bg-gray-200 rounded-sm'>
-            <span className='sr-only'>Settings</span>
-            <Settings2 size={14} />
-          </button>
-        </DocumentSettingsSheet>
-      );
+      return <div>hello</div>;
     },
   },
 ];

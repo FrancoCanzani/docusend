@@ -13,7 +13,10 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { columns, DocumentView } from '@/app/document/[documentId]/columns';
+import {
+  columns,
+  DocumentView,
+} from '@/app/(dashboard)/document/[documentId]/columns';
 import { useRouter } from 'next/navigation';
 import { DataTable } from '../ui/data-table';
 import { DataTablePagination } from '../ui/data-table-pagination';
@@ -68,7 +71,7 @@ export default function DocumentViewsTable({
           Refresh data
         </Button>
       </div>
-      <div className='rounded-md border'>
+      <div className='rounded-md border mb-4'>
         <DataTable columns={columns} table={table} />
       </div>
       <DataTablePagination table={table} />

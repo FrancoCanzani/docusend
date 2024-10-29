@@ -14,7 +14,7 @@ export function Sidebar() {
       <nav className='font-medium'>
         <Link
           href='/dashboard'
-          className='flex items-center px-6 py-3  hover:bg-gray-100'
+          className='flex items-center px-6 py-4  hover:bg-gray-100'
         >
           Dashboard
         </Link>

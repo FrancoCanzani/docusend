@@ -1,7 +1,7 @@
 import DocumentViewsChart from './document-views-chart';
 import DocumentViewsMap from './document-views-map';
 import DocumentViewsTable from './document-views-table';
-import { DocumentView } from '@/app/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
 
 type DocumentViewsProps = {
   documentViews: DocumentView[];

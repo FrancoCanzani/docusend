@@ -10,7 +10,7 @@ import {
 import { geoMap } from '@/lib/constants/geo-map';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { Plus, Minus } from 'lucide-react';
-import { DocumentView } from '@/app/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
 import getCountryData from '@/lib/helpers/get-country-data';
 import DocumentViewsCountryCountTable from './document-views-country-count-table';
 
