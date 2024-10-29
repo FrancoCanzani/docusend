@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Karla } from 'next/font/google';
 import { Toaster } from 'sonner';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 const karla = Karla({ subsets: ['latin'] });
 
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <Toaster richColors />
-      <body className={`${karla.className} antialiased`}>{children}</body>
+      <body className={`${karla.className} antialiased`}>
+        <NuqsAdapter>{children}</NuqsAdapter>
+      </body>
     </html>
   );
 }

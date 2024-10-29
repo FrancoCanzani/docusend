@@ -51,6 +51,7 @@
     "lucide-react": "^0.439.0",
     "next": "^15.0.1",
     "next-mdx-remote": "^5.0.0",
+    "nuqs": "^2.0.4",
     "react": "^18",
     "react-csv": "^2.2.2",
     "react-day-picker": "^8.10.1",

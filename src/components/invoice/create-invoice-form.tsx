@@ -12,7 +12,7 @@ import { InvoiceData } from '@/lib/types';
 import { toast } from 'sonner';
 import generateInvoicePDF from '@/lib/helpers/generate-invoice-pdf';
 import { createInvoice } from '@/lib/actions';
-import InvoicePreviewDialog from './invoice-preview-dialog';
+import InvoicePreviewSheet from './invoice-preview-sheet';
 
 export default function CreateInvoiceForm() {
   const [invoiceId, setInvoiceId] = useState('Invoice #001');
@@ -146,7 +146,7 @@ export default function CreateInvoiceForm() {
             autoFocus
             placeholder='Invoice #'
           />
-          <InvoicePreviewDialog data={invoiceData} />
+          <InvoicePreviewSheet data={invoiceData} />
         </div>
 
         <div className='flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 lg:mb-8'>

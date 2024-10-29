@@ -4,13 +4,13 @@ import React from 'react';
 import { InvoiceData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { PageTop, PageBottom } from '@fileforge/react-print';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -22,25 +22,28 @@ const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString();
 };
 
-export default function InvoicePreviewDialog({ data }: InvoicePreviewProps) {
+export default function InvoicePreviewSheet({ data }: InvoicePreviewProps) {
   const discountAmount = data.subtotal * (data.discount / 100);
   const taxAmount = (data.subtotal - discountAmount) * (data.tax / 100);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Sheet>
+      <SheetTrigger asChild>
         <Button variant='outline' size='sm' className='font-bold'>
           Preview
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[70%] sm:h-[90vh] p-0'>
-        <DialogHeader className='p-6 pb-0'>
-          <DialogTitle>Invoice Preview</DialogTitle>
-          <DialogDescription>
+      </SheetTrigger>
+      <SheetContent
+        side='right'
+        className='w-full bg-white text-sm sm:max-w-[100vw] md:w-[80vw] lg:w-[60vw] p-0'
+      >
+        <SheetHeader className='p-6 pb-0'>
+          <SheetTitle>Invoice Preview</SheetTitle>
+          <SheetDescription>
             Preview your invoice template before we send it to your client.
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea className='h-[calc(90vh-8rem)] p-6'>
+          </SheetDescription>
+        </SheetHeader>
+        <ScrollArea className='h-[calc(100vh-8rem)] p-6'>
           <div className='bg-white text-black font-mono'>
             <PageTop>
               <div className='flex justify-between items-center mb-14'>
@@ -146,7 +149,7 @@ export default function InvoicePreviewDialog({ data }: InvoicePreviewProps) {
             </PageBottom>
           </div>
         </ScrollArea>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
