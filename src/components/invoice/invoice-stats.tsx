@@ -93,7 +93,7 @@ export function InvoiceStats({ data }: InvoiceStatsProps) {
   ).size;
   const averageInvoice = totalAmount / filteredData.length || 0;
   const pendingAmount = filteredData
-    .filter((invoice) => !invoice.received)
+    .filter((invoice) => !invoice.paid)
     .reduce((sum, invoice) => sum + invoice.total, 0);
 
   const monthlyData = React.useMemo(() => {

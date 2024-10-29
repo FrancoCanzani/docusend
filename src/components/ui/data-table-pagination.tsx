@@ -16,7 +16,7 @@ export function DataTablePagination<TData>({
   showRowCount = true,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className='flex items-center justify-end space-x-2 py-4'>
+    <div className='flex items-center justify-end space-x-2 pb-4'>
       {showRowCount && (
         <div className='flex-1 text-sm text-muted-foreground'>
           {table.getFilteredSelectedRowModel?.() ? (

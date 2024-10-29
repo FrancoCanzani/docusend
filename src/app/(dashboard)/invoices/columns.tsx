@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export type Invoice = {
   id: string;
@@ -28,6 +29,7 @@ export type Invoice = {
   subtotal: number;
   total: number;
   received: boolean;
+  paid: boolean;
   created_at: string;
 };
 
@@ -90,7 +92,14 @@ export const columns: ColumnDef<Invoice>[] = [
     accessorKey: 'due_date',
     header: () => <div className='hidden md:block'>Due Date</div>,
     cell: ({ row }) => (
-      <div className='hidden md:block'>
+      <div
+        className={cn(
+          'hidden md:block',
+          !row.original.paid &&
+            new Date(row.original.due_date) < new Date() &&
+            'text-red-600'
+        )}
+      >
         {format(new Date(row.original.due_date), 'MMM d, yyyy')}
       </div>
     ),
@@ -110,11 +119,22 @@ export const columns: ColumnDef<Invoice>[] = [
   },
   {
     accessorKey: 'received',
-    header: () => <div className='hidden md:block'>Status</div>,
+    header: () => <div className='hidden md:block'>Reception</div>,
     cell: ({ row }) => (
       <div className='hidden md:block'>
         <Badge variant={row.original.received ? 'default' : 'secondary'}>
           {row.original.received ? 'Received' : 'Pending'}
+        </Badge>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'payment',
+    header: () => <div className='hidden md:block'>Payment</div>,
+    cell: ({ row }) => (
+      <div className='hidden md:block'>
+        <Badge variant={row.original.paid ? 'default' : 'secondary'}>
+          {row.original.received ? 'Paid' : 'Pending'}
         </Badge>
       </div>
     ),
