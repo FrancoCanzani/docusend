@@ -2,10 +2,8 @@
 
 import { DocumentMetadata as DocumentMetadataType } from '@/lib/types';
 import Link from 'next/link';
-import { buttonVariants } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { useQueryState } from 'nuqs';
-import { Button } from '../ui/button';
 
 type DocumentMetadataProps = {
   documentMetadata: DocumentMetadataType;
@@ -22,7 +20,7 @@ export default function DocumentHeader({
   });
 
   return (
-    <section className='w-full space-y-4 sm:space-y-6'>
+    <div className='w-full space-y-4 sm:space-y-6'>
       <div className='flex flex-col items-start justify-between space-y-6'>
         <h1 className='text-xl sm:text-2xl font-bold truncate mr-2'>
           {documentMetadata.sanitized_name}
@@ -67,6 +65,6 @@ export default function DocumentHeader({
           </Link>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
