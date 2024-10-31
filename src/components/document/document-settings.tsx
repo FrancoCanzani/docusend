@@ -104,13 +104,6 @@ export default function DocumentSettings({
 
   return (
     <div className='w-full'>
-      <div className='flex justify-between items-center mb-6'>
-        <h1 className='text-3xl font-bold'>Document Settings</h1>
-        <Button onClick={handleSaveSettings} variant={'outline'} size={'sm'}>
-          Save Changes
-        </Button>
-      </div>
-
       <SettingSection
         title='Basic Information'
         description='Set the display name for your document'
@@ -342,6 +335,11 @@ export default function DocumentSettings({
           </div>
         </div>
       </SettingSection>
+      <div className='flex justify-end items-center'>
+        <Button onClick={handleSaveSettings} variant={'outline'} size={'sm'}>
+          Save Changes
+        </Button>
+      </div>
     </div>
   );
 }
