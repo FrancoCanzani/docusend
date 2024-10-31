@@ -34,7 +34,6 @@ export default async function Page({
     .eq('user_id', authData.user?.id)
     .single();
 
-  // Only fetch data needed for current tab
   const { data: documentFeedback } =
     tab === 'feedback'
       ? await supabase

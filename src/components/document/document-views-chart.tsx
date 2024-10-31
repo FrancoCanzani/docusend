@@ -18,35 +18,13 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import {
-  format,
-  parseISO,
-  startOfDay,
-  differenceInHours,
-  addDays,
-  isSameDay,
-} from 'date-fns';
+import { format, parseISO, startOfDay } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
 
 type DocumentViewsChartProps = {
   documentViews: DocumentView[];
 };
-
-type TimeDistribution = {
-  hour: number;
-  views: number;
-}[];
-
-type RetentionData = {
-  timeSpent: string;
-  count: number;
-}[];
-
-type DeviceDistribution = {
-  name: string;
-  value: number;
-}[];
 
 export default function DocumentViewsChart({
   documentViews,
@@ -153,6 +131,10 @@ export default function DocumentViewsChart({
                     labelFormatter={(label) =>
                       format(parseISO(label), 'MMMM dd, yyyy')
                     }
+                    formatter={(value: number, name: string) => [
+                      value,
+                      name === 'uniqueVisitors' ? 'Unique visitors' : 'Views',
+                    ]}
                     contentStyle={{
                       backgroundColor: '#fff',
                       border: '1px solid #ccc',
