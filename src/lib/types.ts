@@ -22,6 +22,8 @@ export type DocumentMetadata = {
   folder_id: string | null;
 };
 
+export type TimeFrame = 'today' | 'this_month' | 'this_year' | 'all_time';
+
 export type Folder = {
   id: string;
   name: string;

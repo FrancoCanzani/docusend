@@ -13,13 +13,20 @@ import { decodeCityName } from '@/lib/helpers/decode-city-name';
 
 export type DocumentView = {
   id: string;
-  distinct_id: string;
   email: string | null;
+  document_id: string;
+  pathname: string;
   browser: string;
   device_type: string;
   timestamp: string;
-  country: string;
   duration: number;
+  created_at: string;
+  ip: string;
+  city: string;
+  country: string;
+  country_region: string;
+  latitude: number;
+  longitude: number;
 };
 
 export const columns: ColumnDef<DocumentView>[] = [
