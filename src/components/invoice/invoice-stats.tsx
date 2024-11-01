@@ -357,7 +357,44 @@ export default function InvoiceStats({ data }: InvoiceStatsProps) {
           </CardContent>
         </Card>
       )}
-      {timeFrame === 'this_month' && <InvoiceCalendar data={data} />}
+      <div className='grid gap-4 md:grid-cols-[2fr,1fr]'>
+        <InvoiceCalendar data={data} />
+        <Card>
+          <CardHeader>
+            <CardTitle>Overdue Invoices</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data
+              .filter(
+                (invoice) =>
+                  !invoice.paid && new Date(invoice.due_date) < new Date()
+              )
+              .map((invoice) => (
+                <div
+                  key={invoice.id}
+                  className='flex items-center justify-between border-b pb-4 last:border-0 last:pb-0 mb-4 last:mb-0'
+                >
+                  <div className='space-y-1'>
+                    <p className='text-sm font-medium leading-none'>
+                      {invoice.customer_name}
+                    </p>
+                    <p className='text-xs text-muted-foreground'>
+                      Due: {format(new Date(invoice.due_date), 'MMM d, yyyy')}
+                    </p>
+                  </div>
+                  <div className='text-right'>
+                    <p className='text-sm font-medium'>
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: invoice.currency,
+                      }).format(invoice.total)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
