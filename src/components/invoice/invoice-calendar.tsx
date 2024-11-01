@@ -12,6 +12,7 @@ import {
   startOfMonth,
   getDay,
   isPast,
+  differenceInMonths,
 } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -34,7 +35,7 @@ const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export default function InvoiceCalendar({ data }: { data: Invoice[] }) {
   const [monthOffset, setMonthOffset] = useQueryState('month', {
-    defaultValue: '-1',
+    defaultValue: '0',
     parse: (value) => value,
     serialize: (value) => value,
   });
@@ -72,7 +73,7 @@ export default function InvoiceCalendar({ data }: { data: Invoice[] }) {
           <Button variant='outline' size='icon' onClick={handlePreviousMonth}>
             <ChevronLeft className='h-4 w-4' />
           </Button>
-          <Button variant='outline' onClick={() => setMonthOffset('-1')}>
+          <Button variant='outline' onClick={() => setMonthOffset('0')}>
             Today
           </Button>
           <Button variant='outline' size='icon' onClick={handleNextMonth}>
@@ -134,7 +135,7 @@ export default function InvoiceCalendar({ data }: { data: Invoice[] }) {
                       className={cn(
                         'h-12 rounded flex flex-col items-center justify-center cursor-pointer text-sm',
                         getBackgroundColor(),
-                        compareAsc(date, today) > 0 && 'opacity-40'
+                        compareAsc(date, today) < 0 && 'opacity-40'
                       )}
                     >
                       <span
