@@ -89,7 +89,7 @@ export default function InvoiceStats({ data }: InvoiceStatsProps) {
     0
   );
   const uniqueCustomers = new Set(
-    filteredData.map((invoice) => invoice.customer_email)
+    filteredData.map((invoice) => invoice.customer_name)
   ).size;
   const averageInvoice = totalAmount / filteredData.length || 0;
   const pendingAmount = filteredData
