@@ -130,7 +130,7 @@ export default function InvoiceCalendar({ data }: { data: Invoice[] }) {
                   <TooltipTrigger asChild>
                     <div
                       className={cn(
-                        'h-12 rounded flex flex-col items-center justify-center cursor-pointer text-sm',
+                        'h-12 rounded-sm flex flex-col items-center justify-center cursor-pointer text-sm',
                         getBackgroundColor(),
                         compareAsc(date, today) < 0 && 'opacity-40'
                       )}

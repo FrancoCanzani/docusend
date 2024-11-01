@@ -167,7 +167,7 @@ export default function DashboardTable({
           />
         )}
       </div>
-      <div className='rounded-sm border border-gray-100'>
+      <div className='rounded-sm border border-gray-100 mb-4'>
         <DataTable columns={columns} table={table} />
       </div>
       <DataTablePagination table={table} />

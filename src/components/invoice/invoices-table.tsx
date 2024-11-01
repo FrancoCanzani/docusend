@@ -57,9 +57,7 @@ export function InvoicesTable({ data }: InvoicesTableProps) {
             (table.getColumn('invoice_id')?.getFilterValue() as string) ?? ''
           }
           onChange={(event) =>
-            table
-              .getColumn('invoice_number')
-              ?.setFilterValue(event.target.value)
+            table.getColumn('invoice_id')?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />
