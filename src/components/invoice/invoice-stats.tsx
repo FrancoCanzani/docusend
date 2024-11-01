@@ -32,14 +32,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { TimeFrame } from '@/lib/types';
+import InvoiceCalendar from './invoice-calendar';
 
 interface InvoiceStatsProps {
   data: Invoice[];
 }
 
-type TimeFrame = 'today' | 'this_month' | 'this_year' | 'all_time';
-
-export function InvoiceStats({ data }: InvoiceStatsProps) {
+export default function InvoiceStats({ data }: InvoiceStatsProps) {
   const [timeFrame, setTimeFrame] = React.useState<TimeFrame>('this_month');
 
   const filteredData = React.useMemo(() => {
@@ -357,6 +357,7 @@ export function InvoiceStats({ data }: InvoiceStatsProps) {
           </CardContent>
         </Card>
       )}
+      {timeFrame === 'this_month' && <InvoiceCalendar data={data} />}
     </div>
   );
 }

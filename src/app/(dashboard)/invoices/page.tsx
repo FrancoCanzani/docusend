@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { InvoicesTable } from '@/components/invoice/invoices-table';
-import { InvoiceStats } from '@/components/invoice/invoice-stats';
+import InvoiceStats from '@/components/invoice/invoice-stats';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';

@@ -103,7 +103,7 @@ export default function DocumentSettings({
   };
 
   return (
-    <div className='w-full'>
+    <div className='w-full pb-4'>
       <SettingSection
         title='Basic Information'
         description='Set the display name for your document'
