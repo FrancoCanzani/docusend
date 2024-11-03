@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye, Users, Clock, Globe } from 'lucide-react';
 import { useMemo } from 'react';
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 import { calculateDocumentStats } from '@/lib/helpers/calculate-document-stats';
 
 interface DocumentStatsProps {

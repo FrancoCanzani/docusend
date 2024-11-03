@@ -20,7 +20,7 @@ import {
 } from 'recharts';
 import { format, parseISO, startOfDay } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 
 type DocumentViewsChartProps = {
   documentViews: DocumentView[];

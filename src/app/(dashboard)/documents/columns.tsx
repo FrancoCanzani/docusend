@@ -69,7 +69,7 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
           <span className='uppercase font-bold'>{documentType}</span>
           <span>‧</span>
           <Link
-            href={`/document/${row.original.document_id}`}
+            href={`/documents/document/${row.original.document_id}`}
             className='max-w-lg truncate'
             title={row.getValue('sanitized_name')}
           >

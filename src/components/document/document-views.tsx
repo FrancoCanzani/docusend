@@ -4,7 +4,7 @@ import { DocumentStats } from './document-stats';
 import DocumentViewsChart from './document-views-chart';
 import DocumentViewsMap from './document-views-map';
 import DocumentViewsTable from './document-views-table';
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 import { TimeFrame } from '@/lib/types';
 import { useState, useMemo } from 'react';
 import { calculateTimeFrameData } from '@/lib/helpers/calculate-timeframe-data';

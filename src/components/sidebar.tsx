@@ -13,7 +13,7 @@ export function Sidebar() {
       </div>
       <nav className='font-medium'>
         <Link
-          href='/dashboard'
+          href='/documents'
           className='flex items-center px-6 py-4  hover:bg-gray-100'
         >
           Dashboard

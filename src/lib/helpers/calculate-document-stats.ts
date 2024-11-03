@@ -1,4 +1,4 @@
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 
 export type DeviceStats = {
   devices: Record<string, number>;

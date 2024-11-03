@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import getCountryData from '@/lib/helpers/get-country-data';
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 import {
   ColumnDef,
   getCoreRowModel,

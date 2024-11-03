@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { columns } from '@/app/dashboard/columns';
+import { columns } from '@/app/(dashboard)/documents/columns';
 import { DocumentMetadata, Folder } from '@/lib/types';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';

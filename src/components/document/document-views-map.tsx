@@ -11,7 +11,7 @@ import {
 import { geoMap } from '@/lib/constants/geo-map';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { Plus, Minus, Maximize2 } from 'lucide-react';
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 import getCountryData from '@/lib/helpers/get-country-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

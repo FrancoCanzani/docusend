@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import {
   columns,
   DocumentView,
-} from '@/app/(dashboard)/document/[documentId]/columns';
+} from '@/app/(dashboard)/documents/document/[documentId]/columns';
 import { useRouter } from 'next/navigation';
 import { DataTable } from '../ui/data-table';
 import { DataTablePagination } from '../ui/data-table-pagination';

@@ -1,8 +1,7 @@
 import React from 'react';
-import { Sidebar } from '@/components/sidebar';
-import Dashboard from '@/components/dashboard';
 import { createClient } from '@/lib/supabase/server';
 import { DocumentMetadata, Folder } from '@/lib/types';
+import DocumentsDashboard from '@/components/documents-dashboard';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -29,14 +28,9 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className='flex h-screen'>
-      <Sidebar />
-      <main className='flex-1 py-4 px-6 overflow-auto'>
-        <Dashboard
-          documents={(docsData as DocumentMetadata[]) || []}
-          folders={(foldersData as Folder[]) || []}
-        />
-      </main>
-    </div>
+    <DocumentsDashboard
+      documents={(docsData as DocumentMetadata[]) || []}
+      folders={(foldersData as Folder[]) || []}
+    />
   );
 }

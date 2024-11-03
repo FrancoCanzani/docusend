@@ -8,7 +8,7 @@ import { FolderList } from './folder-list';
 import DocumentUploadDialog from './document/document-upload-dialog';
 import DashboardTable from './dashboard-table';
 
-export default function Dashboard({
+export default function DocumentsDashboard({
   documents,
   folders,
 }: {

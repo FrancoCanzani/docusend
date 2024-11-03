@@ -8,7 +8,7 @@ import {
   isWithinInterval,
 } from 'date-fns';
 import { TimeFrame } from '@/lib/types';
-import { DocumentView } from '@/app/(dashboard)/document/[documentId]/columns';
+import { DocumentView } from '@/app/(dashboard)/documents/document/[documentId]/columns';
 
 export function calculateTimeFrameData(
   documentViews: DocumentView[],
