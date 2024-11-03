@@ -1,0 +1,12 @@
+{
+  "provider": "openai",
+  "envVariable": "OPENAI_API_KEY",
+  "format": "Simple (description only)",
+  "language": "english",
+  "envFile": ".env.local",
+  "maxLength": 50,
+  "options": {
+    "autoCommit": true,
+    "promptPush": true
+  }
+}

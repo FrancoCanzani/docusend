@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fileforge/react-print": "^0.1.150",
+    "@francocanzani/ai-commit": "^1.1.2",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
     "@next/mdx": "^14.2.9",
