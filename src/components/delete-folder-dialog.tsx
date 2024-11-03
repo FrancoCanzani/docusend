@@ -42,7 +42,7 @@ export function DeleteFolderDialog({
       error: 'An error occurred while deleting. Please try again.',
     });
 
-    router.push('/dashboard');
+    router.push('/documents');
     router.refresh();
   };
 

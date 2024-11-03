@@ -26,7 +26,7 @@ export default function DocumentsDashboard({
     } else {
       params.delete('folderId');
     }
-    router.push(`/dashboard?${params.toString()}`);
+    router.push(`/documents?${params.toString()}`);
   }
 
   const filteredDocuments = activeFolderId

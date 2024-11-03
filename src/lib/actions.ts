@@ -24,7 +24,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/dashboard');
+  redirect('/documents');
 }
 
 export async function signup(formData: FormData) {
@@ -83,7 +83,7 @@ export async function uploadDocument(metadata: {
     throw new Error('Failed to store document metadata');
   }
 
-  revalidatePath('/dashboard');
+  revalidatePath('/documents');
 }
 
 export async function downloadDocument(documentPath: string) {
@@ -207,7 +207,7 @@ export async function saveDocumentSettings(
     throw new Error('Failed to update document settings');
   }
 
-  revalidatePath('/dashboard');
+  revalidatePath('/documents');
   return { success: true };
 }
 
@@ -252,7 +252,7 @@ export async function deleteFolder(folderId: string) {
     console.error('Error deleting folder:', err);
     throw err;
   } finally {
-    revalidatePath('/dashboard');
+    revalidatePath('/documents');
   }
 }
 
