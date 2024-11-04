@@ -62,7 +62,7 @@ export default function LandingPage() {
             <div className='flex items-baseline justify-center space-x-3'>
               <h1 className='text-2xl font-bold'>DocuSend</h1>
               <h2 className='text-sm font-semibold uppercase'>
-                Unlock Document Sharing Power
+                Document sharing solutions
               </h2>
             </div>
             <div className='hidden md:flex space-x-4'>

@@ -4,6 +4,7 @@ import { DocumentMetadata as DocumentMetadataType } from '@/lib/types';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useQueryState } from 'nuqs';
+import DashboardSectionTitle from '../dashboard-section-title';
 
 type DocumentMetadataProps = {
   documentMetadata: DocumentMetadataType;
@@ -22,9 +23,7 @@ export default function DocumentHeader({
   return (
     <div className='w-full space-y-4 sm:space-y-6'>
       <div className='flex flex-col items-start justify-between space-y-6'>
-        <h1 className='text-xl sm:text-2xl font-bold truncate mr-2'>
-          {documentMetadata.sanitized_name}
-        </h1>
+        <DashboardSectionTitle title={documentMetadata.sanitized_name} />
         <div className='flex space-x-4 flex-shrink-0'>
           <button
             className={cn(

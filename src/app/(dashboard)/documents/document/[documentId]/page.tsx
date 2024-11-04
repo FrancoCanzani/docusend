@@ -51,9 +51,8 @@ export default async function Page({
       : { data: null };
 
   return (
-    <main className='flex-1 space-y-6 overflow-x-hidden overflow-y-auto container mx-auto'>
+    <main className='space-y-6 overflow-x-hidden overflow-y-auto w-full mx-auto'>
       <DocumentHeader documentMetadata={documentMetadata} />
-
       {tab === 'views' &&
         (documentAnalytics && documentAnalytics.length > 0 ? (
           <DocumentViews documentViews={documentAnalytics} />

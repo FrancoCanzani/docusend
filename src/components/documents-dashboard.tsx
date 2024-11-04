@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FolderList } from './folder-list';
 import DocumentUploadDialog from './document/document-upload-dialog';
 import DashboardTable from './dashboard-table';
+import DashboardSectionTitle from './dashboard-section-title';
 
 export default function DocumentsDashboard({
   documents,
@@ -36,7 +37,7 @@ export default function DocumentsDashboard({
   return (
     <div>
       <div className='flex justify-between items-center mb-8'>
-        <h2 className='text-2xl font-bold'>Documents</h2>
+        <DashboardSectionTitle title='Documents' />
         <div className='flex items-end space-x-2'>
           <CreateFolderDialog />
           <DocumentUploadDialog folderId={activeFolderId} />

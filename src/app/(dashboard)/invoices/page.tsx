@@ -4,6 +4,7 @@ import InvoiceStats from '@/components/invoice/invoice-stats';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import DashboardSectionTitle from '@/components/dashboard-section-title';
 
 export default async function InvoicesPage() {
   const supabase = await createClient();
@@ -27,7 +28,7 @@ export default async function InvoicesPage() {
   return (
     <div className='flex flex-col w-full'>
       <div className='flex justify-between items-center mb-8'>
-        <h2 className='text-2xl font-bold'>Invoices</h2>
+        <DashboardSectionTitle title='Invoices' />
         <Link
           href='/invoices/create'
           className={cn(
