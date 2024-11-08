@@ -1,6 +1,6 @@
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, Settings2 } from 'lucide-react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DocumentMetadata, Folder } from '@/lib/types';
 import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
@@ -161,8 +161,10 @@ export const columns: ColumnDef<DocumentMetadata>[] = [
       const folders = (table.options.meta as { folders: Folder[] }).folders;
       const folderName = folderId
         ? folders.find((f) => f.id === folderId)?.name || 'Unknown'
-        : 'None';
-      return <span className='hidden lg:block'>{folderName}</span>;
+        : '-';
+      return (
+        <span className='hidden lg:block font-semibold'>{folderName}</span>
+      );
     },
   },
   {

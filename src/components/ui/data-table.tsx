@@ -20,7 +20,7 @@ interface DataTableProps<TData> {
 export function DataTable<TData>({ table, columns }: DataTableProps<TData>) {
   return (
     <Table>
-      <TableHeader className='bg-gray-50/50 text-black'>
+      <TableHeader className='bg-gray-50/50 dark:bg-black'>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (

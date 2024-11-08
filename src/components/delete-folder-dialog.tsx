@@ -53,12 +53,9 @@ export function DeleteFolderDialog({
         <DialogHeader>
           <DialogTitle>Delete folder</DialogTitle>
           <DialogDescription>
-            <p>
-              This action cannot be undone. This will permanently delete the
-              folder{' '}
-              <span className='font-medium text-black'>{folder.name}</span> and
-              all documents inside it.
-            </p>
+            This action cannot be undone. This will permanently delete the
+            folder <span className='font-medium text-black'>{folder.name}</span>{' '}
+            and all documents inside it.
           </DialogDescription>
         </DialogHeader>
         <div className='flex flex-col space-y-2 items-start'>

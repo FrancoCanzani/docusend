@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Karla } from 'next/font/google';
 import { Toaster } from 'sonner';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import Providers from '@/components/providers';
 
 const karla = Karla({ subsets: ['latin'] });
 
@@ -17,10 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
-      <Toaster richColors />
-      <body className={`${karla.className} antialiased`}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+    <html lang='en' suppressHydrationWarning>
+      <Toaster />
+      <body
+        className={`${karla.className} antialiased dark:text-gray-50 dark:bg-black text-black bg-white`}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

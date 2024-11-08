@@ -4,9 +4,6 @@ import Link from 'next/link';
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -19,9 +16,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from './ui/dropdown-menu';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, Sun, Moon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 const items = [
   {
@@ -48,17 +46,27 @@ const items = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  console.log(pathname);
+  const { theme, setTheme } = useTheme();
+  console.log(theme);
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className='flex items-center justify-between flex-row pr-8'>
         <Link
           href='/'
-          className='flex items-center text-2xl font-bold h-16 px-2'
+          className='flex items-center text-2xl font-bold h-14 px-2'
         >
           DocuSend
         </Link>
+        {theme == 'dark' ? (
+          <button onClick={() => setTheme('light')}>
+            <Sun size={18} />
+          </button>
+        ) : (
+          <button onClick={() => setTheme('dark')}>
+            <Moon size={18} />
+          </button>
+        )}
       </SidebarHeader>
       <SidebarContent className='px-4 text-xl space-y-4'>
         {items.map((item) => (

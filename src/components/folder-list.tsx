@@ -22,11 +22,15 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
     >
       <div className='flex items-center space-x-2'>
         {folder.id === 'all' ? (
-          <File size={18} fill='#171717' stroke='#171717' />
+          <File size={19} fill='#171717' stroke='#171717' />
         ) : (
-          <Folder size={18} fill='#171717' stroke='#171717' />
+          <Folder size={19} fill='#171717' stroke='#171717' />
         )}
-        <span className={`flex-grow truncate ${isActive ? 'font-medium' : ''}`}>
+        <span
+          className={`flex-grow truncate text-lg ${
+            isActive ? 'font-semibold' : 'font-medium'
+          }`}
+        >
           {folder.name}
         </span>
         {folder.id !== 'all' && (
@@ -35,7 +39,7 @@ function FolderItem({ folder, isActive, onClick, level = 0 }: FolderItemProps) {
               aria-label='Delete folder'
               className='p-1 hover:bg-red-100 rounded-md sm:hidden group-hover:block '
             >
-              <Trash size={16} className='text-red-600' />
+              <Trash size={19} className='text-red-600' />
             </button>
           </DeleteFolderDialog>
         )}
