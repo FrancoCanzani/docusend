@@ -147,7 +147,7 @@ export default function DocumentViewsMap({
     <div className='space-y-6'>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4'>
         {topCountries.map((country) => (
-          <Card key={country.countryCode} className='bg-black/5'>
+          <Card key={country.countryCode}>
             <CardHeader className='py-2'>
               <CardTitle className='text-sm font-medium truncate flex items-center gap-2'>
                 <span>{country.flag}</span>
